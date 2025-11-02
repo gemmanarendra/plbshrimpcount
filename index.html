@@ -10,7 +10,7 @@
   --color-bg:#f4f9ff;
   --color-header-bg1:#e3f2fd;
   --color-header-bg2:#f4f9ff;
-  --color-card-bg:#fff;
+  --color-card-bg:#007bff1a;
   --color-border:#d9e1ec;
   --color-accent:#007bff;
   --color-shadow:rgba(0,0,0,.08);
@@ -18,8 +18,8 @@
   --font-weight-thin:300;
   --radius-card:16px;
   --shadow-card:0 3px 10px var(--color-shadow);
-  --color-card-tester:#fff9e6;
-  --color-card-hitung:#e8f5e9;
+  --color-card-tester:#007bff1a;
+  --color-card-hitung:#007bff1a;
   --color-text-sum:#1b6b2b;
   --color-text-sj:#007bbf;
   --color-calc-bg: #4a4a4a;
@@ -47,10 +47,10 @@ body.dark-mode {
   --color-header-bg1:#1a222c;
   --color-header-bg2:#121212;
   --color-card-bg:#1e1e1e;
-  --color-border:#ccc;
+  --color-border:#3E3E3E;
   --color-shadow:rgba(255,255,255,.05);
-  --color-card-tester:#2a261c;
-  --color-card-hitung:#1d2a1e;
+  --color-card-tester:#1e1e1e;
+  --color-card-hitung:#1e1e1e;
   --color-text-sum:#66bb6a;
   --color-text-sj:#4dabf5;
   --color-calc-bg: #3a3a3a;
@@ -58,10 +58,10 @@ body.dark-mode {
   --color-tester-result-bg: #2e4b30;
   --color-tester-result-text: #b9f6ca;
   --color-alert-text: #ffab40;
-  --color-card-recap: #22252a;
+  --color-card-recap: #1e1e1e;
   --color-recap-label: #aaa;
   --color-recap-value: #f1f1f1;
-  --color-recap-border: #ccc;
+  --color-recap-border: #3E3E3E;
   --color-text-main: #f1f1f1;
   --color-text-light: #bbb;
   --color-text-lighter: #888;
@@ -113,6 +113,10 @@ header.visible{opacity:1;transform:translateY(0)}
 
 .title{font-size:1.2em;margin:0;color:#444}
 body.dark-mode .title { color: #ccc; }
+body.dark-mode .title-pl,
+body.dark-mode .title-b {
+    color: inherit;
+}
 .title-pl { color: #00008B; }
 .title-b { color: #ADD8E6; }
 .version{font-size:.45em;color:var(--color-text-lighter);vertical-align:super}
@@ -125,8 +129,8 @@ body.dark-mode .title { color: #ccc; }
 
 .dark-mode-toggle {
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 25px;
+    right: 25px;
     background: var(--color-card-bg);
     border: 1px solid var(--color-border);
     border-radius: 50%;
@@ -139,7 +143,7 @@ body.dark-mode .title { color: #ccc; }
     transition: transform .2s, background .3s;
 }
 #trashToggleBtn {
-    left: 15px;
+    left: 20px;
     right: auto; /* Batalkan 'right: 15px' dari style aslinya */
 }
 
@@ -402,37 +406,37 @@ body.dark-mode .global-actions .btn.import { background: #4a2125; }
     transform: scale(1.1);
 }
 .add-btn {
-    background: #e6f7ff;
+    background: #007bff1a;
     color: var(--color-accent);
-    border-color: #b3e0ff;
+    border-color: #ccc;
 }
 .remove-btn {
-    background: #fff0f0;
+    background: #007bff1a;
     color: #dc3545;
-    border-color: #ffb3b3;
+    border-color: #ccc;
 }
 .remove-btn:disabled {
-    background: #f8f8f8;
+    background: #007bff1a;
     color: #ccc;
-    border-color: #eee;
+    border-color: #ccc;
     cursor: not-allowed;
     opacity: 0.8;
     transform: none !important;
 }
 .reset-btn {
-    background: #fff9e6;
+    background: #007bff1a;
     color: #e65100;
-    border-color: #ffe0b2;
+    border-color: #ccc;
 }
 body.dark-mode .reset-btn {
-    background: #392b1a;
-    border-color: #5e452a;
+    background: #121212;
+    border-color: #3E3E3E;
     color: #ffab40;
 }
 
-body.dark-mode .add-btn { background: #1e3a4c; border-color: #004a80; }
-body.dark-mode .remove-btn { background: #4a2125; border-color: #801c28; }
-body.dark-mode .remove-btn:disabled { background: #2f2f2f; border-color: #444; color: #555; }
+body.dark-mode .add-btn { background: #121212; border-color: #3E3E3E; }
+body.dark-mode .remove-btn { background: #121212; border-color: #3E3E3E; }
+body.dark-mode .remove-btn:disabled { background: #121212; border-color: #3E3E3E; color: #555; }
 
 
 /* --- Detail CSS (Tidak diubah) --- */
@@ -1117,6 +1121,17 @@ body.dark-mode .tab-link.active {
     gap: 6px; /* Rapatkan sedikit tombol */
 }
 
+/* === [BARU] SEMBUNYIKAN SCROLLBAR === */
+
+/* Sembunyikan scrollbar untuk Chrome, Safari, Edge */
+.card-tab-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* Sembunyikan scrollbar untuk Firefox */
+.card-tab-content {
+    scrollbar-width: none; /* Firefox */
+}
 </style>
 </head>
 
@@ -1234,7 +1249,7 @@ body.dark-mode .tab-link.active {
                 <h2>🔬 Hitungan Tester</h2>
 
                 <div class="row">
-                    <div class="col"><label>💧 Nomor Bak</label><input id="{{INSTANCE_ID}}_nomorBak" placeholder="Nomor Bak" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
+                    <div class="col"><label>💧 Nomor Bak</label><input id="{{INSTANCE_ID}}_nomorBak" placeholder="Bak Scooring" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
                 </div>
 
                 <div class="row">
@@ -1333,7 +1348,7 @@ body.dark-mode .tab-link.active {
                     </div>
 
                     <section class="card card-selisih" id="{{INSTANCE_ID}}_selisihBox" style="display: none;">
-                        <h2 class="selisih-title">📦 Total Benur (Packing) vs Order</h2>
+                        <h2 class="selisih-title">🐠 Rekap Packing</h2>
                         <div class="selisih-row">
                             <span class="selisih-label">Total Benur Packing</span>
                             <span class="selisih-value" id="{{INSTANCE_ID}}_selisih_totalPacking">0</span>
