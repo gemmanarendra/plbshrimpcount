@@ -1,0 +1,2778 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"> <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PLB ShrimpCount</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;700&display=swap" rel="stylesheet">
+<style>
+/* --- VARIABEL AKAR & STANDAR --- */
+:root {
+  --color-bg:#f4f9ff;
+  --color-header-bg1:#e3f2fd;
+  --color-header-bg2:#f4f9ff;
+  --color-card-bg:#fff;
+  --color-border:#d9e1ec;
+  --color-accent:#007bff;
+  --color-shadow:rgba(0,0,0,.08);
+  --font-main:'Poppins',sans-serif;
+  --font-weight-thin:300;
+  --radius-card:16px;
+  --shadow-card:0 3px 10px var(--color-shadow);
+  --color-card-tester:#fff9e6;
+  --color-card-hitung:#e8f5e9;
+  --color-text-sum:#1b6b2b;
+  --color-text-sj:#007bbf;
+  --color-calc-bg: #4a4a4a;
+  --color-calc-display: #e8f5f9;
+  --color-calc-operator: #ff9500;
+  --color-tester-result-bg: #c8e6c9;
+  --color-tester-result-text: #1b5e20;
+  --color-alert-text: #e65200;
+  --color-card-recap: #f5f7fa;
+  --color-recap-label: #555;
+  --color-recap-value: #000;
+  --color-recap-border: #e0e6ef;
+  --color-text-main: #333;
+  --color-text-light: #666;
+  --color-text-lighter: #888;
+  --color-input-border: #cfd8e3;
+  --color-input-bg: #fff;
+  --color-card-tester-border: #e3e3c9;
+  --color-card-hitung-border: #c8e6c9;
+}
+
+/* === [BARU] Mode Gelap === */
+body.dark-mode {
+  --color-bg:#121212;
+  --color-header-bg1:#1a222c;
+  --color-header-bg2:#121212;
+  --color-card-bg:#1e1e1e;
+  --color-border:#ccc;
+  --color-shadow:rgba(255,255,255,.05);
+  --color-card-tester:#2a261c;
+  --color-card-hitung:#1d2a1e;
+  --color-text-sum:#66bb6a;
+  --color-text-sj:#4dabf5;
+  --color-calc-bg: #3a3a3a;
+  --color-calc-display: #222;
+  --color-tester-result-bg: #2e4b30;
+  --color-tester-result-text: #b9f6ca;
+  --color-alert-text: #ffab40;
+  --color-card-recap: #22252a;
+  --color-recap-label: #aaa;
+  --color-recap-value: #f1f1f1;
+  --color-recap-border: #ccc;
+  --color-text-main: #f1f1f1;
+  --color-text-light: #bbb;
+  --color-text-lighter: #888;
+  --color-input-border: #444;
+  --color-input-bg: #252525;
+  --color-card-tester-border: #444;
+  --color-card-hitung-border: #334e35;
+}
+/* === [AKHIR] Mode Gelap === */
+
+*{box-sizing:border-box}
+
+/* === [REVISI] KUNCI LAYOUT 1: HTML & BODY === */
+html {
+  /* Kunci tinggi html ke tinggi layar dinamis */
+  height: 100dvh; 
+}
+body{
+  margin:0;font-family:var(--font-main);
+  font-weight:var(--font-weight-thin);
+  background:var(--color-bg);color:var(--color-text-main);
+  transition: background .3s, color .3s;
+  font-size: 15px;
+
+  /* --- [REVISI] Ganti dari min-height & justify-center --- */
+  display: flex;
+  flex-direction: column;
+  /* Kunci body agar 100% tinggi layar (dvh=dynamic viewport height) */
+  height: 100dvh; 
+  /* Hapus justify-content: center; */
+  /* Cegah body agar tidak bisa di-scroll */
+  overflow: hidden; 
+  /* -------------------------------------------------- */
+}
+/* Animasi */
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+header{opacity:0;transform:translateY(25px);transition:opacity .8s ease,transform .8s ease}
+header.visible{opacity:1;transform:translateY(0)}
+
+/* --- [REVISI] KUNCI LAYOUT 2: HEADER --- */
+.app-header{
+  text-align:center;padding: 15px 15px 10px; /* DIUBAH */
+  border-radius:0 0 20px 20px;
+  background:linear-gradient(180deg,var(--color-header-bg1),var(--color-header-bg2));
+  box-shadow:0 2px 8px var(--color-shadow);
+  position: relative;
+  flex-shrink: 0; 
+}
+
+.title{font-size:1.2em;margin:0;color:#444}
+body.dark-mode .title { color: #ccc; }
+.title-pl { color: #00008B; }
+.title-b { color: #ADD8E6; }
+.version{font-size:.45em;color:var(--color-text-lighter);vertical-align:super}
+.build-badge{background:#007bff1a;color:var(--color-accent);
+  font-size:.65em;border-radius:8px;padding:2px 6px;margin-left:6px}
+.subtitle{font-size: .5em;color:var(--color-text-light);margin-top: 4px;font-style:italic; display: none; } /* DIKECILKAN */
+.sponsor{font-size: .4em;color:var(--color-text-lighter);margin-top: 2px; display: none; } /* DIKECILKAN */
+.sponsor b{color:var(--color-accent)}
+.timestamp{font-size:.7em;color:#999}
+
+.dark-mode-toggle {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+    line-height: 1;
+    box-shadow: 0 1px 3px var(--color-shadow);
+    transition: transform .2s, background .3s;
+}
+#trashToggleBtn {
+    left: 15px;
+    right: auto; /* Batalkan 'right: 15px' dari style aslinya */
+}
+
+.dark-mode-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* --- CARD UMUM & INPUT (Dalam Slide) --- */
+.card{
+  background:var(--color-card-bg);
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-card);
+  padding:35px 20px;
+  margin:25px 0 0;
+  box-shadow:var(--shadow-card);
+  position:relative;
+  transition: background .3s, border .3s;
+}
+.card h2{margin-top:0;color:var(--color-accent);font-size:1.05em}
+.card-data h2 {
+    color: var(--color-accent);
+    font-weight: 700;
+    font-size: 1.15em;
+    margin-bottom: 20px;
+    border-bottom: 1px dashed var(--color-border);
+    padding-bottom: 10px;
+}
+label{display:block;margin-top:10px;font-size:.9em}
+input,select{
+  width:100%;padding:8px 10px;margin-top:4px;
+  border:1px solid var(--color-input-border);border-radius:8px;
+  font-size:.9em;font-family:var(--font-main);
+  transition:.3s;
+  background: var(--color-input-bg);
+  color: var(--color-text-main);
+}
+input:focus,select:focus{
+  outline:none;border-color:var(--color-accent);
+  box-shadow:0 0 6px rgba(0,123,255,.2);
+}
+.card-tester{background:var(--color-card-tester);}
+.card-hitung{background:var(--color-card-hitung);}
+
+.card-recap{
+    background: var(--color-card-recap);
+    border-color: var(--color-recap-border);
+}
+.card-recap h2 {
+    color: var(--color-text-main);
+    font-weight: 700;
+}
+.recap-section-title {
+    font-size: 0.95em;
+    font-weight: 700;
+    color: var(--color-accent);
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--color-recap-border);
+    padding-bottom: 5px;
+}
+.recap-row, .recap-row-small {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 0.9em;
+    border-bottom: 1px dashed var(--color-recap-border);
+}
+.card-recap .recap-row:last-child { border-bottom: none; }
+.recap-label {
+    color: var(--color-recap-label);
+    flex-basis: 40%;
+    flex-shrink: 0;
+}
+.recap-value {
+    color: var(--color-recap-value);
+    font-weight: 700;
+    text-align: right;
+    flex-grow: 1;
+}
+.recap-row-small {
+    font-size: 0.85em;
+    padding: 4px 0;
+}
+.recap-value.final-result {
+    font-size: 1.1em;
+    color: var(--color-text-sum);
+}
+.recap-value.final-result-alert {
+    font-size: 1.1em;
+    color: var(--color-alert-text);
+}
+
+.actions-row{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{
+  background:transparent;border:1px solid rgba(0,123,255,.2);
+  padding:7px 11px;border-radius:8px;cursor:pointer;font-size:.6em;
+  transition:.2s;
+  color: var(--color-accent);
+}
+body.dark-mode .btn {
+  background: var(--color-input-bg);
+  border-color: var(--color-accent);
+}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
+body.dark-mode .btn.primary:hover { color: #fff; }
+.time-stamp{
+  position:absolute;bottom:6px;right:10px;
+  font-size:.65em;color:var(--color-text-lighter);font-weight:300;opacity:.6
+}
+
+.card-recap .actions-row {
+    margin-top: 25px;
+    border-top: 1px dashed var(--color-recap-border);
+    padding-top: 15px;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.card-recap .actions-row .btn {
+    flex-grow: 1;
+    flex-basis: 180px;
+    text-align: center;
+    font-size: 0.85em;
+    background: #fff;
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    font-weight: 700;
+}
+body.dark-mode .card-recap .actions-row .btn {
+    background: var(--color-card-recap);
+}
+.card-recap .actions-row .btn:hover {
+    background: #f0f8ff;
+    transform: translateY(-1px);
+    color: #0056b3;
+}
+body.dark-mode .card-recap .actions-row .btn:hover {
+    background: #2a3a4c;
+    color: #69baff;
+}
+
+
+/* --- [REVISI] KUNCI LAYOUT 3: CAROUSEL / SLIDE CONTAINER --- */
+.carousel-wrapper {
+    width: 100%; /* <-- [REKOMENDASI PERBAIKAN BUG] */
+    max-width: 400px; /* [EDIT] Lebar maksimal dikurangi 5px */
+    margin: 0px auto 0;
+    overflow: hidden; /* Revisi: overflow-x diubah ke overflow */
+    position: relative;
+    border-radius: var(--radius-card);
+    
+    /* Biarkan wrapper ini tumbuh mengisi sisa ruang */
+    flex-grow: 1; 
+}
+
+
+.slide-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    /* [REVISI] Pastikan track mengisi tinggi wrapper */
+    height: 100%; 
+}
+
+.slide-item {
+    min-width: 100%;
+    max-width: 400px; /* [EDIT] Lebar maksimal dikurangi 5px */
+    flex-shrink: 0;
+    padding: 0 20px;
+
+    /* [REVISI] KUNCI LAYOUT 4: SLIDE ITEM (FLEX CONTAINER) */
+    height: 100%; /* Isi tinggi .slide-track */
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- [REVISI] Sembunyikan total blok kontrol lama --- */
+.carousel-controls {
+    /* Kontrol ini diganti floating nav, sembunyikan total */
+    display: none; 
+    
+    /* Aturan lama (hanya untuk referensi): */
+    /* max-width: 400px; 
+    margin: 15px auto 50px;
+    padding: 0 20px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px; */
+}
+.slide-nav-btn {
+    font-size: 1.5em;
+    padding: 5px 10px;
+    background: var(--color-input-bg);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    border-radius: 8px;
+    color: var(--color-text-main);
+}
+#slideIndicator {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--color-text-main);
+    min-width: 60px;
+    text-align: center;
+}
+.global-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+    margin-top: 10px;
+    order: 3;
+}
+.global-actions .btn {
+    font-size: 0.8em;
+    font-weight: 700;
+    flex-grow: 1;
+    max-width: 180px;
+}
+.global-actions .btn.export {
+    border-color: #28a745;
+    color: #28a745;
+}
+body.dark-mode .global-actions .btn.export { background: #1e3c25; }
+.global-actions .btn.import {
+    border-color: #dc3545;
+    color: #dc3545;
+}
+body.dark-mode .global-actions .btn.import { background: #4a2125; }
+
+
+/* --- PROJECT CONTROLS DI CARD 1 (DIKECILKAN) --- */
+.card-project-controls {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    display: flex;
+    gap: 5px;
+    z-index: 50;
+}
+.card-project-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    font-size: 0.7em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 1px 3px var(--color-shadow);
+    transition: transform 0.2s, opacity 0.2s, background 0.2s;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-project-btn:hover {
+    transform: scale(1.1);
+}
+.add-btn {
+    background: #e6f7ff;
+    color: var(--color-accent);
+    border-color: #b3e0ff;
+}
+.remove-btn {
+    background: #fff0f0;
+    color: #dc3545;
+    border-color: #ffb3b3;
+}
+.remove-btn:disabled {
+    background: #f8f8f8;
+    color: #ccc;
+    border-color: #eee;
+    cursor: not-allowed;
+    opacity: 0.8;
+    transform: none !important;
+}
+.reset-btn {
+    background: #fff9e6;
+    color: #e65100;
+    border-color: #ffe0b2;
+}
+body.dark-mode .reset-btn {
+    background: #392b1a;
+    border-color: #5e452a;
+    color: #ffab40;
+}
+
+body.dark-mode .add-btn { background: #1e3a4c; border-color: #004a80; }
+body.dark-mode .remove-btn { background: #4a2125; border-color: #801c28; }
+body.dark-mode .remove-btn:disabled { background: #2f2f2f; border-color: #444; color: #555; }
+
+
+/* --- Detail CSS (Tidak diubah) --- */
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.col{flex:1 1 45%;display:flex;flex-direction:column}
+.hit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:8px;margin-top:10px}
+.calc-box{background:var(--color-input-bg);border:1px solid var(--color-card-tester-border);border-radius:8px;padding:6px;text-align:center}
+.calc-box input{border:none;text-align:center;width:100%;font-size:.9em;background:transparent;padding:0;margin:0;}
+.summary-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:14px}
+.sum-box,.density-box{
+  background:var(--color-input-bg);padding:10px 14px;border-radius:10px;
+  border:1px solid var(--color-card-tester-border);min-width:140px;
+}
+.allowance-tester-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--color-border);
+}
+.allowance-tester-input-group label {
+    flex-basis: 75%;
+    margin: 0;
+    font-size: 0.95em;
+    color: var(--color-text-main);
+}
+.allowance-tester-input-group input {
+    flex-basis: 25%;
+    width: auto;
+    padding: 5px 8px;
+    text-align: center;
+    margin: 0;
+    font-size: 1em;
+}
+
+.tester-result-box {
+    margin-top: 15px;
+    padding: 15px;
+    background: var(--color-tester-result-bg);
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 700;
+    border: 1px solid #a5d6a7;
+    box-shadow: 0 2px 5px var(--color-shadow);
+}
+body.dark-mode .tester-result-box { border-color: #3b753e; }
+.tester-result-box .label {
+    font-size: 0.7em;
+    color: var(--color-tester-result-text);
+    margin-bottom: 5px;
+}
+.tester-result-box .result-value {
+    font-size: 1.5em;
+    color: var(--color-tester-result-text);
+    line-height: 1.2;
+}
+
+.tester-result-box.split-layout {
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    gap: 15px;
+    padding: 10px;
+}
+.result-box-split {
+    flex: 1;
+    min-width: 0;
+    padding: 5px;
+    border-radius: 6px;
+}
+.result-box-split.estimasi-box {
+    background: #fff3e0;
+    border: 1px solid #ffe0b2;
+}
+body.dark-mode .result-box-split.estimasi-box {
+    background: #392b1a;
+    border: 1px solid #5e452a;
+}
+.result-box-split.estimasi-box .label {
+    color: #e65100;
+}
+body.dark-mode .result-box-split.estimasi-box .label {
+    color: #ffab40;
+}
+.result-box-split.estimasi-box .result-value {
+    color: var(--color-alert-text);
+    font-size: 1.5em;
+}
+
+
+.label{font-size:.8em;color:var(--color-text-light)}
+.value{font-size:1em;color:var(--color-text-sum);margin-top:4px}
+
+
+/* === NEW CSS STYLES FOR CARD HITUNGAN (CARD 4) === */
+.order-nominal-display {
+    text-align: center;
+    padding: 15px 10px;
+    background: #f4fff7;
+    border: 1px solid var(--color-card-hitung-border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+body.dark-mode .order-nominal-display {
+    background: #192c1c;
+    border-color: var(--color-card-hitung-border);
+}
+.order-nominal-display .label {
+    font-size: 0.85em;
+    color: #4a6c4c;
+    margin-bottom: 5px;
+}
+body.dark-mode .order-nominal-display .label { color: #81b984; }
+.order-nominal-display .value {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--color-text-sum);
+    line-height: 1.1;
+}
+
+.hit-session .session-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 0.9em;
+    font-weight: 400;
+    border-bottom: 1px dashed var(--color-border);
+    margin-top: 10px;
+}
+.hit-session .session-summary .sum-value {
+    font-weight: 700;
+    color: var(--color-text-sum);
+}
+
+.actions-row-small .btn {
+    font-size: 0.75em;
+    padding: 5px 8px;
+    border-width: 1px;
+    opacity: 0.7;
+}
+
+.summary-and-result-grid {
+    display: block;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.grey-summary-box, .green-result-box {
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px var(--color-shadow);
+}
+.grey-summary-box {
+    background: #fcfcfc;
+    border: 1px solid #ddd;
+}
+body.dark-mode .grey-summary-box {
+    background: #2a2a2a;
+    border-color: #444;
+}
+.green-result-box {
+    background: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    margin-top: 15px;
+}
+body.dark-mode .green-result-box {
+    background: var(--color-card-hitung);
+    border-color: var(--color-card-hitung-border);
+}
+
+.summary-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--color-border);
+}
+.summary-item-row:last-child {
+    border-bottom: none;
+}
+.summary-label {
+    font-size: 0.9em;
+    color: var(--color-text-main);
+}
+.summary-value {
+    font-size: 1.2em;
+    font-weight: 700;
+}
+.summary-value.avg {color: #1a7a40;}
+body.dark-mode .summary-value.avg {color: #66bb6a;}
+.summary-value.box {color: #ff8c00;}
+body.dark-mode .summary-value.box {color: #ffc97a;}
+.summary-value.real-sj {color: var(--color-text-sum);}
+.summary-value.simulation {
+    color: var(--color-alert-text);
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+.allowance-input-grid {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--color-border);
+}
+.allowance-input-grid label {
+    font-size: 0.9em;
+    margin: 0;
+    flex-grow: 1;
+}
+.allowance-input-grid input {
+    width: 65px;
+    padding: 5px;
+    text-align: center;
+    margin: 0;
+}
+.allowance-display {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: var(--color-text-sum);
+    text-align: right;
+    flex-shrink: 0;
+}
+.allowance-result-row .summary-label {
+    flex-basis: 50%;
+}
+.allowance-result-row .allowance-inputs {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+/* Floating Calculator CSS (No Change) */
+.calculator-container {
+    position: fixed; top: 100px; right: 20px; z-index: 1000;
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    transform: translateX(100%); opacity: 0;
+}
+.calculator-container.visible {transform: translateX(0); opacity: 1;}
+.calculator-card {
+    width: 280px; background: var(--color-calc-bg); border-radius: var(--radius-card);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); padding: 15px;
+}
+.calc-display-input {
+    width: 100%; height: 60px; background: var(--color-calc-display); border: none;
+    border-radius: 8px; text-align: right; font-size: 2.2em; font-weight: 700;
+    color: #333; padding: 10px; margin-bottom: 10px; pointer-events: none;
+}
+body.dark-mode .calc-display-input { color: var(--color-text-main); }
+.calc-grid {display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;}
+.calc-btn {
+    background: #6c6c6c; color: white; border: none; border-radius: 50%;
+    height: 55px; font-size: 1.2em; cursor: pointer; transition: background 0.2s;
+}
+body.dark-mode .calc-btn { background: #555; }
+.calc-btn:hover {background: #888;}
+body.dark-mode .calc-btn:hover {background: #777;}
+.calc-btn.operator {background: var(--color-calc-operator); font-weight: 700;}
+.calc-btn.operator:hover {background: #ffb75f;}
+.calc-btn.clear, .calc-btn.toggle-sign {background: #a6a6a6; color: #333;}
+body.dark-mode .calc-btn.clear, body.dark-mode .calc-btn.toggle-sign { background: #888; color: #f1f1f1; }
+.calc-btn.clear:hover, .calc-btn.toggle-sign:hover {background: #c2c2c2;}
+body.dark-mode .calc-btn.clear:hover, body.dark-mode .calc-btn.toggle-sign:hover {background: #999;}
+.calc-btn.zero {grid-column: span 2; border-radius: 55px; text-align: left; padding-left: 20px;}
+.calc-toggle-btn {
+    position: fixed; bottom: 20px; right: 20px; z-index: 1001;
+    background: var(--color-accent); color: white; border: none; border-radius: 50%;
+    width: 50px; height: 50px; font-size: 1.5em; box-shadow: 0 4px 8px var(--color-shadow);
+    cursor: pointer; transition: background 0.3s;
+}
+.calc-toggle-btn:hover {background: #0056b3;}
+
+
+/* === [BARU] REVISI 2: Box Spesial Selisih === */
+/* REVISI 1: Pindahkan margin-top karena box dipindah */
+.card-selisih {
+    background: #fffbe6; /* Warna kuning muda, beda dari yang lain */
+    border-color: #ffe58f;
+    margin-top: 15px; /* Jarak dari Card Hijau */
+    padding: 15px 20px;
+    border-radius: 10px; /* Samakan dengan box summary */
+    box-shadow: 0 1px 5px var(--color-shadow); /* Samakan dengan box summary */
+}
+body.dark-mode .card-selisih {
+    background: #2a261c;
+    border-color: #5e5a4a;
+}
+.selisih-title {
+    margin: 0 0 10px 0;
+    font-size: 1.0em;
+    font-weight: 700;
+    color: #d98200;
+    border-bottom: 1px dashed #ffe58f;
+    padding-bottom: 8px;
+}
+body.dark-mode .selisih-title {
+    color: #ffab40;
+    border-bottom-color: #5e5a4a;
+}
+.selisih-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 0.9em;
+}
+.selisih-label {
+    color: var(--color-text-light);
+}
+.selisih-value {
+    font-size: 1.25em;
+    font-weight: 700;
+    color: var(--color-text-sum);
+}
+.selisih-value.negative {
+    color: var(--color-alert-text);
+}
+.selisih-value.positive {
+    color: var(--color-text-sum);
+}
+/* === [AKHIR] REVISI 2 === */
+
+/* === [BARU] REVISI 5: Toggle Switch Simulasi === */
+.simulasi-toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.simulasi-toggle-label {
+    font-size: 0.9em;
+    font-weight: 700;
+    color: var(--color-text-main);
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px; /* Lebar switch */
+    height: 28px; /* Tinggi switch */
+}
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px; /* Ukuran knob */
+    width: 20px; /* Ukuran knob */
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+input:checked + .slider {
+    background-color: var(--color-accent);
+}
+input:checked + .slider:before {
+    transform: translateX(22px); /* Pergeseran knob */
+}
+.slider.round {
+    border-radius: 28px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+/* === [AKHIR] REVISI 5 === */
+
+/* === [BARU] Penyesuaian Font Mobile === */
+@media (max-width: 360px) {
+    body {
+        font-size: 14px; /* Sedikit lebih kecil di layar sempit */
+    }
+    .title { font-size: 1.1em; }
+    .subtitle { font-size: 0.8em; }
+    .btn, .card-recap .actions-row .btn, .global-actions .btn {
+        font-size: 0.8em; /* Kecilkan semua tombol */
+    }
+    .card-data h2 { font-size: 1.05em; }
+    .card h2 { font-size: 1em; }
+    .tester-result-box .result-value { font-size: 1.5em; }
+    .result-box-split.estimasi-box .result-value { font-size: 1.4em; }
+    .order-nominal-display .value { font-size: 1.5em; }
+    .summary-value { font-size: 1.1em; }
+    .hit-grid {
+        grid-template-columns: repeat(auto-fit,minmax(70px,1fr)); /* Kecilkan kolom grid */
+    }
+}
+/* === [PATCH REVISI] Floating Nav Bar Bawah === */
+
+/* 1. Kontainer Utama */
+.floating-nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.0); /* 0% Hitam Transparan */
+    box-shadow: 0 -3px 10px rgba(0,0,0,0.0);
+    
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    z-index: 998;
+    
+    /* [REVISI] Pastikan nav tidak bisa diklik saat di belakang kalkulator */
+    pointer-events: none; 
+}
+
+/* 2. Grup Tombol (Kiri, Tengah, Kanan) */
+.floating-nav-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto; /* Tombol bisa diklik */
+}
+.floating-nav-group.center {
+    /* Posisikan di tengah absolut */
+    position: absolute; 
+    left: 50%;
+    transform: translateX(-50%);
+    /* Sembunyikan jika hanya 1 slide */
+    display: none; 
+}
+.floating-nav-group.right {
+    margin-left: auto; /* Dorong ke kanan */
+}
+
+/* 3. Style Tombol Bulat (Save, Prev, Next, Calc) */
+.floating-nav-btn {
+    background: #007bff; /* warna biru laut */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 1.2em;
+    box-shadow: 0 4px 8px var(--color-shadow);
+    cursor: pointer;
+    transition: background 0.3s;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 0;
+}
+.floating-nav-btn:hover {
+    opacity: 0.8; /* 80% terlihat. Ganti ke 0.7, 0.9, dll. */
+}
+/* .floating-nav-btn.save-btn:hover { (Dihapus) } */
+
+/* 5. Style Indikator Halaman */
+.floating-nav-indicator {
+    background: var(--color-calc-display);
+    color: var(--color-calc-bg);
+    font-size: 1.1em;
+    font-weight: 700;
+    padding: 10px 16px;
+    border-radius: 25px;
+    box-shadow: 0 4px 8px var(--color-shadow);
+}
+
+/* 6. SEMBUNYIKAN Kontrol Asli */
+/* .carousel-controls sudah di display: none */
+#prevSlideBtn, #nextSlideBtn, #slideIndicator {
+    display: none !important;
+}
+body > .calc-toggle-btn {
+    display: none !important;
+}
+/* === [AKHIR PATCH CSS] === */
+
+/* === [REVISI] CSS Card Keranjang Sampah (Floating Panel) === */
+
+/* 1. Kontainer Utama (Panel Mengambang) */
+.trash-popup-container {
+    /* Posisi: Mengambang di tengah, di bawah header */
+    position: absolute;
+    top: 70px; /* Jarak dari atas (di bawah header) */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 990; /* Di atas konten, di bawah kalkulator */
+
+    /* Ukuran: Lebih kecil dan profesional */
+    width: 90%;
+    max-width: 360px; /* Lebih ramping dari 400px */
+    max-height: 60vh; /* Batas tinggi, misal 60% layar */
+    
+    /* Tampilan */
+    background: var(--color-bg); /* Latar belakang body, BUKAN kartu */
+    border-radius: var(--radius-card);
+    box-shadow: 0 5px 20px var(--color-shadow);
+    border: 1px solid var(--color-border);
+
+    /* Konten di dalam */
+    overflow: hidden; /* Kontainer luar tidak di-scroll */
+}
+
+/* 2. Atur .slide-item khusus di dalam trash */
+.trash-popup-container .slide-item {
+    padding: 0; /* Hapus padding bawaan slide-item */
+    height: auto;
+    /* INI yang akan di-scroll jika daftarnya panjang */
+    max-height: 60vh; /* Samakan dengan kontainer */
+    overflow-y: auto; 
+}
+
+/* 3. Atur .card-trash khusus di dalam trash */
+.trash-popup-container .card-trash {
+    margin: 0; /* Hapus margin bawaan kartu */
+    box-shadow: none; /* Hapus bayangan ganda */
+    border: none; /* Hapus border ganda */
+}
+/* === [AKHIR] CSS Card Keranjang Sampah === */
+
+/* [PATCH REVISI] CSS untuk Card Keranjang Sampah (PENGGANTI MODAL) */
+.card-trash {
+    /* Desainnya meniru card rekap */
+    background: var(--color-card-recap); 
+    border-color: var(--color-recap-border);
+}
+.trash-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+.trash-modal-list-item { /* Kita pakai ulang style lama */
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.trash-item-info strong {
+    display: block;
+    font-size: 1em;
+    color: var(--color-text-main);
+}
+.trash-item-info span {
+    font-size: 0.8em;
+    color: var(--color-text-light);
+}
+.trash-item-actions { display: flex; gap: 8px; }
+.trash-item-actions .btn { font-size: 0.8em; padding: 5px 8px; }
+.trash-item-actions .restore { border-color: #28a745; color: #28a745; }
+body.dark-mode .trash-item-actions .restore { background: #1e3c25; }
+.trash-item-actions .delete { border-color: #dc3545; color: #dc3545; }
+body.dark-mode .trash-item-actions .delete { background: #4a2125; }
+/* === [AKHIR] CSS Card Sampah === */
+
+/* === [BARU] DESAIN 1: GAYA TAB === */
+
+/* 1. Navigasi Tab (Kotak Pil di Atas) */
+.card-tab-nav {
+    display: flex;
+    justify-content: space-around;
+    background: var(--color-card-bg);
+    margin: 20px 0 0 0; /* DIUBAH: Hapus margin samping */
+    padding: 5px;
+    border-radius: 25px; /* Bentuk pil yang modern */
+    box-shadow: 0 2px 8px var(--color-shadow);
+    border: 1px solid var(--color-border);
+    position: sticky; /* Tetap di atas saat scroll sedikit */
+    top: 10px; /* Jarak dari atas layar */
+    z-index: 10;
+    
+    /* [REVISI] KUNCI LAYOUT 5: TAB NAV */
+    flex-shrink: 0; /* Jangan biarkan tab nav mengecil */
+}
+
+/* 2. Tombol Tab Individual */
+.tab-link {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    color: var(--color-text-light);
+    padding: 10px 5px;
+    border-radius: 20px; /* Pil di dalam pil */
+    font-weight: 700;
+    font-size: 0.8em; /* Ukuran font dikecilkan agar muat */
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+    text-align: center;
+    white-space: nowrap; /* Pastikan teks tidak terlipat */
+}
+
+/* 3. Tombol Tab Saat Aktif */
+.tab-link.active {
+    background: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0,123,255,.2);
+}
+body.dark-mode .tab-link.active {
+    /* Agar kontras di mode gelap */
+    color: var(--color-card-bg); 
+}
+
+/* 4. [REVISI] KUNCI LAYOUT 6: KONTEN TAB */
+.card-tab-content {
+    padding-top: 1px; /* Jarak dari tab nav ke kartu */
+
+    /* Biarkan area konten ini tumbuh mengisi sisa ruang */
+    flex-grow: 1; 
+    /* Buat area ini bisa di-scroll secara internal */
+    overflow-y: auto; 
+    overflow-x: hidden;
+    /* Beri padding bawah agar tidak tertutup nav */
+    padding-bottom: 75px; 
+}
+
+/* 5. Panel Kartu (Default Tersembunyi) */
+.tab-panel {
+    display: none; /* Sembunyikan semua kartu */
+    margin-top: 0 !important; /* Hapus margin atas pada kartu */
+    animation: fadeSlideIn 0.4s ease; /* Gunakan animasi fade-in Anda */
+}
+/* Tampilkan hanya panel yang aktif */
+.tab-panel.active {
+    display: block;
+}
+
+/* === [EDIT] PENYESUAIAN CSS LAMA === */
+
+/* 1. Ubah .slide-item */
+.slide-item {
+    min-width: 100%;
+    max-width: 400px; /* [EDIT] Lebar maksimal dikurangi 5px */
+    flex-shrink: 0;
+    padding: 0 15px; /* DIUBAH: Ini akan jadi jarak utama */
+
+    /* [REVISI] KUNCI LAYOUT 4: SLIDE ITEM (FLEX CONTAINER) */
+    height: 100%; /* Isi tinggi .slide-track */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. Ubah .card di dalam tab */
+.tab-panel.card {
+    margin: 0 0 25px 0; /* DIUBAH: Hapus margin samping */
+    /* border-top: none; */ /* <-- DIHAPUS */
+    /* border-top-left-radius: 0; */ /* <-- DIHAPUS */
+    /* border-top-right-radius: 0; */ /* <-- DIHAPUS */
+    /* Bayangan lebih halus */
+    box-shadow: 0 10px 15px -5px var(--color-shadow); 
+}
+
+/* 3. Ubah h2 di kartu pertama (Data Panen) */
+.card-data h2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: -10px; /* Tarik kontrol ke kanan */
+}
+
+/* 4. Pindahkan .card-project-controls */
+.card-project-controls {
+    position: relative; /* Hapus 'absolute' */
+    top: auto;
+    right: auto;
+    gap: 6px; /* Rapatkan sedikit tombol */
+}
+
+</style>
+</head>
+
+<header class="app-header visible">
+  <button id="trashToggleBtn" class="dark-mode-toggle" onclick="showTrash()" title="Buka Keranjang Sampah">♻️</button>
+  
+  <button id="darkModeToggle" class="dark-mode-toggle" title="Ganti Tema">🌙</button>
+
+  <h1 class="title">
+    <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
+    <span class="version">V4.9</span>
+    <span class="build-badge">Beta</span>
+  </h1>
+  <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
+  <p class="sponsor">This app has been built for internal use and restricted purpose only! ⓒ 2025 All Right Reserved</p>
+</header>
+
+<div id="carouselWrapper" class="carousel-wrapper">
+    <div id="slideTrack" class="slide-track">
+        </div>
+</div>
+
+<div class="carousel-controls">
+    <button id="prevSlideBtn" class="slide-nav-btn" onclick="goToSlide(activeInstanceIndex - 1)" style="display: none;">&lt;</button>
+    <span id="slideIndicator">1 / 1</span>
+    <button id="nextSlideBtn" class="slide-nav-btn" onclick="goToSlide(activeInstanceIndex + 1)" style="display: none;">&gt;</button>
+
+    <div class="global-actions">
+        <button class="btn export" onclick="showTrash()">♻️ Pulihkan Data</button>
+    </div>
+</div>
+<div id="calculatorContainer" class="calculator-container">
+    <div class="calculator-card">
+        <input type="text" id="calcDisplay" class="calc-display-input" value="0">
+        <div class="calc-grid">
+            <button class="calc-btn clear" onclick="calcClear()">AC</button>
+            <button class="calc-btn clear" onclick="calcBackspace()">DEL</button>
+            <button class="calc-btn clear" onclick="calcPercent()">%</button>
+            <button class="calc-btn operator" onclick="calcOperator('/')">÷</button>
+
+            <button class="calc-btn" onclick="calcInput('7')">7</button>
+            <button class="calc-btn" onclick="calcInput('8')">8</button>
+            <button class="calc-btn" onclick="calcInput('9')">9</button>
+            <button class="calc-btn operator" onclick="calcOperator('*')">×</button>
+
+            <button class="calc-btn" onclick="calcInput('4')">4</button>
+            <button class="calc-btn" onclick="calcInput('5')">5</button>
+            <button class="calc-btn" onclick="calcInput('6')">6</button>
+            <button class="calc-btn operator" onclick="calcOperator('-')">−</button>
+
+            <button class="calc-btn" onclick="calcInput('1')">1</button>
+            <button class="calc-btn" onclick="calcInput('2')">2</button>
+            <button class="calc-btn" onclick="calcInput('3')">3</button>
+            <button class="calc-btn operator" onclick="calcOperator('+')">+</button>
+
+            <button class="calc-btn zero" onclick="calcInput('0')">0</button>
+            <button class="calc-btn" onclick="calcInput('.')">.</button>
+            <button class="calc-btn operator" onclick="calcEquals()">=</button>
+        </div>
+    </div>
+</div>
+
+<button class="calc-toggle-btn" onclick="toggleCalculator()">🧮</button>
+
+
+<template id="panen-template">
+    <div class="slide-item">
+
+        <div class="card-tab-nav">
+            <button class="tab-link active" onclick="openCard(event, '{{INSTANCE_ID}}_data')">📋 Data</button>
+            <button class="tab-link" onclick="openCard(event, '{{INSTANCE_ID}}_tester')">🔬 Tester</button>
+            <button class="tab-link" onclick="openCard(event, '{{INSTANCE_ID}}_hitung')">🔢 Hitung</button>
+            <button class="tab-link" onclick="openCard(event, '{{INSTANCE_ID}}_rekap')">📊 Rekap</button>
+        </div>
+
+        <div class="card-tab-content">
+
+            <section id="{{INSTANCE_ID}}_data" class="card card-data tab-panel" style="display: block;">
+                <h2 id="{{INSTANCE_ID}}_title">
+                    📋 Data Panen {{ID}}
+                    <div class="card-project-controls">
+                        <button class="card-project-btn add-btn" onclick="addInstance()" title="Tambah Data Panen Baru">➕</button>
+                        <button class="card-project-btn reset-btn" onclick="resetCard1('{{INSTANCE_ID}}')" title="Reset Data Panen Ini">🔄</button>
+                        <button id="{{INSTANCE_ID}}_removeBtn" class="card-project-btn remove-btn" onclick="removeInstance()" title="Hapus Data Panen Ini" disabled>❌</button>
+                    </div>
+                </h2>
+
+                <label>📅 Tanggal Panen</label><input id="{{INSTANCE_ID}}_line" type="date" placeholder="YYYY-MM-DD" oninput="updateRecap('{{INSTANCE_ID}}')">
+                <label>👤 Nama Customer</label><input id="{{INSTANCE_ID}}_customer" placeholder="Nama Customer" oninput="updateRecap('{{INSTANCE_ID}}')">
+                <label>🎯 Tujuan</label><input id="{{INSTANCE_ID}}_tujuan" placeholder="Kota Tujuan" oninput="updateRecap('{{INSTANCE_ID}}')">
+                <label>📈 Order Benur (Ekor)</label><input type="text" id="{{INSTANCE_ID}}_nominalOrder" placeholder="0" oninput="formatCurrency(this); recalcAllHitungan('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}')">
+
+                <label>🚛 Jenis Truk</label>
+                <select id="{{INSTANCE_ID}}_jenisTruk" onchange="updateTruckDetails('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}'); recalcAllHitungan('{{INSTANCE_ID}}')">
+                    <option value="Euro2">Euro 2</option>
+                    <option value="Euro4">Euro 4</option>
+                    <option value="Bandara">Bandara</option>
+                </select>
+
+                <label>📦 Kapasitas Angkut (Box)</label>
+                <input type="number" id="{{INSTANCE_ID}}_kapasitasAngkut" placeholder="Auto isi">
+
+                <label>⚖️ Isi Per Box (Kantong)</label>
+                <input type="number" id="{{INSTANCE_ID}}_isiBox" placeholder="Auto isi dari jenis truk" readonly>
+
+                <label>🚚 Driver</label>
+                <select id="{{INSTANCE_ID}}_driver" onchange="updateDriverDetails('{{INSTANCE_ID}}')">
+                </select>
+                
+                <label>🚗 Plat Nomor</label>
+                <input id="{{INSTANCE_ID}}_platNomor" placeholder="Plat Nomor (auto-fill)" oninput="updateRecap('{{INSTANCE_ID}}')">
+            </section>
+
+            <section id="{{INSTANCE_ID}}_tester" class="card card-tester tab-panel">
+                <h2>🔬 Hitungan Tester</h2>
+
+                <div class="row">
+                    <div class="col"><label>💧 Nomor Bak</label><input id="{{INSTANCE_ID}}_nomorBak" placeholder="Nomor Bak" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col"><label>🤖 Tomota (ekor)</label><input id="{{INSTANCE_ID}}_tomota" type="number" placeholder="Tomota" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><label>Hitungan Tester:</label></div>
+                </div>
+
+                <div id="{{INSTANCE_ID}}_hitGridTester" class="hit-grid"></div>
+                <div class="summary-row">
+                    <div class="sum-box"><div class="label">Σ Total</div><div id="{{INSTANCE_ID}}_testerSum" class="value">0</div></div>
+                    <div class="density-box"><div class="label">Density (ekor/L)</div><div id="{{INSTANCE_ID}}_testerDensity" class="value">-</div></div>
+                </div>
+
+                <div class="allowance-tester-input-group">
+                    <label>Allowance Tester (%)</label>
+                    <input type="number" id="{{INSTANCE_ID}}_allowanceTester" value="0" min="0" max="100" oninput="recalcAllTester('{{INSTANCE_ID}}')">
+                </div>
+
+                <div class="tester-result-box split-layout">
+                    <div class="result-box-split">
+                        <div class="label">✨ Hasil Benur Tester (Dibulatkan)</div>
+                        <div id="{{INSTANCE_ID}}_finalTesterResult" class="result-value">0</div>
+                    </div>
+                    <div class="result-box-split estimasi-box">
+                        <div class="label">📦 Estimasi Box (Tester)</div>
+                        <div id="{{INSTANCE_ID}}_estimasiBoxTester" class="result-value">0 Box</div>
+                    </div>
+                </div>
+                <div class="actions-row">
+                    <button class="btn" onclick="addCalcBox('{{INSTANCE_ID}}_hitGridTester')">➕ Tambah Kolom</button>
+                    <button class="btn" onclick="removeCalcBox('{{INSTANCE_ID}}_hitGridTester')">❌ Hapus Kolom</button>
+                    <button class="btn" onclick="resetTester('{{INSTANCE_ID}}')">🔄 Reset Semua</button>
+                </div>
+                <div id="{{INSTANCE_ID}}_testerTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
+            </section>
+
+            <section id="{{INSTANCE_ID}}_hitung" class="card card-hitung tab-panel">
+                <h2>🔢 Hitungan</h2>
+
+                <div class="order-nominal-display">
+                    <div class="label">🎯 Order Benur (Ekor)</div>
+                    <div id="{{INSTANCE_ID}}_orderDisplay" class="value">0</div>
+                </div>
+
+                <div id="{{INSTANCE_ID}}_multiSessionGrid">
+                </div>
+
+                <div class="actions-row actions-row-small">
+                    <button class="btn" onclick="addCalcBox('{{INSTANCE_ID}}_multiSessionGrid')">➕ Tambah Kolom</button>
+                    <button class="btn primary" onclick="addHitunganSession('{{INSTANCE_ID}}')">➕ Tambah Baris</button>
+                    <button class="btn" onclick="removeHitunganSession('{{INSTANCE_ID}}')">❌ Hapus Baris</button>
+                    <button class="btn" onclick="resetHitungan('{{INSTANCE_ID}}')">🔄 Reset Semua</button>
+                </div>
+
+                <div class="summary-and-result-grid">
+                    <div class="grey-summary-box">
+                        <div class="summary-item-row">
+                            <div class="summary-label">Rata-rata (Aktual)</div>
+                            <div id="{{INSTANCE_ID}}_avgValueDisplay" class="summary-value avg">0 ekor</div>
+                        </div>
+                        <div class="summary-item-row allowance-result-row">
+                            <div class="summary-label">Allowance (%)</div>
+                            <div class="allowance-inputs">
+                                <input type="number" id="{{INSTANCE_ID}}_allowance1" value="0" min="0" max="100" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 70px;">
+                                <span>-</span>
+                                <input type="number" id="{{INSTANCE_ID}}_allowance2" value="0" min="0" max="100" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 70px;">
+                            </div>
+                        </div>
+                        <div class="summary-item-row">
+                            <div class="summary-label">📦 Kebutuhan Box</div>
+                            <div id="{{INSTANCE_ID}}_kebutuhanBox" class="summary-value box">0 Box</div>
+                        </div>
+                        <div class="summary-item-row" id="{{INSTANCE_ID}}_simulasiBoxRow" style="display: none;">
+                            <div class="summary-label" style="font-weight: 700; color: var(--color-alert-text);">⚠ Simulasi Box Real (Over Capacity)</div>
+                            <div id="{{INSTANCE_ID}}_simulasiBoxReal" class="summary-value simulation"></div>
+                        </div>
+                    </div>
+
+                    <div class="green-result-box">
+                        <div class="summary-item-row">
+                            <div class="summary-label">
+                                Benur Per Kantong (Real)<br>
+                                <small class="text-muted" style="font-size: 0.75em;">(Rata-rata - A1)</small>
+                            </div>
+                            <div id="{{INSTANCE_ID}}_benurPerKantongReal" class="summary-value real-sj">0 ekor/kantong</div>
+                        </div>
+                        <div class="summary-item-row" id="{{INSTANCE_ID}}_benurPerKantongSJRow" style="display: none;">
+                            <div class="summary-label">
+                                Benur Per Kantong (SJ)<br>
+                                <small class="text-muted" style="font-size: 0.75em;">(Rata-rata - A1 - A2)</small>
+                            </div>
+                            <div id="{{INSTANCE_ID}}_benurPerKantongSJ" class="summary-value real-sj">0 ekor/kantong</div>
+                        </div>
+                    </div>
+
+                    <section class="card card-selisih" id="{{INSTANCE_ID}}_selisihBox" style="display: none;">
+                        <h2 class="selisih-title">📦 Total Benur (Packing) vs Order</h2>
+                        <div class="selisih-row">
+                            <span class="selisih-label">Total Benur Packing</span>
+                            <span class="selisih-value" id="{{INSTANCE_ID}}_selisih_totalPacking">0</span>
+                        </div>
+                        <div class="selisih-row">
+                            <span class="selisih-label">Selisih (vs Order)</span>
+                            <span class="selisih-value" id="{{INSTANCE_ID}}_selisih_selisihOrder">0</span>
+                        </div>
+                    
+                        <div id="{{INSTANCE_ID}}_selisihWarningBox" style="display: none; margin-top: 15px; border-top: 1px dashed var(--color-recap-border); padding-top: 15px; text-align: center;">
+                            <h3 style="font-size: 0.9em; color: var(--color-alert-text); margin: 0 0 8px 0;">⚠ Peringatan Selisih! Cek Ulang:</h3>
+                            <div class="simulasi-toggle-container">
+                                <span class="simulasi-toggle-label">Gunakan Simulasi</span>
+                                <label class="switch">
+                                    <input type="checkbox" id="{{INSTANCE_ID}}_simulasiToggle" onchange="toggleSimulasiUsage('{{INSTANCE_ID}}')">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div style="font-size: 0.8em; color: var(--color-recap-label); margin-bottom: 5px; display: none;">[Order] / [Box] / [Isi/Box]</div>
+                            <div id="{{INSTANCE_ID}}_selisihFormula" style="font-size: 0.85em; font-weight: 700; color: var(--color-text-main); margin-bottom: 10px; display: none;">-</div>
+                            <div id="{{INSTANCE_ID}}_selisihFinalResult" style="font-size: 1.8em; font-weight: 700; color: var(--color-alert-text); text-align: center; background: var(--color-card-tester); padding: 10px; border-radius: 8px; margin-top: 10px;">
+                                0 ekor/kantong
+                            </div>
+                            <div id="{{INSTANCE_ID}}_selisihSimulasiResult" style="font-size: 0.9em; font-weight: 700; color: var(--color-text-light); margin-top: 8px;">
+                                Estimasi Selisih Baru: +0 ekor
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="actions-row">
+                </div>
+
+                <div id="{{INSTANCE_ID}}_hitunganTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
+            </section>
+
+            <section id="{{INSTANCE_ID}}_rekap" class="card card-recap tab-panel">
+                <h2>📊 Rekap Panen {{ID}}</h2>
+
+                <h3 class="recap-section-title">Data Panen</h3>
+                <div class="recap-row"><span class="recap-label">Customer</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_customer">-</span></div>
+                <div class="recap-row"><span class="recap-label">Tujuan</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tujuan">-</span></div>
+                <div class="recap-row"><span class="recap-label">Tanggal Panen</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_line">-</span></div>
+                <div class="recap-row"><span class="recap-label">Driver</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_driver">-</span></div>
+                <div class="recap-row"><span class="recap-label">Plat Nomor</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_platNomor">-</span></div>
+                <div class="recap-row"><span class="recap-label">Order</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_orderBenur">0</span></div>
+                <div class="recap-row"><span class="recap-label">Truk</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_jenisTruk">-</span></div>
+                <div class="recap-row"><span class="recap-label">Kapasitas</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_kapasitasAngkut">0 Box</span></div>
+                <div class="recap-row"><span class="recap-label">Isi/Box</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_isiBox">0 Kantong</span></div>
+
+                <h3 class="recap-section-title">Data Tester</h3>
+                <div class="recap-row"><span class="recap-label">No. Bak</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_nomorBak">-</span></div>
+                <div class="recap-row"><span class="recap-label">Tomota</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tomota">- ekor</span></div>
+                <div class="recap-row"><span class="recap-label">Σ Total</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerSum">0</span></div>
+                <div class="recap-row"><span class="recap-label">Density</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerDensity">-</span></div>
+                <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceTester">0 %</span></div>
+                <div class="recap-row"><span class="recap-label">Hasil Benur Tester</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_hasilTester">0</span></div>
+                <div class="recap-row"><span class="recap-label">Estimasi Box</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_estimasiBoxTester">0 Box</span></div>
+
+                <h3 class="recap-section-title">Hasil Hitungan</h3>
+                <div id="{{INSTANCE_ID}}_recap_sessionSummary">
+                </div>
+                <div class="recap-row"><span class="recap-label">Rata-rata (Aktual)</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_avgValue">0 ekor</span></div>
+                <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceHitung">0% / 0%</span></div>
+                <div class="recap-row"><span class="recap-label">Kebutuhan Box</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_kebutuhanBox">0 Box</span></div>
+                <div class="recap-row"><span class="recap-label">Benur/Kantong (Real)</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_benurReal">0 ekor/kantong</span></div>
+                <div class="recap-row" id="{{INSTANCE_ID}}_recap_benurSJ_row" style="display: none;"><span class="recap-label">Benur/Kantong (SJ)</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_benurSJ">0 ekor/kantong</span></div>
+                <div class="recap-row" id="{{INSTANCE_ID}}_recap_simulasi_row" style="display: none;"><span class="recap-label">⚠ Simulasi Real</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_simulasi">0 ekor/kantong</span></div>
+
+                <div class="actions-row">
+                    <button class="btn" onclick="saveData('{{INSTANCE_ID}}')" title="Simpan semua input data ke memori browser">💾 Save</button>
+                    <button class="btn" onclick="shareToCustomer('{{INSTANCE_ID}}')" title="Bagikan rincian panen ke Customer via Whatsapp">🤳🏻 Bagikan ke Customer</button>
+                    <button class="btn" onclick="shareAdmin('{{INSTANCE_ID}}')" title="Kirim rincian panen via WhatsApp">🚛 Kirim Rincian Panen</button>
+                </div>
+
+                <div id="{{INSTANCE_ID}}_recapTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
+            </section>
+
+        </div> 
+</div>
+ </template>
+<div class="floating-nav-bar">
+    
+    <div class="floating-nav-group left">
+        <button id="floatingSaveBtn" class="floating-nav-btn save-btn" title="Simpan Data Panen Ini">💾</button>
+    </div>
+    
+    <div id="floatingNavCenter" class="floating-nav-group center">
+        <button id="floatingPrevBtn" class="floating-nav-btn" title="Slide Sebelumnya" disabled>&lt;</button>
+        <span id="floatingIndicator" class="floating-nav-indicator">1 / 1</span>
+        <button id="floatingNextBtn" class="floating-nav-btn" title="Slide Berikutnya" disabled>&gt;</button>
+    </div>
+    
+    <div class="floating-nav-group right">
+        <button id="floatingCalcBtn" class="floating-nav-btn" onclick="toggleCalculator()" title="Buka Kalkulator">🧮</button>
+    </div>
+
+</div>
+
+<div id="trashCardContainer" class="trash-popup-container" style="display: none;">
+    <div class="slide-item" style="padding: 0 20px;">
+        <section class="card card-trash">
+            <h2 style="margin-bottom: 20px;">♻️ Keranjang Sampah</h2>
+            
+            <div id="staticTrashList" class="trash-list">
+                </div>
+        </section>
+    </div>
+</div>
+<script>
+
+// ===================================
+// [BARU] FUNGSI UNTUK DESAIN 1: TAB
+// ===================================
+/**
+ * Mengganti kartu yang terlihat di dalam satu slide.
+ * Dipanggil oleh tombol tab.
+ */
+function openCard(evt, cardIdToOpen) {
+    // 1. Dapatkan elemen 'slide-item' terdekat
+    const slideItem = evt.target.closest('.slide-item');
+    if (!slideItem) return;
+
+    // 2. Dapatkan semua panel tab di dalam slide-item ini
+    const tabPanels = slideItem.querySelectorAll('.tab-panel');
+    
+    // 3. Sembunyikan semua panel
+    tabPanels.forEach(panel => {
+        panel.style.display = 'none';
+        panel.classList.remove('active');
+    });
+
+    // 4. Hapus status 'active' dari semua tombol tab
+    const tabLinks = slideItem.querySelectorAll('.tab-link');
+    tabLinks.forEach(link => {
+        link.classList.remove('active');
+    });
+
+    // 5. Tampilkan panel yang diklik
+    const cardToShow = document.getElementById(cardIdToOpen);
+    if (cardToShow) {
+        cardToShow.style.display = 'block';
+        cardToShow.classList.add('active');
+    }
+
+    // 5. Aktifkan tombol tab yang diklik
+    evt.target.classList.add('active');
+}
+
+// ===================================
+// GLOBAL VARIABLES & SETUP
+// ===================================
+// ... (sisa kode JavaScript Anda yang sudah ada) ...
+
+// ===================================
+// GLOBAL VARIABLES & SETUP
+// ===================================
+
+let instanceCounter = 0;
+let activeInstanceIndex = 0; // 0-based index
+const slideTrack = document.getElementById('slideTrack');
+const maxBox = 12; // Maksimal kolom hitungan per sesi
+let autoSaveTimeout;
+const LOCAL_STORAGE_KEY = 'shrimpCountData_v4';
+// [PATCH] Kunci untuk keranjang sampah
+const TRASH_STORAGE_KEY = 'shrimpCountData_v4_TRASH'; 
+
+// Database Sopir
+const sopirDB = {
+  "Didi": { "nohp": "085351360595", "plat": "DK 8656 UE" },
+  "Yandi": { "nohp": "081236248730", "plat": "DK 8252 UB" },
+  "Suharsono": { "nohp": "081399102574", "plat": "DK 8250 UB" },
+  "Rusdiana": { "nohp": "081287812738", "plat": "DK 8040 UD" },
+  "Yana": { "nohp": "082146659061", "plat": "DK 8655 UE" },
+  "Rizki": { "nohp": "081398994440", "plat": " DK 8995 UE" },
+  "Ruksin": { "nohp": "081246101708", "plat": "DK 8079 UD" },
+  "Dian": { "nohp": "082340074446", "plat": "DK 8079 UF" },
+  "Anggi": { "nohp": "082169656871", "plat": "DK 8043 UD" },
+  "Frendi": { "nohp": "082278912811", "plat": "DK 8078 UC" },
+  "Asep Satria": { "nohp": "081337045654", "plat": "DK 8230 UB" },
+  "M. Soleh": { "nohp": "082145810407", "plat": "DK 8996 UE" },
+  "Awaludin": { "nohp": "085333533892", "plat": "DK 8580 VB" },
+  "Yusup": { "nohp": "08881722094", "plat": "DK 8115 YU" },
+  "Sidik": { "nohp": "082146807407", "plat": "DK 8745 VU" },
+  "Romli": { "nohp": "082174445127", "plat": "DK 8945 VA" },
+  "Anang": { "nohp": "085860259512", "plat": "DK 8349 VA" },
+  "Sulaeman": { "nohp": "081337611536", "plat": "DK 8459 UZ" },
+  "Jenal": { "nohp": "082127741992", "plat": "DK 8177 VU" }
+};
+
+/**
+ * [PERBAIKAN ANDROID] Helper function untuk parsing angka yang aman.
+ */
+function safeParseFloat(value) {
+    if (typeof value !== 'string') {
+        value = String(value);
+    }
+    const cleanValue = value.replace(',', '.');
+    return parseFloat(cleanValue) || 0;
+}
+
+// ===================================
+// DARK MODE LOGIC
+// ===================================
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
+    document.getElementById('darkModeToggle').textContent = isDarkMode ? '☀️' : '🌙';
+}
+function checkDarkModePreference() {
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeToggle').textContent = '☀️';
+    } else {
+        document.getElementById('darkModeToggle').textContent = '🌙';
+    }
+}
+
+// === Auto-Save Logic ===
+function triggerAutoSave(instanceId) {
+    clearTimeout(autoSaveTimeout);
+    autoSaveTimeout = setTimeout(() => {
+        saveData(instanceId, true);
+    }, 1500);
+}
+
+// ===================================
+// TEMPLATE & CAROUSEL LOGIC
+// ===================================
+function createInstanceHTML(id) {
+    const instanceId = `instance_${id}`;
+    const templateHTML = document.getElementById('panen-template').innerHTML;
+    const finalHTML = templateHTML
+        .replace(/{{INSTANCE_ID}}/g, instanceId)
+        .replace(/{{ID}}/g, id);
+    return finalHTML;
+}
+
+function updateCarouselControls() {
+    const total = slideTrack.children.length;
+    const indicatorText = `${activeInstanceIndex + 1} / ${total}`;
+    
+    // Hapus referensi ke kontrol lama yang sudah di-display:none
+    // document.getElementById('slideIndicator').textContent = indicatorText;
+    document.getElementById('floatingIndicator').textContent = indicatorText;
+    
+    // document.getElementById('prevSlideBtn').style.display = (activeInstanceIndex > 0) ? 'inline-block' : 'none';
+    document.getElementById('floatingPrevBtn').disabled = (activeInstanceIndex <= 0);
+    
+    // document.getElementById('nextSlideBtn').style.display = (activeInstanceIndex < total - 1) ? 'inline-block' : 'none';
+    document.getElementById('floatingNextBtn').disabled = (activeInstanceIndex >= total - 1);
+
+    document.getElementById('floatingNavCenter').style.display = (total > 1) ? 'flex' : 'none';
+
+    const currentInstance = slideTrack.children[activeInstanceIndex];
+    if (currentInstance) {
+        const removeBtn = currentInstance.querySelector('.remove-btn');
+        if (removeBtn) {
+            removeBtn.disabled = (total <= 1);
+        }
+    }
+}
+
+function goToSlide(index) {
+    const total = slideTrack.children.length;
+    if (index >= 0 && index < total) {
+        activeInstanceIndex = index;
+        const offset = -activeInstanceIndex * 100;
+        slideTrack.style.transform = `translateX(${offset}%)`;
+        updateCarouselControls();
+    }
+}
+
+function addInstance() {
+    instanceCounter++;
+    const newInstanceHTML = createInstanceHTML(instanceCounter);
+    slideTrack.insertAdjacentHTML('beforeend', newInstanceHTML);
+    const instanceId = `instance_${instanceCounter}`;
+    
+    populateDriverOptions(instanceId);
+    updateTruckDetails(instanceId);
+    initBoxesTester(instanceId);
+    addHitunganSession(instanceId);
+    addHitunganSession(instanceId);
+    updateRecap(instanceId);
+
+    if (arguments.length === 0) {
+        goToSlide(instanceCounter - 1);
+    }
+}
+
+// [REVISI TOTAL] Fungsi Hapus dengan logika Keranjang Sampah + Bug Fix
+function removeInstance() {
+    const total = slideTrack.children.length;
+    if (total <= 1) {
+        alert("Tidak bisa menghapus! Minimal harus ada 1 Data Panen.");
+        return;
+    }
+
+    if (!confirm(`Hapus Data Panen ${activeInstanceIndex + 1}? Data akan dipindah ke Keranjang Sampah.`)) return;
+
+    const slideToRemove = slideTrack.children[activeInstanceIndex];
+    const removedInstanceId = slideToRemove.id;
+    const removedStorageKey = `${LOCAL_STORAGE_KEY}_${removedInstanceId}`;
+
+    // --- LOGIKA KERANJANG SAMPAH ---
+    try {
+        const dataString = localStorage.getItem(removedStorageKey);
+        if (dataString) {
+            const dataObject = JSON.parse(dataString);
+            dataObject._trashInfo = {
+                customer: dataObject.customer || "Tanpa Nama",
+                deletedOn: new Date().toISOString()
+            };
+            const trashRaw = localStorage.getItem(TRASH_STORAGE_KEY);
+            let trashArray = [];
+            if (trashRaw) {
+                try { trashArray = JSON.parse(trashRaw); } catch(e) { trashArray = []; }
+            }
+            trashArray.unshift(dataObject);
+            localStorage.setItem(TRASH_STORAGE_KEY, JSON.stringify(trashArray));
+        }
+    } catch (e) {
+        console.error("Gagal menyimpan data ke keranjang sampah:", e);
+        alert("Peringatan: Gagal memindahkan data ke keranjang sampah. Data mungkin hilang permanen.");
+    }
+    // --- AKHIR LOGIKA ---
+
+    slideTrack.removeChild(slideToRemove);
+    try {
+        localStorage.removeItem(removedStorageKey);
+    } catch (e) {
+        console.warn(`Gagal menghapus data localStorage untuk ${removedInstanceId}`, e);
+    }
+
+    if (activeInstanceIndex > 0) {
+        activeInstanceIndex--;
+    }
+
+    // Re-ID semua instance
+    for (let i = 0; i < slideTrack.children.length; i++) {
+        const item = slideTrack.children[i];
+        const newIdNumber = i + 1;
+        const oldIdNumber = parseInt(item.id.split('_')[1]);
+        
+        if (oldIdNumber !== newIdNumber) {
+            const newInstanceId = `instance_${newIdNumber}`;
+            const oldInstanceId = `instance_${oldIdNumber}`;
+            const oldStorageKey = `${LOCAL_STORAGE_KEY}_${oldInstanceId}`;
+            const newStorageKey = `${LOCAL_STORAGE_KEY}_${newInstanceId}`;
+
+            try {
+                const dataToMove = localStorage.getItem(oldStorageKey);
+                if (dataToMove) {
+                    localStorage.setItem(newStorageKey, dataToMove);
+                    localStorage.removeItem(oldStorageKey);
+                }
+            } catch (e) {
+                 console.warn(`Gagal me-rename localStorage dari ${oldStorageKey} ke ${newStorageKey}`, e);
+            }
+
+            item.id = newInstanceId;
+            let newHTML = item.innerHTML.replace(new RegExp(oldInstanceId, 'g'), newInstanceId);
+            newHTML = newHTML.replace(new RegExp(`Data Panen ${oldIdNumber}`, 'g'), `Data Panen ${newIdNumber}`);
+            newHTML = newHTML.replace(new RegExp(`Rekap Panen ${oldIdNumber}`, 'g'), `Rekap Panen ${newIdNumber}`);
+            item.innerHTML = newHTML;
+
+            // [PERBAIKAN BUG KOLOM HILANG]
+            // Panggil loadData untuk memuat ulang data (termasuk kolom dinamis)
+            // ke dalam HTML yang baru saja di-reset.
+            loadData(newInstanceId, true); // true = silent (tidak ada pop-up)
+
+            const oldRemoveBtn = item.querySelector(`[id^="${oldInstanceId}_removeBtn"]`);
+            if(oldRemoveBtn) oldRemoveBtn.id = `${newInstanceId}_removeBtn`;
+        }
+    }
+    
+    instanceCounter = slideTrack.children.length;
+    goToSlide(activeInstanceIndex); 
+}
+// ===================================
+// GENERAL HELPER FUNCTIONS
+// ===================================
+function getEl(instanceId, id) {
+    return document.getElementById(`${instanceId}_${id}`);
+}
+
+function populateDriverOptions(instanceId) {
+    const selectEl = getEl(instanceId, 'driver');
+    if (!selectEl) return;
+    selectEl.innerHTML = '<option value="">--- Pilih Sopir ---</option>';
+    const sortedDrivers = Object.keys(sopirDB).sort();
+    sortedDrivers.forEach(driverName => {
+        const option = document.createElement('option');
+        option.value = driverName;
+        option.textContent = driverName;
+        selectEl.appendChild(option);
+    });
+}
+
+function updateDriverDetails(instanceId) {
+    const driverSelect = getEl(instanceId, 'driver');
+    const platInput = getEl(instanceId, 'platNomor');
+    const driverName = driverSelect.value;
+    if (driverName && sopirDB[driverName]) {
+        platInput.value = sopirDB[driverName].plat.trim();
+    } else {
+        platInput.value = '';
+    }
+    updateRecap(instanceId);
+}
+
+function resetCard1(instanceId) {
+    if (!confirm(`Reset semua DATA PANEN (Kartu 1) untuk slide ini?`)) return;
+    getEl(instanceId, 'line').value = '';
+    getEl(instanceId, 'customer').value = '';
+    getEl(instanceId, 'tujuan').value = '';
+    getEl(instanceId, 'nominalOrder').value = '0';
+    getEl(instanceId, 'jenisTruk').value = 'Euro2';
+    getEl(instanceId, 'driver').selectedIndex = 0;
+    getEl(instanceId, 'platNomor').value = '';
+    updateTruckDetails(instanceId);
+    recalcAllHitungan(instanceId);
+    recalcAllTester(instanceId);
+}
+
+function updateTruckDetails(instanceId){
+  const j=getEl(instanceId, 'jenisTruk').value;
+  const i=getEl(instanceId, 'isiBox');
+  const k=getEl(instanceId, 'kapasitasAngkut');
+  if(j.includes('Euro2')){i.value=2;k.value=240;}
+  else if(j.includes('Euro4')){i.value=2;k.value=258;}
+  else if(j.includes('Bandara')){i.value=6;k.value=120;}
+  else {i.value='';k.value='';}
+  updateRecap(instanceId);
+}
+function timestampNow(instanceId, elementId){
+  const d=new Date();
+  const opt={day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'};
+  getEl(instanceId, elementId).textContent='🕒 Terakhir diperbarui: '+d.toLocaleString('id-ID',opt);
+}
+function getDensityDivisor(instanceId) {
+    const jenisTrukEl = getEl(instanceId, 'jenisTruk');
+    const jenis = jenisTrukEl.value.toLowerCase();
+    return jenis.includes('bandara') ? 3 : 5;
+}
+function formatCurrency(input) {
+    let value = input.value.replace(/\./g, '');
+    if (value) { input.value = parseFloat(value).toLocaleString('id-ID'); }
+}
+function roundToNearestTen(num) {
+    if (typeof num !== 'number') return 0;
+    return Math.round(num / 10) * 10;
+}
+
+// ===================================
+// CARD 2: TESTER LOGIC
+// ===================================
+function recalcAllTester(instanceId){
+  const gridTester = getEl(instanceId, 'hitGridTester');
+  const sumTesterEl = getEl(instanceId, 'testerSum');
+  const densTesterEl = getEl(instanceId, 'testerDensity');
+  const allowanceInput = getEl(instanceId, 'allowanceTester');
+  const finalResultEl = getEl(instanceId, 'finalTesterResult');
+  const vals=[...gridTester.querySelectorAll('input')].map(i=>safeParseFloat(i.value));
+  const s=vals.reduce((a,b)=>a+b,0);
+  sumTesterEl.textContent=s.toLocaleString();
+  let div=getDensityDivisor(instanceId);
+  densTesterEl.textContent=(s?Math.round(s/div):'-').toLocaleString();
+  const allowancePercent = safeParseFloat(allowanceInput.value) / 100;
+  let finalBenurTester = 0;
+  if (s > 0) {
+      finalBenurTester = Math.round(s * (1 - allowancePercent));
+  }
+  finalResultEl.textContent = finalBenurTester.toLocaleString();
+  const estimasiBoxEl = getEl(instanceId, 'estimasiBoxTester');
+  const nominalText = getEl(instanceId, 'nominalOrder').value.replace(/\./g,'');
+  const nominalOrderEkor = parseFloat(nominalText)||0;
+  const isiBox = parseFloat(getEl(instanceId, 'isiBox').value)||0;
+  let estimasiBox = 0;
+  if (nominalOrderEkor > 0 && finalBenurTester > 0 && isiBox > 0) {
+      estimasiBox = Math.ceil(nominalOrderEkor / finalBenurTester / isiBox);
+  }
+  estimasiBoxEl.textContent = estimasiBox.toLocaleString() + ' Box';
+  timestampNow(instanceId, 'testerTimestamp');
+  updateRecap(instanceId);
+  triggerAutoSave(instanceId);
+}
+function initBoxesTester(instanceId){
+    const gridTester = getEl(instanceId, 'hitGridTester');
+    gridTester.innerHTML='';
+    for(let i=0;i<8;i++){
+        const box=document.createElement('div');box.className='calc-box';
+        const input=document.createElement('input');input.type='number';input.placeholder='0';
+        input.oninput=() => recalcAllTester(instanceId);
+        box.appendChild(input);
+        gridTester.appendChild(box);
+    }
+}
+function resetTester(instanceId){
+  if(!confirm('Reset semua input Hitungan Tester untuk Data Panen ini?'))return;
+  getEl(instanceId, 'nomorBak').value='';
+  getEl(instanceId, 'tomota').value='';
+  getEl(instanceId, 'allowanceTester').value='0';
+  initBoxesTester(instanceId);
+  recalcAllTester(instanceId);
+}
+
+// ===================================
+// CARD 3 & 4: HITUNGAN MULTI SESI LOGIC
+// ===================================
+let sessionCounter = {};
+function recalcSession(instanceId, sessionId) {
+    const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+    const sumEl = document.getElementById(`${instanceId}_sessionSum${sessionId}`);
+    if (!grid) return;
+    const vals = [...grid.querySelectorAll('input')].map(i => safeParseFloat(i.value));
+    const s = vals.reduce((a,b)=>a+b,0);
+    sumEl.innerHTML = s.toLocaleString('id-ID');
+}
+function recalcAllHitungan(instanceId) {
+    const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
+    const sessions = multiSessionGrid.querySelectorAll('.hit-session');
+    let totalSum = 0;
+    let validSessions = 0;
+    sessions.forEach(session => {
+        const sessionId = session.dataset.sessionId;
+        recalcSession(instanceId, sessionId);
+        const sumText = document.getElementById(`${instanceId}_sessionSum${sessionId}`).textContent.replace(/\./g,'');
+        const sumVal = parseFloat(sumText)||0;
+        if (sumVal > 0) {
+            totalSum += sumVal;
+            validSessions++;
+        }
+    });
+    const averageSum = validSessions > 0 ? totalSum / validSessions : 0;
+    const nominalText = getEl(instanceId, 'nominalOrder').value.replace(/\./g,'');
+    const nominalOrderEkor = parseFloat(nominalText)||0;
+    const isiBox = parseFloat(getEl(instanceId, 'isiBox').value)||0;
+    const kapasitasAngkut = parseFloat(getEl(instanceId, 'kapasitasAngkut').value)||0;
+    const allowance1Input = safeParseFloat(getEl(instanceId, 'allowance1').value);
+    const allowance2Input = safeParseFloat(getEl(instanceId, 'allowance2').value);
+    const allowance1 = allowance1Input / 100;
+    const allowance2 = allowance2Input / 100;
+    getEl(instanceId, 'orderDisplay').textContent = nominalOrderEkor.toLocaleString();
+    const avgRounded = Math.round(averageSum);
+    getEl(instanceId, 'avgValueDisplay').textContent = avgRounded.toLocaleString() + ' ekor';
+    const benurPerKantong_Real_Raw = avgRounded * (1 - allowance1);
+    const benurPerKantong_SJ_Raw = avgRounded * (1 - (allowance1 + allowance2));
+    const benurPerKantong_Real_Display = roundToNearestTen(benurPerKantong_Real_Raw);
+    const benurPerKantong_SJ_Display = roundToNearestTen(benurPerKantong_SJ_Raw);
+    let kebutuhanBox = 0;
+    let boxRoundedText = '0 Box';
+    let simulationNeeded = false;
+    let simulasiEkorPerKantong = 0;
+    if (nominalOrderEkor > 0 && benurPerKantong_Real_Display > 0 && isiBox > 0) {
+        const totalKantongDibutuhkan = nominalOrderEkor / benurPerKantong_Real_Display;
+        const boxSebelumBulat = totalKantongDibutuhkan / isiBox;
+        kebutuhanBox = Math.ceil(boxSebelumBulat);
+        let pembulatanText = '';
+        boxRoundedText = kebutuhanBox.toLocaleString() + ' Box' + pembulatanText;
+        if (kebutuhanBox > kapasitasAngkut && kapasitasAngkut > 0) {
+            simulationNeeded = true;
+            kebutuhanBox = kapasitasAngkut;
+            boxRoundedText = kapasitasAngkut.toLocaleString() + ' Box (MAX)';
+            const simulasiTotalKantong = kapasitasAngkut * isiBox;
+            if (simulasiTotalKantong > 0) {
+                simulasiEkorPerKantong = roundToNearestTen(nominalOrderEkor / simulasiTotalKantong);
+            }
+        }
+    }
+    getEl(instanceId, 'kebutuhanBox').textContent = boxRoundedText;
+    getEl(instanceId, 'benurPerKantongReal').textContent = benurPerKantong_Real_Display.toLocaleString() + ' ekor/kantong';
+    getEl(instanceId, 'benurPerKantongSJ').textContent = benurPerKantong_SJ_Display.toLocaleString() + ' ekor/kantong';
+    const simulasiBoxRow = getEl(instanceId, 'simulasiBoxRow');
+    let finalEkorPerKantongRealUntukHitung = benurPerKantong_Real_Display;
+    if (simulationNeeded) {
+        simulasiBoxRow.style.display = 'flex';
+        getEl(instanceId, 'simulasiBoxReal').textContent = simulasiEkorPerKantong.toLocaleString() + ' ekor/kantong';
+        finalEkorPerKantongRealUntukHitung = simulasiEkorPerKantong;
+    } else {
+        simulasiBoxRow.style.display = 'none';
+    }
+    const sjRow = getEl(instanceId, 'benurPerKantongSJRow');
+    if (allowance2Input > 0) {
+        sjRow.style.display = 'flex';
+    } else {
+        sjRow.style.display = 'none';
+    }
+    const selisihBoxEl = getEl(instanceId, 'selisihBox');
+    const totalPackingEl = getEl(instanceId, 'selisih_totalPacking');
+    const selisihOrderEl = getEl(instanceId, 'selisih_selisihOrder');
+    const selisihWarningBox = getEl(instanceId, 'selisihWarningBox');
+    const selisihFormulaEl = getEl(instanceId, 'selisihFormula');
+    const selisihFinalResultEl = getEl(instanceId, 'selisihFinalResult');
+    if (kebutuhanBox > 0 && isiBox > 0 && finalEkorPerKantongRealUntukHitung > 0) {
+        const totalPacking = kebutuhanBox * isiBox * finalEkorPerKantongRealUntukHitung;
+        const selisihOrder = totalPacking - nominalOrderEkor;
+        totalPackingEl.textContent = totalPacking.toLocaleString('id-ID') + ' ekor';
+        let selisihText = (selisihOrder >= 0 ? '+' : '') + selisihOrder.toLocaleString('id-ID') + ' ekor';
+        selisihOrderEl.textContent = selisihText;
+        selisihOrderEl.classList.toggle('positive', selisihOrder >= 0);
+        selisihOrderEl.classList.toggle('negative', selisihOrder < 0);
+        selisihBoxEl.style.display = 'block'; 
+        const batasWajar = nominalOrderEkor * 0.002; 
+        if (Math.abs(selisihOrder) > batasWajar && nominalOrderEkor > 0 && kebutuhanBox > 0 && isiBox > 0) {
+            selisihWarningBox.style.display = 'block';
+            let targetTotalPacking;
+            let newBenurPerKantong;
+            let formulaText;
+            const h3El = getEl(instanceId, 'selisihWarningBox').querySelector('h3');
+            if (selisihOrder > 0) {
+                targetTotalPacking = nominalOrderEkor * 1.001;
+                if(h3El) h3El.textContent = '⚠ Selisih PLUS! Simulasi agar +0.1%:';
+                formulaText = `[(${nominalOrderEkor.toLocaleString('id-ID')} * 1.001)] / [${kebutuhanBox}] / [${isiBox}]`;
+            } else {
+                targetTotalPacking = nominalOrderEkor * 0.999;
+                if(h3El) h3El.textContent = '⚠ Selisih MINUS! Simulasi agar -0.1%:';
+                formulaText = `[(${nominalOrderEkor.toLocaleString('id-ID')} * 0.999)] / [${kebutuhanBox}] / [${isiBox}]`;
+            }
+            newBenurPerKantong = targetTotalPacking / kebutuhanBox / isiBox;
+            selisihFormulaEl.textContent = formulaText;
+            const hasilBulat = roundToNearestTen(newBenurPerKantong);
+            selisihFinalResultEl.textContent = hasilBulat.toLocaleString('id-ID') + ' ekor/kantong';
+            const newTotalPacking = kebutuhanBox * isiBox * hasilBulat;
+            const newSelisih = newTotalPacking - nominalOrderEkor;
+            const selisihSimulasiResultEl = getEl(instanceId, 'selisihSimulasiResult');
+            if (selisihSimulasiResultEl) {
+                selisihSimulasiResultEl.textContent = 'Estimasi Selisih Baru: ' + (newSelisih >= 0 ? '+' : '') + newSelisih.toLocaleString('id-ID') + ' ekor';
+            }
+        } else {
+            selisihWarningBox.style.display = 'none';
+            const simulasiToggle = getEl(instanceId, 'simulasiToggle');
+            if (simulasiToggle) simulasiToggle.checked = false;
+        }
+        const simulasiToggle = getEl(instanceId, 'simulasiToggle');
+        const useSimulasi = selisihWarningBox.style.display === 'block' && simulasiToggle && simulasiToggle.checked;
+        let finalBenurReal = finalEkorPerKantongRealUntukHitung;
+        let finalBenurSJ = benurPerKantong_SJ_Display;
+        if (useSimulasi) {
+            const hasilBulatSimulasi = parseFloat(getEl(instanceId, 'selisihFinalResult').textContent.replace(/\./g, '')) || 0;
+            if (hasilBulatSimulasi > 0) {
+                finalBenurReal = hasilBulatSimulasi;
+                const sjAdjustment = avgRounded * allowance2;
+                finalBenurSJ = roundToNearestTen(finalBenurReal - sjAdjustment);
+            }
+        }
+        const realDisplayEl = getEl(instanceId, 'benurPerKantongReal');
+        const sjDisplayEl = getEl(instanceId, 'benurPerKantongSJ');
+        realDisplayEl.textContent = finalBenurReal.toLocaleString() + ' ekor/kantong';
+        sjDisplayEl.textContent = finalBenurSJ.toLocaleString() + ' ekor/kantong';
+        const realParentRow = realDisplayEl.closest('.summary-item-row');
+        const sjParentRow = sjDisplayEl.closest('.summary-item-row');
+        if (realParentRow) {
+            realDisplayEl.style.color = useSimulasi ? 'var(--color-alert-text)' : 'var(--color-text-sum)';
+            realParentRow.style.background = useSimulasi ? 'var(--color-card-tester)' : '';
+            const realLabel = realParentRow.querySelector('.summary-label');
+            if(realLabel) realLabel.style.color = useSimulasi ? 'var(--color-alert-text)' : 'var(--color-text-main)';
+        }
+        if (sjParentRow) {
+            sjDisplayEl.style.color = useSimulasi ? 'var(--color-alert-text)' : 'var(--color-text-sum)';
+            sjParentRow.style.background = useSimulasi ? 'var(--color-card-tester)' : '';
+            const sjLabel = sjParentRow.querySelector('.summary-label');
+            if(sjLabel) sjLabel.style.color = useSimulasi ? 'var(--color-alert-text)' : 'var(--color-text-main)';
+        }
+    } else {
+        selisihBoxEl.style.display = 'none'; 
+        if (selisihWarningBox) selisihWarningBox.style.display = 'none';
+        const realDisplayEl = getEl(instanceId, 'benurPerKantongReal');
+        const sjDisplayEl = getEl(instanceId, 'benurPerKantongSJ');
+        const realParentRow = realDisplayEl.closest('.summary-item-row');
+        const sjParentRow = sjDisplayEl.closest('.summary-item-row');
+        if (realParentRow) {
+            realDisplayEl.style.color = 'var(--color-text-sum)';
+            realParentRow.style.background = '';
+            const realLabel = realParentRow.querySelector('.summary-label');
+            if(realLabel) realLabel.style.color = 'var(--color-text-main)';
+        }
+        if (sjParentRow) {
+            sjDisplayEl.style.color = 'var(--color-text-sum)';
+            sjParentRow.style.background = '';
+            const sjLabel = sjParentRow.querySelector('.summary-label');
+            if(sjLabel) sjLabel.style.color = 'var(--color-text-main)';
+        }
+    }
+    timestampNow(instanceId, 'hitunganTimestamp');
+    updateRecap(instanceId);
+    triggerAutoSave(instanceId);
+}
+function toggleSimulasiUsage(instanceId) {
+    recalcAllHitungan(instanceId);
+}
+function addHitunganSession(instanceId) {
+    const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
+    if (!sessionCounter[instanceId]) {
+        sessionCounter[instanceId] = 0;
+    }
+    sessionCounter[instanceId]++;
+    const sessionId = sessionCounter[instanceId];
+    const newSession = document.createElement('div');
+    newSession.className = 'hit-session';
+    newSession.dataset.sessionId = sessionId;
+    newSession.innerHTML = `
+        <div class="session-summary">
+            <span class="session-label">Hitungan ${sessionId}:</span>
+            <span class="results">
+                Σ <span id="${instanceId}_sessionSum${sessionId}" class="sum-value">0</span>
+            </span>
+        </div>
+        <div id="${instanceId}_sessionGrid${sessionId}" class="hit-grid"></div>
+    `;
+    multiSessionGrid.appendChild(newSession);
+    for (let i = 0; i < 8; i++) {
+        const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+        const box = document.createElement('div');
+        box.className = 'calc-box';
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.placeholder = '0';
+        input.oninput = function() { recalcSession(instanceId, sessionId); recalcAllHitungan(instanceId); };
+        box.appendChild(input);
+        grid.appendChild(box);
+    }
+    recalcAllHitungan(instanceId);
+}
+function removeHitunganSession(instanceId) {
+    const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
+    const sessions = multiSessionGrid.querySelectorAll('.hit-session');
+    if (sessions.length > 0) {
+        sessions[sessions.length - 1].remove();
+    }
+    recalcAllHitungan(instanceId);
+}
+function resetHitungan(instanceId) {
+    if (!confirm('Reset semua input Hitungan, Allowance, dan Override untuk Data Panen ini?')) return;
+    const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
+    multiSessionGrid.innerHTML = '';
+    sessionCounter[instanceId] = 0;
+    addHitunganSession(instanceId);
+    addHitunganSession(instanceId);
+    getEl(instanceId, 'allowance1').value = '0';
+    getEl(instanceId, 'allowance2').value = '0';
+    recalcAllHitungan(instanceId);
+}
+addCalcBox = (fullGridId) => {
+    const parts = fullGridId.split('_');
+    const instanceId = parts[0] + '_' + parts[1];
+    const gridType = parts[2];
+    const grid = document.getElementById(fullGridId);
+    const c=grid.querySelectorAll('.calc-box').length;
+    if(c>=maxBox){alert('Maks '+maxBox+' kolom per sesi.');return;}
+    const box=document.createElement('div');box.className='calc-box';
+    const input=document.createElement('input');input.type='number';input.placeholder='0';
+    if (gridType === 'hitGridTester') {
+        input.oninput = () => recalcAllTester(instanceId);
+        box.appendChild(input);
+        grid.appendChild(box);
+    } else if (gridType === 'multiSessionGrid') {
+        const sessions = grid.querySelectorAll('.hit-session');
+        if (sessions.length === 0) { alert('Tambahkan Baris Hitungan terlebih dahulu.'); return; }
+        sessions.forEach(session => {
+            const sessionId = session.dataset.sessionId;
+            const sessionGrid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+            const newBox = document.createElement('div');
+            newBox.className = 'calc-box';
+            const newInput = document.createElement('input');
+            newInput.type = 'number';
+            newInput.placeholder = '0';
+            newInput.oninput = () => { recalcSession(instanceId, sessionId); recalcAllHitungan(instanceId); };
+            newBox.appendChild(newInput);
+            sessionGrid.appendChild(newBox);
+        });
+    }
+    if (gridType.startsWith('sessionGrid')) {
+        recalcAllHitungan(instanceId);
+    }
+};
+removeCalcBox = (fullGridId) => {
+    const parts = fullGridId.split('_');
+    const instanceId = parts[0] + '_' + parts[1];
+    const gridType = parts[2];
+    const grid = document.getElementById(fullGridId);
+    let shouldRecalc = false;
+    if (gridType === 'hitGridTester') {
+        const b=grid.querySelectorAll('.calc-box');
+        if(b.length){b[b.length-1].remove(); shouldRecalc = true;}
+        if (shouldRecalc) recalcAllTester(instanceId);
+    } else if (gridType === 'multiSessionGrid') {
+        const sessions = grid.querySelectorAll('.hit-session');
+        if (sessions.length === 0) return;
+        sessions.forEach(session => {
+            const sessionId = session.dataset.sessionId;
+            const sessionGrid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+            const b = sessionGrid.querySelectorAll('.calc-box');
+            if (b.length > 0) {
+                b[b.length-1].remove();
+                recalcSession(instanceId, sessionId);
+                shouldRecalc = true;
+            }
+        });
+        if (shouldRecalc) {
+            recalcAllHitungan(instanceId);
+        }
+    }
+};
+
+
+// ===================================
+// CARD 5: REKAP LOGIC
+// ===================================
+function updateRecap(instanceId) {
+    const setRecap = (targetId, sourceEl, isInput = true, fallback = '-', suffix = '') => {
+        if (!sourceEl) return;
+        const val = isInput ? sourceEl.value : sourceEl.textContent;
+        const el = getEl(instanceId, targetId);
+        if (el) {
+            el.textContent = (val || fallback) + suffix;
+        }
+    };
+    setRecap('recap_customer', getEl(instanceId, 'customer'));
+    setRecap('recap_tujuan', getEl(instanceId, 'tujuan'));
+    setRecap('recap_line', getEl(instanceId, 'line'));
+    setRecap('recap_driver', getEl(instanceId, 'driver'));
+    setRecap('recap_platNomor', getEl(instanceId, 'platNomor'));
+    setRecap('recap_orderBenur', getEl(instanceId, 'nominalOrder'), true, '0');
+    setRecap('recap_jenisTruk', getEl(instanceId, 'jenisTruk'));
+    setRecap('recap_kapasitasAngkut', getEl(instanceId, 'kapasitasAngkut'), true, '0', ' Box');
+    setRecap('recap_isiBox', getEl(instanceId, 'isiBox'), true, '0', ' Kantong');
+    setRecap('recap_nomorBak', getEl(instanceId, 'nomorBak'));
+    setRecap('recap_tomota', getEl(instanceId, 'tomota'), true, '-', ' ekor');
+    setRecap('recap_testerSum', getEl(instanceId, 'testerSum'), false, '0');
+    setRecap('recap_testerDensity', getEl(instanceId, 'testerDensity'), false, '-');
+    setRecap('recap_allowanceTester', getEl(instanceId, 'allowanceTester'), true, '0', ' %');
+    setRecap('recap_hasilTester', getEl(instanceId, 'finalTesterResult'), false, '0');
+    setRecap('recap_estimasiBoxTester', getEl(instanceId, 'estimasiBoxTester'), false, '0 Box');
+    const sessions = getEl(instanceId, 'multiSessionGrid').querySelectorAll('.hit-session');
+    let sessionHtml = '';
+    sessions.forEach(session => {
+        const label = session.querySelector('.session-label').textContent.trim();
+        const sum = document.getElementById(`${instanceId}_sessionSum${session.dataset.sessionId}`).textContent.trim();
+        sessionHtml += `<div class="recap-row-small"><span class="recap-label">${label}</span><span class="recap-value">Σ ${sum}</span></div>`;
+    });
+    getEl(instanceId, 'recap_sessionSummary').innerHTML = sessionHtml || '<div class="recap-row-small"><span class="recap-label">Tidak ada data</span></div>';
+    setRecap('recap_avgValue', getEl(instanceId, 'avgValueDisplay'), false);
+    const a1 = getEl(instanceId, 'allowance1').value || '0';
+    const a2 = getEl(instanceId, 'allowance2').value || '0';
+    getEl(instanceId, 'recap_allowanceHitung').textContent = `${a1}% / ${a2}%`;
+    setRecap('recap_kebutuhanBox', getEl(instanceId, 'kebutuhanBox'), false);
+    setRecap('recap_benurReal', getEl(instanceId, 'benurPerKantongReal'), false);
+    const sjRow = getEl(instanceId, 'benurPerKantongSJRow');
+    const sjRowRecap = getEl(instanceId, 'recap_benurSJ_row');
+    if (sjRow && sjRow.style.display === 'flex') {
+        setRecap('recap_benurSJ', getEl(instanceId, 'benurPerKantongSJ'), false);
+        sjRowRecap.style.display = 'flex';
+    } else if (sjRowRecap) {
+        sjRowRecap.style.display = 'none';
+    }
+    const simRow = getEl(instanceId, 'simulasiBoxRow');
+    const simRowRecap = getEl(instanceId, 'recap_simulasi_row');
+    if (simRow && simRow.style.display === 'flex') {
+        setRecap('recap_simulasi', getEl(instanceId, 'simulasiBoxReal'), false);
+        simRowRecap.style.display = 'flex';
+    } else if (simRowRecap) {
+        simRowRecap.style.display = 'none';
+    }
+    timestampNow(instanceId, 'recapTimestamp');
+    triggerAutoSave(instanceId);
+}
+
+
+// ===================================
+// CARD 5: SAVE, LOAD, SHARE LOGIC
+// ===================================
+
+function saveData(instanceId, silent = false) {
+    try {
+        const dataToSave = {};
+        dataToSave.customer = getEl(instanceId, 'customer').value;
+        dataToSave.tujuan = getEl(instanceId, 'tujuan').value;
+        dataToSave.line = getEl(instanceId, 'line').value;
+        dataToSave.nominalOrder = getEl(instanceId, 'nominalOrder').value;
+        dataToSave.jenisTruk = getEl(instanceId, 'jenisTruk').value;
+        dataToSave.kapasitasAngkut = getEl(instanceId, 'kapasitasAngkut').value;
+        dataToSave.driver = getEl(instanceId, 'driver').value;
+        dataToSave.platNomor = getEl(instanceId, 'platNomor').value;
+        dataToSave.nomorBak = getEl(instanceId, 'nomorBak').value;
+        dataToSave.tomota = getEl(instanceId, 'tomota').value;
+        dataToSave.allowanceTester = getEl(instanceId, 'allowanceTester').value;
+        dataToSave.testerGrid = [...getEl(instanceId, 'hitGridTester').querySelectorAll('input')].map(inp => inp.value);
+        dataToSave.allowance1 = getEl(instanceId, 'allowance1').value;
+        dataToSave.allowance2 = getEl(instanceId, 'allowance2').value;
+        dataToSave.sessionsGrid = [];
+        const sessions = getEl(instanceId, 'multiSessionGrid').querySelectorAll('.hit-session');
+        sessions.forEach(session => {
+            const sessionId = session.dataset.sessionId;
+            const inputs = [...document.getElementById(`${instanceId}_sessionGrid${sessionId}`).querySelectorAll('input')].map(inp => inp.value);
+            dataToSave.sessionsGrid.push(inputs);
+        });
+        
+        const storageKey = `${LOCAL_STORAGE_KEY}_${instanceId}`;
+        localStorage.setItem(storageKey, JSON.stringify(dataToSave));
+        
+        if (!silent) {
+            alert(`Data Panen ${instanceId.split('_')[1]} disimpan! ✅`);
+        }
+    } catch (e) {
+        console.error("Gagal menyimpan data:", e);
+        if (!silent) {
+            alert(`Gagal menyimpan data Panen ${instanceId.split('_')[1]}.`);
+        }
+    }
+}
+function loadData(instanceId, silent = false) {
+    const storageKey = `${LOCAL_STORAGE_KEY}_${instanceId}`;
+    const savedData = localStorage.getItem(storageKey);
+    if (!savedData) {
+        if (!silent) alert(`Tidak ada data tersimpan untuk Panen ${instanceId.split('_')[1]}. 📂`);
+        return;
+    }
+    try {
+        const data = JSON.parse(savedData);
+        loadDataFromObject(instanceId, data); // Panggil helper
+        if (!silent) alert(`Data Panen ${instanceId.split('_')[1]} berhasil dimuat! ✅`);
+    } catch (e) {
+        console.error("Gagal memuat data:", e);
+        if (!silent) alert(`Gagal memuat data Panen ${instanceId.split('_')[1]}. Data tersimpan mungkin rusak.`);
+    }
+}
+
+function formatWithDots(num) {
+    if (typeof num !== 'number' || isNaN(num)) {
+        num = 0;
+    }
+    return Math.round(num).toLocaleString('id-ID');
+}
+function reformatDate(dateString) {
+    if (!dateString) return '-';
+    try {
+        const parts = dateString.split('-'); // YYYY-MM-DD
+        if (parts.length !== 3) return dateString;
+        return `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/YYYY
+    } catch (e) {
+        return dateString;
+    }
+}
+
+/**
+ * [REVISI] Bagikan rincian ke Customer
+ * [PATCH] REVISI 4.9: Memperbaiki logika terbalik antara SJ dan Real
+ */
+function shareToCustomer(instanceId) {
+    // 1. Ambil Data Panen
+    const customer = getEl(instanceId, 'customer').value || 'Customer';
+    const tanggal = reformatDate(getEl(instanceId, 'line').value);
+    const tujuan = getEl(instanceId, 'tujuan').value || 'Tujuan';
+    const nomorBak = getEl(instanceId, 'nomorBak').value || '-';
+    
+    // 2. Ambil Data Driver (dari DB dan input)
+    const driverName = getEl(instanceId, 'driver').value;
+    const driverData = sopirDB[driverName] || { nohp: '-', plat: '-' };
+    const driverHP = driverData.nohp;
+    const driverPlat = getEl(instanceId, 'platNomor').value || driverData.plat; // Ambil dari input, fallback ke DB
+
+    // 3. Ambil Data Hitungan
+    const boxText = getEl(instanceId, 'kebutuhanBox').textContent.split(' ')[0];
+    const kebutuhanBox = parseFloat(boxText.replace(/[\.,]/g, '')) || 0;
+    const isiBox = parseFloat(getEl(instanceId, 'isiBox').value) || 0;
+    const totalKantong = kebutuhanBox * isiBox;
+    
+    const a2 = parseFloat(getEl(instanceId, 'allowance2').value) || 0;
+    
+    const benurRealText = getEl(instanceId, 'benurPerKantongReal').textContent.split(' ')[0];
+    const benurReal_Value = parseFloat(benurRealText.replace(/[\.,]/g, '')) || 0;
+    
+    const benurSJText = getEl(instanceId, 'benurPerKantongSJ').textContent.split(' ')[0];
+    const benurSJ_Value = parseFloat(benurSJText.replace(/[\.,]/g, '')) || 0;
+
+    let text = "Assalamu'alaikum Wr. Wb.\n";
+    text += "Berikut kami kirimkan rincian benur kepada:\n";
+    text += `${customer}\n`;
+    text += `(${tanggal}, ${tujuan})\n\n`;
+
+    if (a2 > 0) {
+        // --- [PERBAIKAN LOGIKA] FORMAT JIKA A2 > 0 ---
+        
+        // Hitungan utama (Invoice) harus berdasarkan Nilai SJ (Surat Jalan)
+        const bruto_SJ = totalKantong * benurSJ_Value; 
+        const netto_SJ = Math.round(bruto_SJ * 0.9);
+        // Hitungan sekunder ("Real") harus berdasarkan Nilai Real (Internal)
+        const totalReal = totalKantong * benurReal_Value; 
+
+        // Tampilkan nilai SJ di baris utama (Invoice)
+        text += `${formatWithDots(kebutuhanBox)} Box, ${formatWithDots(totalKantong)} Kantong @${formatWithDots(benurSJ_Value)} Ekor\n`;
+        text += `Bruto = ${formatWithDots(bruto_SJ)} (Bak ${nomorBak})\n`;
+        text += `Netto = ${formatWithDots(netto_SJ)}\n\n`;
+        
+        // Tampilkan nilai Real di baris "Hitungan Real" (Internal)
+        text += `Hitungan Real:\n`;
+        text += `${formatWithDots(kebutuhanBox)} Box, ${formatWithDots(totalKantong)} Kantong @${formatWithDots(benurReal_Value)} ekor = ${formatWithDots(totalReal)}\n\n`;
+        
+    } else {
+        // --- FORMAT STANDAR (A2 = 0) ---
+        // (Di sini, Real_Value dan SJ_Value nilainya sama, jadi tidak masalah)
+        const bruto = totalKantong * benurReal_Value;
+        const netto = Math.round(bruto * 0.9);
+        
+        text += `${formatWithDots(kebutuhanBox)} Box, ${formatWithDots(totalKantong)} Kantong @${formatWithDots(benurReal_Value)} Ekor\n`;
+        text += `Bruto = ${formatWithDots(bruto)} (Bak ${nomorBak})\n`;
+        text += `Netto = ${formatWithDots(netto)}\n\n`;
+    }
+
+    // 4. Tambah Info Sopir (Sama untuk kedua format)
+    text += `Dengan Sopir Bp. ${driverName || '-'}\n`;
+    text += `No. Hp = ${driverHP}\n`;
+    text += `Plat Mobil = ${driverPlat}\n\n`;
+    text += `Terimakasih, Sukses Bersama PLB 🤝`;
+
+    // 5. Buka WhatsApp
+    const encodedText = encodeURIComponent(text);
+    window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+}
+
+function shareAdmin(instanceId) {
+    const customer = getEl(instanceId, 'customer').value || '-';
+    const driver = getEl(instanceId, 'driver').value || '-';
+    const tujuan = getEl(instanceId, 'tujuan').value || '-';
+    const avgAktualText = getEl(instanceId, 'avgValueDisplay').textContent.replace(' ekor', '').trim();
+    const boxText = getEl(instanceId, 'kebutuhanBox').textContent;
+    const boxNumberString = boxText.split(' Box')[0];
+    const boxValue = parseFloat(boxNumberString.replace(/\./g, '')) || 0;
+    const isiBox = parseFloat(getEl(instanceId, 'isiBox').value) || 0;
+    const totalKantong = (boxValue * isiBox).toLocaleString('id-ID');
+    const benurReal = getEl(instanceId, 'benurPerKantongReal').textContent.replace(' ekor/kantong', '').trim();
+    const benurSJ = getEl(instanceId, 'benurPerKantongSJ').textContent.replace(' ekor/kantong', '').trim();
+    const a2 = parseFloat(getEl(instanceId, 'allowance2').value) || 0;
+    const line1 = `${customer}/${tujuan}`;
+    const line2 = `${driver}/Act ${avgAktualText}`;
+    const lineReal = `Real: ${boxValue} Box, ${totalKantong} Kantong @${benurReal} Ekor (+1)`;
+    const lineRealSimple = `${boxValue} Box, ${totalKantong} Kantong @${benurReal} Ekor (+1)`;
+    let text = `${line1}\n${line2}\n\n`;
+    if (a2 > 0) {
+        const lineSJ = `SJ: ${boxValue} Box, ${totalKantong} Kantong @${benurSJ} Ekor (+1)`;
+        text += `${lineReal}\n${lineSJ}`;
+    } else {
+        text += lineRealSimple;
+    }
+    const encodedText = encodeURIComponent(text);
+    window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+}
+
+// ===================================
+// IMPORT/EXPORT JSON LOGIC
+// ===================================
+function loadDataFromObject(instanceId, data) {
+    try {
+        getEl(instanceId, 'customer').value = data.customer || '';
+        getEl(instanceId, 'tujuan').value = data.tujuan || '';
+        getEl(instanceId, 'line').value = data.line || '';
+        getEl(instanceId, 'nominalOrder').value = data.nominalOrder || '0';
+        getEl(instanceId, 'jenisTruk').value = data.jenisTruk || 'Euro2';
+        getEl(instanceId, 'kapasitasAngkut').value = data.kapasitasAngkut || '';
+        getEl(instanceId, 'driver').value = data.driver || '';
+        getEl(instanceId, 'platNomor').value = data.platNomor || '';
+        getEl(instanceId, 'nomorBak').value = data.nomorBak || '';
+        getEl(instanceId, 'tomota').value = data.tomota || '';
+        getEl(instanceId, 'allowanceTester').value = data.allowanceTester || '0';
+        const testerInputs = getEl(instanceId, 'hitGridTester').querySelectorAll('input');
+        if (data.testerGrid) {
+            // Pastikan jumlah kolom sesuai
+            const diff = data.testerGrid.length - testerInputs.length;
+            if (diff > 0) {
+                for(let i=0; i<diff; i++) { addCalcBox(`${instanceId}_hitGridTester`); }
+            }
+            // Ambil lagi input list setelah ditambah
+            const newTesterInputs = getEl(instanceId, 'hitGridTester').querySelectorAll('input');
+            data.testerGrid.forEach((val, index) => {
+                if (newTesterInputs[index]) newTesterInputs[index].value = val || '';
+            });
+        }
+        getEl(instanceId, 'allowance1').value = data.allowance1 || '0';
+        getEl(instanceId, 'allowance2').value = data.allowance2 || '0';
+        getEl(instanceId, 'multiSessionGrid').innerHTML = '';
+        sessionCounter[instanceId] = 0;
+        if (data.sessionsGrid && data.sessionsGrid.length > 0) {
+            data.sessionsGrid.forEach(sessionData => {
+                addHitunganSession(instanceId); // Buat sesi baru
+                const sessionId = sessionCounter[instanceId];
+                const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+                const sessionInputs = grid.querySelectorAll('input');
+                
+                // Pastikan jumlah kolom sesuai
+                const diff = sessionData.length - sessionInputs.length;
+                if (diff > 0) {
+                    for(let i=0; i<diff; i++) { addCalcBox(`${instanceId}_multiSessionGrid`); }
+                }
+                // Ambil lagi input list setelah ditambah
+                const newSessionInputs = grid.querySelectorAll('input');
+                sessionData.forEach((val, index) => {
+                    if (newSessionInputs[index]) {
+                        newSessionInputs[index].value = val || '';
+                    }
+                });
+            });
+        } else {
+            addHitunganSession(instanceId);
+            addHitunganSession(instanceId);
+        }
+        updateTruckDetails(instanceId);
+        recalcAllTester(instanceId);
+        recalcAllHitungan(instanceId);
+        formatCurrency(getEl(instanceId, 'nominalOrder'));
+        updateRecap(instanceId);
+    } catch (e) {
+        console.error(`Gagal memuat data ke ${instanceId}:`, e);
+    }
+}
+
+// ===================================
+// FLOATING CALCULATOR LOGIC
+// ===================================
+
+const calcContainer = document.getElementById('calculatorContainer');
+const calcDisplay = document.getElementById('calcDisplay');
+let currentInput = '0';
+let previousValue = null;
+let operator = null;
+let waitingForNewInput = true;
+function toggleCalculator() { calcContainer.classList.toggle('visible'); }
+function calcClear() {
+    currentInput = '0'; previousValue = null; operator = null; waitingForNewInput = true;
+    updateCalcDisplay();
+}
+function updateCalcDisplay() {
+    let displayValue = currentInput.includes('.') ? currentInput : parseFloat(currentInput).toLocaleString('id-ID', {maximumFractionDigits: 10});
+    if (displayValue === 'NaN' || displayValue === 'Infinity' || !isFinite(currentInput)) {
+         calcDisplay.value = 'Error';
+    }
+    else { calcDisplay.value = displayValue; }
+}
+function calcInput(value) {
+    if (calcDisplay.value === 'Error') return;
+    if (waitingForNewInput) {
+        if (value === '.') { currentInput = '0.'; }
+        else { currentInput = value; }
+        waitingForNewInput = false;
+    } else {
+        if (value === '0' && currentInput === '0') return;
+        if (value === '.' && currentInput.includes('.')) return;
+        if (currentInput.length >= 15) return;
+        if (currentInput === '0' && value !== '.') { currentInput = value; }
+        else { currentInput += value; }
+    }
+    updateCalcDisplay();
+}
+function calcBackspace() {
+    if (calcDisplay.value === 'Error') return;
+    if (waitingForNewInput) return;
+    if (currentInput.length > 1) {
+        currentInput = currentInput.slice(0, -1);
+    } else {
+        currentInput = '0';
+        waitingForNewInput = true;
+    }
+    updateCalcDisplay();
+}
+function calcPercent() {
+    if (calcDisplay.value === 'Error') return;
+    let currentValue = parseFloat(currentInput);
+    if (previousValue !== null && operator !== null) {
+        currentValue = (parseFloat(previousValue) / 100) * currentValue;
+    } else {
+        currentValue = currentValue / 100;
+    }
+    currentInput = currentValue.toString();
+    updateCalcDisplay();
+    waitingForNewInput = true;
+}
+function performCalculation(prev, current, op) {
+    const prevNum = parseFloat(prev);
+    const currNum = parseFloat(current);
+    if (op === '/' && currNum === 0) return 'Error';
+    let result;
+    if (op === '+') result = (prevNum + currNum);
+    else if (op === '-') result = (prevNum - currNum);
+    else if (op === '*') result = (prevNum * currNum);
+    else if (op === '/') result = (prevNum / currNum);
+    else result = currNum;
+    if (!isFinite(result)) return 'Error';
+    result = parseFloat(result.toPrecision(15));
+    return result.toString();
+}
+function calcOperator(nextOperator) {
+     if (calcDisplay.value === 'Error') return;
+    const inputValue = parseFloat(currentInput);
+    if (operator && waitingForNewInput) {
+        operator = nextOperator;
+        return;
+    }
+    if (previousValue === null) {
+        previousValue = inputValue;
+    } else if (!waitingForNewInput) {
+        const result = performCalculation(previousValue, currentInput, operator);
+         if (result === 'Error') {
+             currentInput = 'Error';
+             updateCalcDisplay();
+             previousValue = null;
+             operator = null;
+             waitingForNewInput = true;
+             currentInput = '0';
+             return;
+         }
+        currentInput = result;
+        previousValue = parseFloat(result);
+	updateCalcDisplay();
+    }
+    waitingForNewInput = true;
+    operator = nextOperator;
+}
+function calcEquals() {
+     if (calcDisplay.value === 'Error' || previousValue === null || operator === null) return;
+    const result = performCalculation(previousValue, currentInput, operator);
+     if (result === 'Error') {
+         currentInput = 'Error';
+         updateCalcDisplay();
+         previousValue = null;
+         operator = null;
+         waitingForNewInput = true;
+         currentInput = '0';
+     } else {
+         currentInput = result;
+         updateCalcDisplay();
+         previousValue = null;
+         operator = null;
+         waitingForNewInput = true;
+     }
+}
+
+
+// ===================================
+// [REVISI] FUNGSI KERANJANG SAMPAH (Menjadi Card)
+// ===================================
+
+/**
+ * Mengambil data dari keranjang sampah
+ */
+function getTrashData() {
+    const trashRaw = localStorage.getItem(TRASH_STORAGE_KEY);
+    if (!trashRaw) {
+        return [];
+    }
+    try {
+        return JSON.parse(trashRaw);
+    } catch (e) {
+        console.error("Data keranjang sampah rusak:", e);
+        return [];
+    }
+}
+
+/**
+ * Menyimpan data ke keranjang sampah
+ */
+function saveTrashData(trashArray) {
+    try {
+        localStorage.setItem(TRASH_STORAGE_KEY, JSON.stringify(trashArray));
+    } catch (e) {
+        console.error("Gagal menyimpan keranjang sampah:", e);
+        alert("Error saat menyimpan keranjang sampah.");
+    }
+}
+
+/**
+ * [REVISI] Mengisi daftar list di card keranjang sampah
+ */
+function populateTrashList() {
+    const trashArray = getTrashData();
+    // [FIX] Target kedua list sampah, karena ada duplikat di HTML
+    const listEls = document.querySelectorAll('#staticTrashList'); 
+    
+    if (listEls.length === 0) return;
+
+    listEls.forEach(listEl => {
+        listEl.innerHTML = ''; // Kosongkan daftar
+
+        if (trashArray.length === 0) {
+            listEl.innerHTML = '<p style="text-align: center; color: var(--color-text-light);">Keranjang sampah kosong.</p>';
+        } else {
+            trashArray.forEach((item, index) => {
+                const info = item._trashInfo || { customer: (item.customer || 'Data Lama'), deletedOn: new Date().toISOString() };
+                const customerName = info.customer || 'Tanpa Nama';
+                const date = new Date(info.deletedOn).toLocaleString('id-ID', {
+                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+                const itemHTML = `
+                    <div class="trash-modal-list-item">
+                        <div class="trash-item-info">
+                            <strong>${customerName}</strong>
+                            <span>Dihapus: ${date}</span>
+                        </div>
+                        <div class="trash-item-actions">
+                            <button class="btn restore" onclick="restoreFromTrash(${index})">↩️ Pulihkan</button>
+                            <button class="btn delete" onclick="deleteFromTrash(${index})">❌ Hapus</button>
+                        </div>
+                    </div>
+                `;
+                listEl.insertAdjacentHTML('beforeend', itemHTML);
+            });
+        }
+    });
+}
+
+
+/**
+ * [REVISI] Mengganti fungsi showTrash (modal) menjadi toggle card
+ */
+function showTrash() {
+    // [FIX] Target kedua kontainer sampah
+    const cardEls = document.querySelectorAll('#trashCardContainer');
+    if (cardEls.length === 0) return;
+
+    // Ambil status dari kontainer pertama (asumsi keduanya sinkron)
+    const cardEl = cardEls[0];
+    
+    if (cardEl.style.display === 'none') {
+        populateTrashList();
+        cardEls.forEach(el => {
+            el.style.display = 'block';
+            el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        });
+    } else {
+        cardEls.forEach(el => el.style.display = 'none');
+    }
+}
+
+/**
+ * Memulihkan data dari keranjang sampah
+ */
+function restoreFromTrash(index) {
+    if (!confirm("Pulihkan data ini? Data akan ditambahkan sebagai slide baru di akhir.")) return;
+
+    let trashArray = getTrashData();
+    if (!trashArray[index]) return;
+
+    const [restoredData] = trashArray.splice(index, 1);
+    delete restoredData._trashInfo;
+    saveTrashData(trashArray);
+    
+    addInstance();
+    const newInstanceId = `instance_${instanceCounter}`;
+    loadDataFromObject(newInstanceId, restoredData);
+    goToSlide(instanceCounter - 1);
+    
+    populateTrashList(); // [REVISI] Refresh list, bukan tutup modal
+    alert("Data berhasil dipulihkan!");
+}
+
+/**
+ * Menghapus data permanen dari keranjang sampah
+ */
+function deleteFromTrash(index) {
+    if (!confirm("Yakin ingin MENGHAPUS PERMANEN data ini? Tindakan ini tidak dapat dibatalkan.")) return;
+
+    let trashArray = getTrashData();
+    if (!trashArray[index]) return;
+
+    trashArray.splice(index, 1);
+    saveTrashData(trashArray);
+    
+    populateTrashList(); // [REVISI] Refresh list, bukan panggil showTrash
+}
+// === [AKHIR] FUNGSI KERANJANG SAMPAH ===
+
+
+// ===================================
+// INITIALIZATION
+// ===================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('darkModeToggle').onclick = toggleDarkMode;
+
+    // === Event listener untuk tombol navigasi melayang ===
+    const floatingSaveBtn = document.getElementById('floatingSaveBtn');
+    if (floatingSaveBtn) {
+        floatingSaveBtn.onclick = () => {
+            const track = document.getElementById('slideTrack');
+            if (!track || !track.children[activeInstanceIndex]) {
+                console.error('Tidak bisa menemukan slide yang aktif!');
+                return;
+            }
+            const currentInstanceId = track.children[activeInstanceIndex].id;
+            if (currentInstanceId) {
+                saveData(currentInstanceId, false);
+            } else {
+                alert('Error: Tidak dapat menemukan ID slide saat ini untuk disimpan.');
+            }
+        };
+    }
+    const floatingPrevBtn = document.getElementById('floatingPrevBtn');
+    if (floatingPrevBtn) {
+        floatingPrevBtn.onclick = () => goToSlide(activeInstanceIndex - 1);
+    }
+    const floatingNextBtn = document.getElementById('floatingNextBtn');
+    if (floatingNextBtn) {
+        floatingNextBtn.onclick = () => goToSlide(activeInstanceIndex + 1);
+    }
+    // === Akhir listener navigasi melayang ===
+
+    checkDarkModePreference();
+
+    // === Logika Load Data Saat Membuka Halaman ===
+    let savedInstanceCount = 0;
+    try {
+        const allKeys = Object.keys(localStorage);
+        const instanceKeys = allKeys.filter(key => 
+            key.startsWith(LOCAL_STORAGE_KEY) && key.includes('_instance_')
+        );
+        savedInstanceCount = instanceKeys.length;
+    } catch (e) {
+        console.warn("Gagal mengakses localStorage untuk load data:", e);
+        savedInstanceCount = 0;
+    }
+
+    if (savedInstanceCount === 0) {
+        addInstance(); // Buat 1 instance default
+    } 
+    else {
+        for (let i = 0; i < savedInstanceCount; i++) {
+            addInstance(); // Buat instance (DOM)
+        }
+        for (let i = 0; i < savedInstanceCount; i++) {
+            const instanceIdToLoad = `instance_${i + 1}`;
+            loadData(instanceIdToLoad, true); // Muat data (silent)
+        }
+    }
+    
+    goToSlide(0);
+    calcClear();
+});
+</script>
+</body>
+</html>
