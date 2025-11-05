@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>PLB ShrimpCount</title>
+
+<link rel="icon" type="image/jpeg" href="logo-plb.png">
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;700&display=swap" rel="stylesheet">
 <style>
 /* --- [REVISI] VARIABEL AKAR & STANDAR (TEMA BIRU MODERN) --- */
@@ -167,8 +170,8 @@ body.dark-mode .title-b {
     color: inherit;
 }
 /* Hapus warna spesifik, biarkan mewarisi dari .title */
-.title-pl { color: #00008B; }
-.title-b { color: #ADD8E6; }
+.title-pl { color: inherit; opacity: 0.8; }
+.title-b { color: inherit; }
 
 .version{font-size:.45em;color:var(--color-header-text);vertical-align:super; opacity: 0.7;}
 .build-badge{
@@ -596,7 +599,7 @@ body.dark-mode .result-box-split.estimasi-box .label {
     border: 1px solid var(--color-card-hitung-border);
     border-radius: var(--radius-input); /* Radius baru */
     margin-bottom: 20px;
-    max-width: 400px; /* <-- Atur lebar maksimum box, sesuaikan jika perlu */
+    max-width: 300px; /* <-- Atur lebar maksimum box, sesuaikan jika perlu */
     margin-left: auto;   /* <-- Tambahkan ini */
     margin-right: auto;  /* <-- Tambahkan ini */
 }
@@ -796,7 +799,7 @@ body.dark-mode .calc-btn.clear:hover, body.dark-mode .calc-btn.toggle-sign:hover
 }
 .simulasi-toggle-label {
     font-size: 0.9em;
-    font-weight: 500;
+    font-weight: 700;
     color: var(--color-text-main);
 }
 .switch {
@@ -1188,7 +1191,7 @@ body.dark-mode .tab-link.active {
 
   <h1 class="title">
     <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
-    <span class="version">V5.1</span>
+    <span class="version">V5.2</span>
     <span class="build-badge">Beta</span>
   </h1>
   <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
@@ -1483,7 +1486,7 @@ body.dark-mode .tab-link.active {
                 <div class="recap-row"><span class="recap-label">No. Bak</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_nomorBak">-</span></div>
                 <div class="recap-row"><span class="recap-label">Tomota</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tomota">- ekor</span></div>
                 <div class="recap-row"><span class="recap-label">Σ Total</span><span class="recap-value" id="{{INSTANCE_ID}}_testerSum">0</span></div>
-                <div class="recap-row"><span class="recap-label">Density</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerDensity">-</span></div>
+                <div class="recap-row"><span class="recap-label">Density</span><span class="recap-value" id="{{INSTANCE_ID}}_testerDensity">-</span></div>
                 <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceTester">0 %</span></div>
                 <div class="recap-row"><span class="recap-label">Hasil Benur Tester</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_hasilTester">0</span></div>
                 <div class="recap-row"><span class="recap-label">Estimasi Box</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_estimasiBoxTester">0 Box</span></div>
