@@ -5,70 +5,114 @@
 <title>PLB ShrimpCount</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;700&display=swap" rel="stylesheet">
 <style>
-/* --- VARIABEL AKAR & STANDAR --- */
+/* --- [REVISI] VARIABEL AKAR & STANDAR (TEMA BIRU MODERN) --- */
 :root {
-  --color-bg:#f4f9ff;
-  --color-header-bg1:#e3f2fd;
-  --color-header-bg2:#f4f9ff;
-  --color-card-bg:#007bff1a;
-  --color-border:#d9e1ec;
-  --color-accent:#007bff;
-  --color-shadow:rgba(0,0,0,.08);
+  /* Palet Aksen Biru */
+  --color-accent: #0D69C2; /* Biru PLB yang lebih kuat */
+  --color-accent-light: #E7F0F8; /* Latar belakang/hover biru sangat muda */
+  --color-accent-text: #FFFFFF; /* Teks di atas aksen (putih) */
+  
+  /* Palet UI Utama (Light) */
+  --color-bg: #F4F7FA; /* Latar belakang body (putih kebiruan) */
+  --color-card-bg: #FFFFFF; /* Latar kartu (putih bersih) */
+  --color-tab-nav-bg: #EAF0F6; /* Latar navigasi tab */
+  
+  /* Palet Header */
+  --color-header-bg: #0D69C2; /* Header biru solid */
+  --color-header-text: #FFFFFF;
+  --color-header-btn-bg: #0A5499; /* Tombol di header (lebih gelap) */
+  --color-header-btn-text: #FFFFFF;
+  
+  /* Palet Teks */
+  --color-text-main: #212529; /* Teks utama (hitam pekat) */
+  --color-text-light: #5A6A7B; /* Teks sekunder (abu-abu kebiruan) */
+  --color-text-lighter: #8A9BAB; /* Teks (mis. timestamp) */
+  
+  /* Palet Umum */
+  --color-border: #DDE4EE; /* Border umum & input */
+  --color-input-bg: #FFFFFF;
+  --color-shadow: rgba(13, 105, 194, 0.1); /* Bayangan berbasis biru */
+  --color-shadow-dark: rgba(13, 105, 194, 0.15);
+
+  /* Palet Semantik (Peringatan, Sukses) */
+  --color-text-sum: #198754; /* Hijau untuk sukses/total */
+  --color-alert-text: #E65200; /* Oranye untuk peringatan */
+  --color-delete-text: #DC3545;
+  --color-tester-result-bg: #E8F5E9; /* Latar hijau muda */
+  --color-tester-result-text: #1E6A21;
+  --color-card-hitung-border: #c8e6c9;
+
+  /* Metrik Desain */
   --font-main:'Poppins',sans-serif;
   --font-weight-thin:300;
-  --radius-card:16px;
-  --shadow-card:0 3px 10px var(--color-shadow);
-  --color-card-tester:#007bff1a;
-  --color-card-hitung:#007bff1a;
-  --color-text-sum:#1b6b2b;
-  --color-text-sj:#007bbf;
+  --radius-card: 12px;
+  --radius-input: 8px;
+  --shadow-card: 0 4px 12px var(--color-shadow);
+  
+  /* Variabel lama (disesuaikan atau tidak terpakai) */
+  --color-header-bg1: var(--color-header-bg); /* Disesuaikan */
+  --color-header-bg2: var(--color-header-bg); /* Disesuaikan */
+  --color-card-tester: var(--color-accent-light); /* Disesuaikan */
+  --color-card-hitung: var(--color-accent-light); /* Disesuaikan */
+  --color-text-sj: var(--color-accent); /* Disesuaikan */
   --color-calc-bg: #4a4a4a;
   --color-calc-display: #e8f5f9;
   --color-calc-operator: #ff9500;
-  --color-tester-result-bg: #c8e6c9;
-  --color-tester-result-text: #1b5e20;
-  --color-alert-text: #e65200;
-  --color-card-recap: #f5f7fa;
-  --color-recap-label: #555;
-  --color-recap-value: #000;
-  --color-recap-border: #e0e6ef;
-  --color-text-main: #333;
-  --color-text-light: #666;
-  --color-text-lighter: #888;
-  --color-input-border: #cfd8e3;
-  --color-input-bg: #fff;
-  --color-card-tester-border: #e3e3c9;
-  --color-card-hitung-border: #c8e6c9;
+  --color-card-recap: #FAFCFE;
+  --color-recap-label: var(--color-text-light);
+  --color-recap-value: var(--color-text-main);
+  --color-recap-border: var(--color-border);
+  --color-card-tester-border: var(--color-border);
 }
 
-/* === [BARU] Mode Gelap === */
+/* === [REVISI] Mode Gelap (TEMA BIRU MODERN) === */
 body.dark-mode {
-  --color-bg:#121212;
-  --color-header-bg1:#1a222c;
-  --color-header-bg2:#121212;
-  --color-card-bg:#1e1e1e;
-  --color-border:#3E3E3E;
-  --color-shadow:rgba(255,255,255,.05);
-  --color-card-tester:#1e1e1e;
-  --color-card-hitung:#1e1e1e;
-  --color-text-sum:#66bb6a;
-  --color-text-sj:#4dabf5;
+  /* Palet Aksen Biru (Dark) */
+  --color-accent: #58A6FF; /* Biru muda yang cerah */
+  --color-accent-light: #2A3B50; /* Latar biru tua */
+  --color-accent-text: #FFFFFF; /* Teks di atas aksen (putih) */
+
+  /* Palet UI Utama (Dark) */
+  --color-bg: #0F172A; /* Latar body (biru sangat tua) */
+  --color-card-bg: #1E293B; /* Latar kartu (biru tua) */
+  --color-tab-nav-bg: #0F172A; /* Latar nav tab (sama dgn body) */
+  
+  /* Palet Header (Dark) */
+  --color-header-bg: #1E293B; /* Header (sama dgn kartu) */
+  --color-header-text: #F1F5F9;
+  --color-header-btn-bg: #334155; /* Tombol di header (lebih cerah) */
+  --color-header-btn-text: #F1F5F9;
+  
+  /* Palet Teks (Dark) */
+  --color-text-main: #F1F5F9; /* Teks utama (putih kebiruan) */
+  --color-text-light: #94A3B8; /* Teks sekunder */
+  --color-text-lighter: #64748B; /* Teks timestamp */
+  
+  /* Palet Umum (Dark) */
+  --color-border: #334155; /* Border */
+  --color-input-bg: #283447;
+  --color-shadow: rgba(0, 0, 0, 0.2);
+  --color-shadow-dark: rgba(0, 0, 0, 0.3);
+
+  /* Palet Semantik (Dark) */
+  --color-text-sum: #6EE7B7; /* Hijau cerah */
+  --color-alert-text: #FFAB40; /* Oranye cerah */
+  --color-delete-text: #F87171;
+  --color-tester-result-bg: #1C3A2A;
+  --color-tester-result-text: #6EE7B7;
+  --color-card-hitung-border: #2A462C;
+
+  /* Variabel lama (disesuaikan) */
+  --color-card-tester: var(--color-card-bg);
+  --color-card-hitung: var(--color-card-bg);
+  --color-text-sj: var(--color-accent);
   --color-calc-bg: #3a3a3a;
   --color-calc-display: #222;
-  --color-tester-result-bg: #2e4b30;
-  --color-tester-result-text: #b9f6ca;
-  --color-alert-text: #ffab40;
-  --color-card-recap: #1e1e1e;
-  --color-recap-label: #aaa;
-  --color-recap-value: #f1f1f1;
-  --color-recap-border: #3E3E3E;
-  --color-text-main: #f1f1f1;
-  --color-text-light: #bbb;
-  --color-text-lighter: #888;
-  --color-input-border: #444;
-  --color-input-bg: #252525;
-  --color-card-tester-border: #444;
-  --color-card-hitung-border: #334e35;
+  --color-card-recap: var(--color-card-bg);
+  --color-recap-label: var(--color-text-light);
+  --color-recap-value: var(--color-text-main);
+  --color-recap-border: var(--color-border);
+  --color-card-tester-border: var(--color-border);
 }
 /* === [AKHIR] Mode Gelap === */
 
@@ -76,7 +120,6 @@ body.dark-mode {
 
 /* === [REVISI] KUNCI LAYOUT 1: HTML & BODY === */
 html {
-  /* Kunci tinggi html ke tinggi layar dinamis */
   height: 100dvh; 
 }
 body{
@@ -84,85 +127,108 @@ body{
   font-weight:var(--font-weight-thin);
   background:var(--color-bg);color:var(--color-text-main);
   transition: background .3s, color .3s;
-  font-size: 15px;
-
-  /* --- [REVISI] Ganti dari min-height & justify-center --- */
+  font-size: 13px;
   display: flex;
   flex-direction: column;
-  /* Kunci body agar 100% tinggi layar (dvh=dynamic viewport height) */
   height: 100dvh; 
-  /* Hapus justify-content: center; */
-  /* Cegah body agar tidak bisa di-scroll */
   overflow: hidden; 
-  /* -------------------------------------------------- */
 }
 /* Animasi */
 @keyframes fadeSlideIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
 header{opacity:0;transform:translateY(25px);transition:opacity .8s ease,transform .8s ease}
 header.visible{opacity:1;transform:translateY(0)}
 
-/* --- [REVISI] KUNCI LAYOUT 2: HEADER --- */
+/* --- [REVISI] KUNCI LAYOUT 2: HEADER (DESAIN BIRU SOLID) --- */
 .app-header{
-  text-align:center;padding: 15px 15px 10px; /* DIUBAH */
+  text-align:center;padding: 15px 15px 10px;
   border-radius:0 0 20px 20px;
-  background:linear-gradient(180deg,var(--color-header-bg1),var(--color-header-bg2));
-  box-shadow:0 2px 8px var(--color-shadow);
+  background: var(--color-header-bg); /* Latar solid modern */
+  box-shadow: 0 4px 10px var(--color-shadow);
   position: relative;
-  flex-shrink: 0; 
+  flex-shrink: 0;
+  z-index: 100; /* Pastikan di atas */
 }
 
-.title{font-size:1.2em;margin:0;color:#444}
-body.dark-mode .title { color: #ccc; }
+.title{
+    font-size:1.2em;
+    margin:0;
+    color: var(--color-header-text); /* Teks header putih */
+    font-weight: 700;
+
+    /* --- [PERBAIKAN BUG STABILITAS] --- */
+    white-space: nowrap; /* Paksa judul tetap 1 baris */
+    overflow: hidden;    /* Sembunyikan jika terlalu panjang */
+    text-overflow: ellipsis; /* Beri tanda "..." jika terpotong */
+    padding: 0 30px; /* Beri jarak agar tidak mentok tombol */
+}
+body.dark-mode .title { color: var(--color-header-text); }
 body.dark-mode .title-pl,
 body.dark-mode .title-b {
     color: inherit;
 }
+/* Hapus warna spesifik, biarkan mewarisi dari .title */
 .title-pl { color: #00008B; }
 .title-b { color: #ADD8E6; }
-.version{font-size:.45em;color:var(--color-text-lighter);vertical-align:super}
-.build-badge{background:#007bff1a;color:var(--color-accent);
-  font-size:.65em;border-radius:8px;padding:2px 6px;margin-left:6px}
-.subtitle{font-size: .5em;color:var(--color-text-light);margin-top: 4px;font-style:italic; display: none; } /* DIKECILKAN */
-.sponsor{font-size: .4em;color:var(--color-text-lighter);margin-top: 2px; display: none; } /* DIKECILKAN */
+
+.version{font-size:.45em;color:var(--color-header-text);vertical-align:super; opacity: 0.7;}
+.build-badge{
+  background: rgba(255,255,255,0.2); /* Badge transparan */
+  color:var(--color-header-text);
+  font-size:.65em;border-radius:8px;padding:2px 6px;margin-left:6px; font-weight: 400;
+}
+.subtitle{font-size: .5em;color:var(--color-text-light);margin-top: 4px;font-style:italic; display: none; }
+.sponsor{font-size: .4em;color:var(--color-text-lighter);margin-top: 2px; display: none; }
 .sponsor b{color:var(--color-accent)}
 .timestamp{font-size:.7em;color:#999}
 
+/* [PERBAIKAN V5.2] Tombol Header (Animasi Zoom) */
 .dark-mode-toggle {
     position: absolute;
-    top: 25px;
+    top: 50%; 
+    transform: translateY(-50%); 
     right: 25px;
-    background: var(--color-card-bg);
-    border: 1px solid var(--color-border);
+    background: var(--color-header-btn-bg); 
+    color: var(--color-header-btn-text); 
+    border: 0px solid var(--color-border);
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 24px; 
+    height: 24px; 
     cursor: pointer;
-    font-size: 0.8em;
+    font-size: 0.9em; 
     line-height: 1;
     box-shadow: 0 1px 3px var(--color-shadow);
-    transition: transform .2s, background .3s;
+    transition: transform 0.2s, background 0.3s; /* <-- UBAH Transisi */
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 #trashToggleBtn {
     left: 20px;
-    right: auto; /* Batalkan 'right: 15px' dari style aslinya */
+    right: auto;
 }
-
+/* [PERBAIKAN V5.2] Animasi Zoom In (Membesar) */
 .dark-mode-toggle:hover {
-    transform: scale(1.1);
+    transform: translateY(-50%) scale(1.1); /* <-- PERBAIKI Transform */
 }
 
-/* --- CARD UMUM & INPUT (Dalam Slide) --- */
+/* --- [REVISI] CARD UMUM & INPUT (GAYA MODERN) --- */
 .card{
   background:var(--color-card-bg);
   border:1px solid var(--color-border);
   border-radius:var(--radius-card);
-  padding:35px 20px;
+  padding:30px 20px; /* Padding atas dikurangi */
   margin:25px 0 0;
   box-shadow:var(--shadow-card);
   position:relative;
   transition: background .3s, border .3s;
 }
-.card h2{margin-top:0;color:var(--color-accent);font-size:1.05em}
+.card h2{
+    margin-top:0;
+    color: var(--color-accent);
+    font-size:1.05em;
+    font-weight: 700; /* Lebih tebal */
+}
 .card-data h2 {
     color: var(--color-accent);
     font-weight: 700;
@@ -171,18 +237,28 @@ body.dark-mode .title-b {
     border-bottom: 1px dashed var(--color-border);
     padding-bottom: 10px;
 }
-label{display:block;margin-top:10px;font-size:.9em}
+label{
+    display:block;
+    margin-top:12px;
+    font-size:.9em;
+    font-weight: 400; /* Sedikit lebih tebal */
+    color: var(--color-text-light);
+}
 input,select{
-  width:100%;padding:8px 10px;margin-top:4px;
-  border:1px solid var(--color-input-border);border-radius:8px;
+  width:100%;padding: 10px 12px; /* Lebih tinggi */
+  margin-top:4px;
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-input); /* Radius baru */
   font-size:.9em;font-family:var(--font-main);
   transition:.3s;
   background: var(--color-input-bg);
   color: var(--color-text-main);
+  font-weight: 300;
 }
 input:focus,select:focus{
-  outline:none;border-color:var(--color-accent);
-  box-shadow:0 0 6px rgba(0,123,255,.2);
+  outline:none;
+  border-color:var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-shadow); /* Bayangan fokus modern */
 }
 .card-tester{background:var(--color-card-tester);}
 .card-hitung{background:var(--color-card-hitung);}
@@ -237,23 +313,37 @@ input:focus,select:focus{
     color: var(--color-alert-text);
 }
 
+/* [REVISI] Tombol */
 .actions-row{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
 .btn{
-  background:transparent;border:1px solid rgba(0,123,255,.2);
-  padding:7px 11px;border-radius:8px;cursor:pointer;font-size:.6em;
+  background: var(--color-accent-light); /* Latar biru muda */
+  border: 1px solid var(--color-accent-light);
+  padding: 8px 12px; /* Lebih besar */
+  border-radius: var(--radius-input); /* Radius baru */
+  cursor:pointer;
+  font-size:.7em; /* Font lebih besar */
+  font-weight: 700;
   transition:.2s;
-  color: var(--color-accent);
+  color: var(--color-accent); /* Teks biru tua */
 }
 body.dark-mode .btn {
-  background: var(--color-input-bg);
-  border-color: var(--color-accent);
+  background: var(--color-accent-light);
+  border-color: var(--color-accent-light);
+  color: var(--color-accent-text);
 }
-.btn:hover{transform:translateY(-1px)}
-.btn.primary{background:var(--color-accent);color:#fff;border-color:var(--color-accent)}
-body.dark-mode .btn.primary:hover { color: #fff; }
+.btn:hover{
+    transform:translateY(-1px);
+    opacity: 0.9;
+}
+.btn.primary{
+    background:var(--color-accent);
+    color:var(--color-accent-text);
+    border-color:var(--color-accent);
+}
+body.dark-mode .btn.primary:hover { color: var(--color-accent-text); }
 .time-stamp{
-  position:absolute;bottom:6px;right:10px;
-  font-size:.65em;color:var(--color-text-lighter);font-weight:300;opacity:.6
+  position:absolute;bottom:8px;right:12px;
+  font-size:.65em;color:var(--color-text-lighter);font-weight:300;opacity:.8
 }
 
 .card-recap .actions-row {
@@ -261,43 +351,41 @@ body.dark-mode .btn.primary:hover { color: #fff; }
     border-top: 1px dashed var(--color-recap-border);
     padding-top: 15px;
     justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 8px;
 }
 .card-recap .actions-row .btn {
     flex-grow: 1;
     flex-basis: 180px;
     text-align: center;
     font-size: 0.85em;
-    background: #fff;
+    background: var(--color-card-bg);
     color: var(--color-accent);
     border: 1px solid var(--color-accent);
     font-weight: 700;
 }
 body.dark-mode .card-recap .actions-row .btn {
     background: var(--color-card-recap);
+    color: var(--color-accent);
+    border-color: var(--color-accent);
 }
 .card-recap .actions-row .btn:hover {
-    background: #f0f8ff;
+    background: var(--color-accent-light);
     transform: translateY(-1px);
-    color: #0056b3;
+    color: var(--color-accent);
 }
 body.dark-mode .card-recap .actions-row .btn:hover {
-    background: #2a3a4c;
-    color: #69baff;
+    background: var(--color-accent-light);
+    color: var(--color-accent-text);
 }
 
 
 /* --- [REVISI] KUNCI LAYOUT 3: CAROUSEL / SLIDE CONTAINER --- */
 .carousel-wrapper {
-    width: 100%; /* <-- [REKOMENDASI PERBAIKAN BUG] */
-    max-width: 400px; /* [EDIT] Lebar maksimal dikurangi 5px */
+    width: 100%; 
+    max-width: 400px;
     margin: 0px auto 0;
-    overflow: hidden; /* Revisi: overflow-x diubah ke overflow */
+    overflow: hidden;
     position: relative;
     border-radius: var(--radius-card);
-    
-    /* Biarkan wrapper ini tumbuh mengisi sisa ruang */
     flex-grow: 1; 
 }
 
@@ -305,93 +393,41 @@ body.dark-mode .card-recap .actions-row .btn:hover {
 .slide-track {
     display: flex;
     transition: transform 0.5s ease-in-out;
-    /* [REVISI] Pastikan track mengisi tinggi wrapper */
     height: 100%; 
 }
 
 .slide-item {
     min-width: 100%;
-    max-width: 400px; /* [EDIT] Lebar maksimal dikurangi 5px */
+    max-width: 400px;
     flex-shrink: 0;
     padding: 0 20px;
-
-    /* [REVISI] KUNCI LAYOUT 4: SLIDE ITEM (FLEX CONTAINER) */
-    height: 100%; /* Isi tinggi .slide-track */
+    height: 100%; 
     display: flex;
     flex-direction: column;
 }
 
-/* --- [REVISI] Sembunyikan total blok kontrol lama --- */
-.carousel-controls {
-    /* Kontrol ini diganti floating nav, sembunyikan total */
-    display: none; 
-    
-    /* Aturan lama (hanya untuk referensi): */
-    /* max-width: 400px; 
-    margin: 15px auto 50px;
-    padding: 0 20px;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px; */
-}
-.slide-nav-btn {
-    font-size: 1.5em;
-    padding: 5px 10px;
-    background: var(--color-input-bg);
-    border: 1px solid var(--color-border);
-    cursor: pointer;
-    border-radius: 8px;
-    color: var(--color-text-main);
-}
-#slideIndicator {
-    font-size: 1.1em;
-    font-weight: 700;
-    color: var(--color-text-main);
-    min-width: 60px;
-    text-align: center;
-}
-.global-actions {
-    display: flex;
-    gap: 10px;
-    width: 100%;
-    justify-content: center;
-    margin-top: 10px;
-    order: 3;
-}
-.global-actions .btn {
-    font-size: 0.8em;
-    font-weight: 700;
-    flex-grow: 1;
-    max-width: 180px;
-}
-.global-actions .btn.export {
-    border-color: #28a745;
-    color: #28a745;
-}
-body.dark-mode .global-actions .btn.export { background: #1e3c25; }
-.global-actions .btn.import {
-    border-color: #dc3545;
-    color: #dc3545;
-}
-body.dark-mode .global-actions .btn.import { background: #4a2125; }
+/* --- Sembunyikan kontrol lama --- */
+.carousel-controls { display: none; }
+.slide-nav-btn { display: none; }
+#slideIndicator { display: none; }
+.global-actions { display: none; }
 
 
-/* --- PROJECT CONTROLS DI CARD 1 (DIKECILKAN) --- */
+/* --- [REVISI] PROJECT CONTROLS DI CARD 1 (GAYA BARU) --- */
 .card-project-controls {
-    position: absolute;
-    top: 10px;
-    right: 15px;
+    position: relative;
+    top: auto;
+    right: auto;
     display: flex;
-    gap: 5px;
+    gap: 6px;
     z-index: 50;
 }
 .card-project-btn {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     border: 1px solid var(--color-border);
-    font-size: 0.7em;
+    font-size: 0.8em;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 0 1px 3px var(--color-shadow);
@@ -401,54 +437,61 @@ body.dark-mode .global-actions .btn.import { background: #4a2125; }
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--color-card-bg);
 }
 .card-project-btn:hover {
     transform: scale(1.1);
 }
 .add-btn {
-    background: #007bff1a;
     color: var(--color-accent);
-    border-color: #ccc;
 }
 .remove-btn {
-    background: #007bff1a;
-    color: #dc3545;
-    border-color: #ccc;
+    color: var(--color-delete-text);
 }
 .remove-btn:disabled {
-    background: #007bff1a;
-    color: #ccc;
-    border-color: #ccc;
+    color: var(--color-text-lighter);
     cursor: not-allowed;
     opacity: 0.8;
     transform: none !important;
 }
 .reset-btn {
-    background: #007bff1a;
-    color: #e65100;
-    border-color: #ccc;
+    color: var(--color-alert-text);
 }
-body.dark-mode .reset-btn {
-    background: #121212;
-    border-color: #3E3E3E;
-    color: #ffab40;
+body.dark-mode .card-project-btn {
+    background: var(--color-input-bg);
+    border-color: var(--color-border);
 }
 
-body.dark-mode .add-btn { background: #121212; border-color: #3E3E3E; }
-body.dark-mode .remove-btn { background: #121212; border-color: #3E3E3E; }
-body.dark-mode .remove-btn:disabled { background: #121212; border-color: #3E3E3E; color: #555; }
-
-
-/* --- Detail CSS (Tidak diubah) --- */
+/* --- [REVISI] CSS Detail (Box, Grid, dll) --- */
 .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .col{flex:1 1 45%;display:flex;flex-direction:column}
 .hit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:8px;margin-top:10px}
-.calc-box{background:var(--color-input-bg);border:1px solid var(--color-card-tester-border);border-radius:8px;padding:6px;text-align:center}
-.calc-box input{border:none;text-align:center;width:100%;font-size:.9em;background:transparent;padding:0;margin:0;}
+.calc-box{
+    background:var(--color-input-bg);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-input);
+    padding:6px;
+    text-align:center;
+}
+.calc-box input{
+    border:none;
+    text-align:center;
+    width:100%;
+    font-size:.9em;
+    background:transparent;
+    padding:0;
+    margin:0;
+    font-weight: 700;
+}
+.calc-box input:focus { box-shadow: none; } /* Hapus shadow di dlm box */
+
 .summary-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:14px}
 .sum-box,.density-box{
-  background:var(--color-input-bg);padding:10px 14px;border-radius:10px;
-  border:1px solid var(--color-card-tester-border);min-width:140px;
+  background:var(--color-input-bg);
+  padding:10px 14px;
+  border-radius:var(--radius-input);
+  border:1px solid var(--color-card-tester-border);
+  min-width:140px;
 }
 .allowance-tester-input-group {
     display: flex;
@@ -477,22 +520,36 @@ body.dark-mode .remove-btn:disabled { background: #121212; border-color: #3E3E3E
     margin-top: 15px;
     padding: 15px;
     background: var(--color-tester-result-bg);
-    border-radius: 10px;
+    border-radius: var(--radius-input);
     text-align: center;
     font-weight: 700;
-    border: 1px solid #a5d6a7;
+    border: 1px solid var(--color-card-hitung-border);
     box-shadow: 0 2px 5px var(--color-shadow);
 }
-body.dark-mode .tester-result-box { border-color: #3b753e; }
+body.dark-mode .tester-result-box { border-color: var(--color-card-hitung-border); }
 .tester-result-box .label {
     font-size: 0.7em;
     color: var(--color-tester-result-text);
     margin-bottom: 5px;
+    font-weight: 700;
 }
 .tester-result-box .result-value {
     font-size: 1.5em;
     color: var(--color-tester-result-text);
     line-height: 1.2;
+}
+
+/* [BARU] CSS untuk unit "ekor/kantong" di dalam result value */
+.result-value small {
+    font-size: 0.4em; /* Jauh lebih kecil */
+    font-weight: 300;
+    color: var(--color-text-light);
+    display: block; /* Pindah ke baris baru */
+    line-height: 1;
+    margin-top: 2px;
+}
+body.dark-mode .result-value small {
+     color: var(--color-text-light);
 }
 
 .tester-result-box.split-layout {
@@ -509,18 +566,18 @@ body.dark-mode .tester-result-box { border-color: #3b753e; }
     border-radius: 6px;
 }
 .result-box-split.estimasi-box {
-    background: #fff3e0;
-    border: 1px solid #ffe0b2;
+    background: #FFF3E0;
+    border: 1px solid #FFE0B2;
 }
 body.dark-mode .result-box-split.estimasi-box {
-    background: #392b1a;
-    border: 1px solid #5e452a;
+    background: #392B1A;
+    border: 1px solid #5E452A;
 }
 .result-box-split.estimasi-box .label {
-    color: #e65100;
+    color: #E65100;
 }
 body.dark-mode .result-box-split.estimasi-box .label {
-    color: #ffab40;
+    color: var(--color-alert-text);
 }
 .result-box-split.estimasi-box .result-value {
     color: var(--color-alert-text);
@@ -529,32 +586,35 @@ body.dark-mode .result-box-split.estimasi-box .label {
 
 
 .label{font-size:.8em;color:var(--color-text-light)}
-.value{font-size:1em;color:var(--color-text-sum);margin-top:4px}
+.value{font-size:1em;color:var(--color-text-sum);margin-top:4px; font-weight: 700;}
 
-
-/* === NEW CSS STYLES FOR CARD HITUNGAN (CARD 4) === */
+/* === [REVISI] CSS STYLES FOR CARD HITUNGAN (CARD 4) === */
 .order-nominal-display {
     text-align: center;
     padding: 15px 10px;
-    background: #f4fff7;
+    background: var(--color-tester-result-bg); /* Latar hijau semantik */
     border: 1px solid var(--color-card-hitung-border);
-    border-radius: 8px;
+    border-radius: var(--radius-input); /* Radius baru */
     margin-bottom: 20px;
+    max-width: 400px; /* <-- Atur lebar maksimum box, sesuaikan jika perlu */
+    margin-left: auto;   /* <-- Tambahkan ini */
+    margin-right: auto;  /* <-- Tambahkan ini */
 }
 body.dark-mode .order-nominal-display {
-    background: #192c1c;
+    background: var(--color-tester-result-bg);
     border-color: var(--color-card-hitung-border);
 }
 .order-nominal-display .label {
     font-size: 0.85em;
-    color: #4a6c4c;
+    color: var(--color-text-sum); /* Teks hijau */
     margin-bottom: 5px;
+    opacity: 0.8;
 }
-body.dark-mode .order-nominal-display .label { color: #81b984; }
+body.dark-mode .order-nominal-display .label { color: var(--color-text-sum); }
 .order-nominal-display .value {
     font-size: 1.8em;
     font-weight: 700;
-    color: var(--color-text-sum);
+    color: var(--color-text-sum); /* Teks hijau */
     line-height: 1.1;
 }
 
@@ -586,26 +646,27 @@ body.dark-mode .order-nominal-display .label { color: #81b984; }
     margin-top: 20px;
 }
 
+/* [REVISI] Box Summary Abu-abu & Hijau */
 .grey-summary-box, .green-result-box {
     padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 1px 5px var(--color-shadow);
+    border-radius: var(--radius-card); /* Radius Card */
+    box-shadow: none; /* Hapus bayangan ganda */
+    border: 1px solid var(--color-border);
 }
 .grey-summary-box {
-    background: #fcfcfc;
-    border: 1px solid #ddd;
-}
-body.dark-mode .grey-summary-box {
-    background: #2a2a2a;
-    border-color: #444;
+    background: var(--color-bg); /* Lebih menyatu dgn body */
 }
 .green-result-box {
-    background: #e8f5e9;
-    border: 1px solid #c8e6c9;
+    background: var(--color-card-bg); /* Putih */
+    border: 1px solid var(--color-card-hitung-border); /* Border hijau */
     margin-top: 15px;
 }
+body.dark-mode .grey-summary-box {
+    background: var(--color-bg);
+    border-color: var(--color-border);
+}
 body.dark-mode .green-result-box {
-    background: var(--color-card-hitung);
+    background: var(--color-card-bg);
     border-color: var(--color-card-hitung-border);
 }
 
@@ -627,15 +688,21 @@ body.dark-mode .green-result-box {
     font-size: 1.2em;
     font-weight: 700;
 }
-.summary-value.avg {color: #1a7a40;}
-body.dark-mode .summary-value.avg {color: #66bb6a;}
-.summary-value.box {color: #ff8c00;}
-body.dark-mode .summary-value.box {color: #ffc97a;}
+.summary-value.avg {color: var(--color-text-sum);} /* Hijau */
+body.dark-mode .summary-value.avg {color: var(--color-text-sum);}
+.summary-value.box {color: var(--color-alert-text);} /* Oranye */
+body.dark-mode .summary-value.box {color: var(--color-alert-text);}
 .summary-value.real-sj {color: var(--color-text-sum);}
 .summary-value.simulation {
     color: var(--color-alert-text);
     font-size: 1.1em;
     font-weight: 700;
+}
+.summary-value.positive {
+    color: var(--color-text-sum);
+}
+.summary-value.negative {
+    color: var(--color-alert-text);
 }
 
 .allowance-input-grid {
@@ -710,78 +777,34 @@ body.dark-mode .calc-btn.clear:hover, body.dark-mode .calc-btn.toggle-sign:hover
     position: fixed; bottom: 20px; right: 20px; z-index: 1001;
     background: var(--color-accent); color: white; border: none; border-radius: 50%;
     width: 50px; height: 50px; font-size: 1.5em; box-shadow: 0 4px 8px var(--color-shadow);
-    cursor: pointer; transition: background 0.3s;
+    cursor: pointer; transition: background 0.3s, transform 0.2s;
 }
-.calc-toggle-btn:hover {background: #0056b3;}
+/* [PERBAIKAN V5.2] Animasi Zoom In (Membesar) */
+.calc-toggle-btn:hover {
+    background: #0056b3;
+    transform: scale(1.1); /* <-- TAMBAHKAN Animasi Zoom */
+}
 
 
-/* === [BARU] REVISI 2: Box Spesial Selisih === */
-/* REVISI 1: Pindahkan margin-top karena box dipindah */
-.card-selisih {
-    background: #fffbe6; /* Warna kuning muda, beda dari yang lain */
-    border-color: #ffe58f;
-    margin-top: 15px; /* Jarak dari Card Hijau */
-    padding: 15px 20px;
-    border-radius: 10px; /* Samakan dengan box summary */
-    box-shadow: 0 1px 5px var(--color-shadow); /* Samakan dengan box summary */
-}
-body.dark-mode .card-selisih {
-    background: #2a261c;
-    border-color: #5e5a4a;
-}
-.selisih-title {
-    margin: 0 0 10px 0;
-    font-size: 1.0em;
-    font-weight: 700;
-    color: #d98200;
-    border-bottom: 1px dashed #ffe58f;
-    padding-bottom: 8px;
-}
-body.dark-mode .selisih-title {
-    color: #ffab40;
-    border-bottom-color: #5e5a4a;
-}
-.selisih-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5px 0;
-    font-size: 0.9em;
-}
-.selisih-label {
-    color: var(--color-text-light);
-}
-.selisih-value {
-    font-size: 1.25em;
-    font-weight: 700;
-    color: var(--color-text-sum);
-}
-.selisih-value.negative {
-    color: var(--color-alert-text);
-}
-.selisih-value.positive {
-    color: var(--color-text-sum);
-}
-/* === [AKHIR] REVISI 2 === */
-
-/* === [BARU] REVISI 5: Toggle Switch Simulasi === */
+/* === [REVISI] Toggle Switch Simulasi (Gaya Modern) === */
 .simulasi-toggle-container {
     display: flex;
-    justify-content: center;
+    
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
 }
 .simulasi-toggle-label {
     font-size: 0.9em;
-    font-weight: 700;
+    font-weight: 500;
     color: var(--color-text-main);
 }
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px; /* Lebar switch */
-    height: 28px; /* Tinggi switch */
+    width: 44px; /* Lebar switch */
+    height: 24px; /* Tinggi switch */
+    flex-shrink: 0; /* <-- DITAMBAH: agar switch tidak gepeng */
 }
 .switch input { 
     opacity: 0;
@@ -801,36 +824,37 @@ body.dark-mode .selisih-title {
 .slider:before {
     position: absolute;
     content: "";
-    height: 20px; /* Ukuran knob */
-    width: 20px; /* Ukuran knob */
-    left: 4px;
-    bottom: 4px;
+    height: 18px; /* Ukuran knob */
+    width: 18px; /* Ukuran knob */
+    left: 3px;
+    bottom: 3px;
     background-color: white;
     transition: .4s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 input:checked + .slider {
-    background-color: var(--color-accent);
+    background-color: var(--color-accent); /* Warna Biru Aksen */
 }
 input:checked + .slider:before {
-    transform: translateX(22px); /* Pergeseran knob */
+    transform: translateX(20px); /* Pergeseran knob */
 }
 .slider.round {
-    border-radius: 28px;
+    border-radius: 24px;
 }
 .slider.round:before {
     border-radius: 50%;
 }
 /* === [AKHIR] REVISI 5 === */
 
-/* === [BARU] Penyesuaian Font Mobile === */
+/* === [REVISI] Penyesuaian Font Mobile === */
 @media (max-width: 360px) {
     body {
-        font-size: 14px; /* Sedikit lebih kecil di layar sempit */
+        font-size: 13px; /* Tetap di 13px */
     }
     .title { font-size: 1.1em; }
     .subtitle { font-size: 0.8em; }
     .btn, .card-recap .actions-row .btn, .global-actions .btn {
-        font-size: 0.8em; /* Kecilkan semua tombol */
+        font-size: 0.8em;
     }
     .card-data h2 { font-size: 1.05em; }
     .card h2 { font-size: 1em; }
@@ -839,10 +863,10 @@ input:checked + .slider:before {
     .order-nominal-display .value { font-size: 1.5em; }
     .summary-value { font-size: 1.1em; }
     .hit-grid {
-        grid-template-columns: repeat(auto-fit,minmax(70px,1fr)); /* Kecilkan kolom grid */
+        grid-template-columns: repeat(auto-fit,minmax(70px,1fr));
     }
 }
-/* === [PATCH REVISI] Floating Nav Bar Bawah === */
+/* === [REVISI] Floating Nav Bar Bawah === */
 
 /* 1. Kontainer Utama */
 .floating-nav-bar {
@@ -850,18 +874,28 @@ input:checked + .slider:before {
     bottom: 0;
     left: 0;
     width: 100%;
-    padding: 12px 15px;
-    background: rgba(0, 0, 0, 0.0); /* 0% Hitam Transparan */
-    box-shadow: 0 -3px 10px rgba(0,0,0,0.0);
+    padding: 12px 15px 15px; /* Padding bawah lebih besar */
+    /* Latar belakang gradien agar teks terbaca */
+    background: linear-gradient(180deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.8) 20%, 
+        var(--color-bg) 100%
+    );
+    box-shadow: none; /* Hapus bayangan, andalkan gradien */
     
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
     z-index: 998;
-    
-    /* [REVISI] Pastikan nav tidak bisa diklik saat di belakang kalkulator */
-    pointer-events: none; 
+    pointer-events: none; /* Kontainer tidak bisa diklik */
+}
+body.dark-mode .floating-nav-bar {
+    background: linear-gradient(180deg, 
+        rgba(15, 23, 42, 0) 0%, 
+        rgba(15, 23, 42, 0.8) 20%, 
+        var(--color-bg) 100%
+    );
 }
 
 /* 2. Grup Tombol (Kiri, Tengah, Kanan) */
@@ -872,29 +906,28 @@ input:checked + .slider:before {
     pointer-events: auto; /* Tombol bisa diklik */
 }
 .floating-nav-group.center {
-    /* Posisikan di tengah absolut */
     position: absolute; 
     left: 50%;
     transform: translateX(-50%);
-    /* Sembunyikan jika hanya 1 slide */
     display: none; 
 }
 .floating-nav-group.right {
     margin-left: auto; /* Dorong ke kanan */
 }
 
-/* 3. Style Tombol Bulat (Save, Prev, Next, Calc) */
+/* [PERBAIKAN V5.2] Style Tombol Bulat (Animasi Zoom) */
 .floating-nav-btn {
-    background: #007bff; /* warna biru laut */
-    color: white;
+    background: var(--color-accent); /* Biru Aksen */
+    color: var(--color-accent-text); /* Putih */
     border: none;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    font-size: 1.2em;
-    box-shadow: 0 4px 8px var(--color-shadow);
+    width: 40px; /* Lebih besar */
+    height: 40px; /* Lebih besar */
+    font-size: 1.3em;
+    box-shadow: 0 4px 12px var(--color-shadow-dark); /* Bayangan lebih kuat */
     cursor: pointer;
-    transition: background 0.3s;
+    /* [PERBAIKAN V5.2] Transisi hover "zoom" */
+    transition: background 0.3s, transform 0.2s, box-shadow 0.2s ease-out;
     
     display: flex;
     align-items: center;
@@ -902,24 +935,43 @@ input:checked + .slider:before {
     line-height: 1;
     padding: 0;
 }
+/* [PERBAIKAN V5.2] Animasi hover "zoom" */
 .floating-nav-btn:hover {
-    opacity: 0.8; /* 80% terlihat. Ganti ke 0.7, 0.9, dll. */
+    transform: scale(1.1); /* <-- GANTI ANIMASI JADI ZOOM */
+    box-shadow: 0 8px 20px var(--color-shadow-dark); /* <-- PERBESAR BAYANGAN */
 }
-/* .floating-nav-btn.save-btn:hover { (Dihapus) } */
+/* Tombol Save berwarna Kuning Telur */
+.floating-nav-btn.save-btn {
+    background: #FFC107; 
+    color: #212529;       
+}
+body.dark-mode .floating-nav-btn.save-btn {
+    background: #FFC107; 
+    color: #212529;       
+}
+
+/* Tombol Navigasi Disabled */
+.floating-nav-btn:disabled {
+    background: var(--color-border);
+    color: var(--color-text-lighter);
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+}
 
 /* 5. Style Indikator Halaman */
 .floating-nav-indicator {
-    background: var(--color-calc-display);
-    color: var(--color-calc-bg);
+    background: var(--color-card-bg);
+    color: var(--color-text-main);
     font-size: 1.1em;
     font-weight: 700;
     padding: 10px 16px;
     border-radius: 25px;
     box-shadow: 0 4px 8px var(--color-shadow);
+    border: 1px solid var(--color-border);
 }
 
 /* 6. SEMBUNYIKAN Kontrol Asli */
-/* .carousel-controls sudah di display: none */
 #prevSlideBtn, #nextSlideBtn, #slideIndicator {
     display: none !important;
 }
@@ -932,48 +984,41 @@ body > .calc-toggle-btn {
 
 /* 1. Kontainer Utama (Panel Mengambang) */
 .trash-popup-container {
-    /* Posisi: Mengambang di tengah, di bawah header */
     position: absolute;
-    top: 70px; /* Jarak dari atas (di bawah header) */
+    top: 70px; 
     left: 50%;
     transform: translateX(-50%);
-    z-index: 990; /* Di atas konten, di bawah kalkulator */
-
-    /* Ukuran: Lebih kecil dan profesional */
+    z-index: 990; 
     width: 90%;
-    max-width: 360px; /* Lebih ramping dari 400px */
-    max-height: 60vh; /* Batas tinggi, misal 60% layar */
+    max-width: 360px; 
+    max-height: 60vh; 
     
-    /* Tampilan */
-    background: var(--color-bg); /* Latar belakang body, BUKAN kartu */
+    background: var(--color-bg); /* Latar belakang body */
     border-radius: var(--radius-card);
-    box-shadow: 0 5px 20px var(--color-shadow);
+    box-shadow: 0 5px 20px var(--color-shadow-dark); /* Bayangan lebih kuat */
     border: 1px solid var(--color-border);
 
-    /* Konten di dalam */
-    overflow: hidden; /* Kontainer luar tidak di-scroll */
+    overflow: hidden; 
 }
 
 /* 2. Atur .slide-item khusus di dalam trash */
 .trash-popup-container .slide-item {
-    padding: 0; /* Hapus padding bawaan slide-item */
+    padding: 0; 
     height: auto;
-    /* INI yang akan di-scroll jika daftarnya panjang */
-    max-height: 60vh; /* Samakan dengan kontainer */
+    max-height: 60vh; 
     overflow-y: auto; 
 }
 
 /* 3. Atur .card-trash khusus di dalam trash */
 .trash-popup-container .card-trash {
-    margin: 0; /* Hapus margin bawaan kartu */
-    box-shadow: none; /* Hapus bayangan ganda */
-    border: none; /* Hapus border ganda */
+    margin: 0; 
+    box-shadow: none; 
+    border: none; 
 }
 /* === [AKHIR] CSS Card Keranjang Sampah === */
 
-/* [PATCH REVISI] CSS untuk Card Keranjang Sampah (PENGGANTI MODAL) */
+/* [REVISI] CSS untuk Card Keranjang Sampah (GAYA BARU) */
 .card-trash {
-    /* Desainnya meniru card rekap */
     background: var(--color-card-recap); 
     border-color: var(--color-recap-border);
 }
@@ -981,10 +1026,10 @@ body > .calc-toggle-btn {
     max-height: 400px;
     overflow-y: auto;
 }
-.trash-modal-list-item { /* Kita pakai ulang style lama */
-    background: var(--color-bg);
+.trash-modal-list-item { 
+    background: var(--color-card-bg); /* Latar kartu */
     border: 1px solid var(--color-border);
-    border-radius: 8px;
+    border-radius: var(--radius-input); /* Radius baru */
     padding: 10px 15px;
     margin-bottom: 10px;
     display: flex;
@@ -1003,106 +1048,110 @@ body > .calc-toggle-btn {
 }
 .trash-item-actions { display: flex; gap: 8px; }
 .trash-item-actions .btn { font-size: 0.8em; padding: 5px 8px; }
-.trash-item-actions .restore { border-color: #28a745; color: #28a745; }
-body.dark-mode .trash-item-actions .restore { background: #1e3c25; }
-.trash-item-actions .delete { border-color: #dc3545; color: #dc3545; }
-body.dark-mode .trash-item-actions .delete { background: #4a2125; }
+.trash-item-actions .restore { 
+    border-color: var(--color-text-sum); 
+    color: var(--color-text-sum); 
+    background: transparent;
+}
+body.dark-mode .trash-item-actions .restore { 
+    background: var(--color-tester-result-bg); 
+    border-color: var(--color-card-hitung-border);
+}
+.trash-item-actions .delete { 
+    border-color: var(--color-delete-text); 
+    color: var(--color-delete-text); 
+    background: transparent;
+}
+body.dark-mode .trash-item-actions .delete { 
+    background: #4a2125;
+    border-color: #dc3545;
+}
 /* === [AKHIR] CSS Card Sampah === */
 
-/* === [BARU] DESAIN 1: GAYA TAB === */
+/* === [REVISI] DESAIN 1: GAYA TAB MODERN === */
 
 /* 1. Navigasi Tab (Kotak Pil di Atas) */
 .card-tab-nav {
     display: flex;
     justify-content: space-around;
-    background: var(--color-card-bg);
-    margin: 20px 0 0 0; /* DIUBAH: Hapus margin samping */
-    padding: 5px;
-    border-radius: 25px; /* Bentuk pil yang modern */
-    box-shadow: 0 2px 8px var(--color-shadow);
+    background: var(--color-tab-nav-bg); /* Latar abu-abu muda */
+    margin: 15px 0 0 0; /* Margin atas */
+    padding: 4px; /* Padding untuk "pill" di dalam */
+    border-radius: 25px; /* Bentuk pil luar */
+    box-shadow: none;
     border: 1px solid var(--color-border);
-    position: sticky; /* Tetap di atas saat scroll sedikit */
-    top: 10px; /* Jarak dari atas layar */
+    position: sticky; 
+    top: 5px; /* Jarak dari atas layar */
     z-index: 10;
-    
-    /* [REVISI] KUNCI LAYOUT 5: TAB NAV */
-    flex-shrink: 0; /* Jangan biarkan tab nav mengecil */
+    flex-shrink: 0; 
+}
+body.dark-mode .card-tab-nav {
+    border: none; /* Hapus border di dark mode */
 }
 
 /* 2. Tombol Tab Individual */
 .tab-link {
     flex-grow: 1;
     border: none;
-    background: transparent;
+    background: transparent; /* Transparan, hanya yg aktif yg solid */
     color: var(--color-text-light);
-    padding: 10px 5px;
-    border-radius: 20px; /* Pil di dalam pil */
+    padding: 8px 5px; /* Padding tombol */
+    border-radius: 20px; /* Pil di dalam */
     font-weight: 700;
-    font-size: 0.8em; /* Ukuran font dikecilkan agar muat */
+    font-size: 0.8em; 
     cursor: pointer;
     transition: background 0.3s, color 0.3s;
     text-align: center;
-    white-space: nowrap; /* Pastikan teks tidak terlipat */
+    white-space: nowrap; 
 }
 
 /* 3. Tombol Tab Saat Aktif */
 .tab-link.active {
-    background: var(--color-accent);
-    color: #fff;
-    box-shadow: 0 2px 5px rgba(0,123,255,.2);
+    background: var(--color-accent); /* Biru Aksen */
+    color: var(--color-accent-text); /* Putih */
+    box-shadow: 0 2px 5px var(--color-shadow-dark);
 }
 body.dark-mode .tab-link.active {
-    /* Agar kontras di mode gelap */
-    color: var(--color-card-bg); 
+    color: #FFFFFF; /* Pastikan putih di dark mode */
 }
 
 /* 4. [REVISI] KUNCI LAYOUT 6: KONTEN TAB */
 .card-tab-content {
-    padding-top: 1px; /* Jarak dari tab nav ke kartu */
-
-    /* Biarkan area konten ini tumbuh mengisi sisa ruang */
+    padding-top: 10px; /* Jarak dari tab ke kartu */
     flex-grow: 1; 
-    /* Buat area ini bisa di-scroll secara internal */
     overflow-y: auto; 
     overflow-x: hidden;
-    /* Beri padding bawah agar tidak tertutup nav */
-    padding-bottom: 75px; 
+    /* Padding bawah agar tidak tertutup nav melayang */
+    padding-bottom: 90px; 
 }
 
 /* 5. Panel Kartu (Default Tersembunyi) */
 .tab-panel {
-    display: none; /* Sembunyikan semua kartu */
-    margin-top: 0 !important; /* Hapus margin atas pada kartu */
-    animation: fadeSlideIn 0.4s ease; /* Gunakan animasi fade-in Anda */
+    display: none; 
+    margin-top: 0 !important; 
+    animation: fadeSlideIn 0.4s ease; 
 }
-/* Tampilkan hanya panel yang aktif */
 .tab-panel.active {
     display: block;
 }
 
-/* === [EDIT] PENYESUAIAN CSS LAMA === */
+/* === [REVISI] PENYESUAIAN CSS LAMA === */
 
 /* 1. Ubah .slide-item */
 .slide-item {
     min-width: 100%;
-    max-width: 400px; /* [EDIT] Lebar maksimal dikurangi 5px */
+    max-width: 400px;
     flex-shrink: 0;
-    padding: 0 15px; /* DIUBAH: Ini akan jadi jarak utama */
-
-    /* [REVISI] KUNCI LAYOUT 4: SLIDE ITEM (FLEX CONTAINER) */
-    height: 100%; /* Isi tinggi .slide-track */
+    padding: 0 15px; /* Jarak samping utama */
+    height: 100%; 
     display: flex;
     flex-direction: column;
 }
 
 /* 2. Ubah .card di dalam tab */
 .tab-panel.card {
-    margin: 0 0 25px 0; /* DIUBAH: Hapus margin samping */
-    /* border-top: none; */ /* <-- DIHAPUS */
-    /* border-top-left-radius: 0; */ /* <-- DIHAPUS */
-    /* border-top-right-radius: 0; */ /* <-- DIHAPUS */
-    /* Bayangan lebih halus */
-    box-shadow: 0 10px 15px -5px var(--color-shadow); 
+    margin: 0 0 15px 0; /* Margin bawah antar kartu */
+    box-shadow: var(--shadow-card); /* Shadow konsisten */
 }
 
 /* 3. Ubah h2 di kartu pertama (Data Panen) */
@@ -1110,16 +1159,11 @@ body.dark-mode .tab-link.active {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-right: -10px; /* Tarik kontrol ke kanan */
+    margin-right: -10px; 
 }
 
-/* 4. Pindahkan .card-project-controls */
-.card-project-controls {
-    position: relative; /* Hapus 'absolute' */
-    top: auto;
-    right: auto;
-    gap: 6px; /* Rapatkan sedikit tombol */
-}
+/* 4. Pindahkan .card-project-controls (sudah di-override di atas) */
+
 
 /* === [BARU] SEMBUNYIKAN SCROLLBAR === */
 
@@ -1135,6 +1179,8 @@ body.dark-mode .tab-link.active {
 </style>
 </head>
 
+<body>
+
 <header class="app-header visible">
   <button id="trashToggleBtn" class="dark-mode-toggle" onclick="showTrash()" title="Buka Keranjang Sampah">♻️</button>
   
@@ -1142,7 +1188,7 @@ body.dark-mode .tab-link.active {
 
   <h1 class="title">
     <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
-    <span class="version">V4.9</span>
+    <span class="version">V5.1</span>
     <span class="build-badge">Beta</span>
   </h1>
   <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
@@ -1155,14 +1201,7 @@ body.dark-mode .tab-link.active {
 </div>
 
 <div class="carousel-controls">
-    <button id="prevSlideBtn" class="slide-nav-btn" onclick="goToSlide(activeInstanceIndex - 1)" style="display: none;">&lt;</button>
-    <span id="slideIndicator">1 / 1</span>
-    <button id="nextSlideBtn" class="slide-nav-btn" onclick="goToSlide(activeInstanceIndex + 1)" style="display: none;">&gt;</button>
-
-    <div class="global-actions">
-        <button class="btn export" onclick="showTrash()">♻️ Pulihkan Data</button>
     </div>
-</div>
 <div id="calculatorContainer" class="calculator-container">
     <div class="calculator-card">
         <input type="text" id="calcDisplay" class="calc-display-input" value="0">
@@ -1239,7 +1278,7 @@ body.dark-mode .tab-link.active {
 
                 <label>🚚 Driver</label>
                 <select id="{{INSTANCE_ID}}_driver" onchange="updateDriverDetails('{{INSTANCE_ID}}')">
-                </select>
+                    </select>
                 
                 <label>🚗 Plat Nomor</label>
                 <input id="{{INSTANCE_ID}}_platNomor" placeholder="Plat Nomor (auto-fill)" oninput="updateRecap('{{INSTANCE_ID}}')">
@@ -1260,6 +1299,7 @@ body.dark-mode .tab-link.active {
                 </div>
 
                 <div id="{{INSTANCE_ID}}_hitGridTester" class="hit-grid"></div>
+                
                 <div class="summary-row">
                     <div class="sum-box"><div class="label">Σ Total</div><div id="{{INSTANCE_ID}}_testerSum" class="value">0</div></div>
                     <div class="density-box"><div class="label">Density (ekor/L)</div><div id="{{INSTANCE_ID}}_testerDensity" class="value">-</div></div>
@@ -1297,7 +1337,7 @@ body.dark-mode .tab-link.active {
                 </div>
 
                 <div id="{{INSTANCE_ID}}_multiSessionGrid">
-                </div>
+                    </div>
 
                 <div class="actions-row actions-row-small">
                     <button class="btn" onclick="addCalcBox('{{INSTANCE_ID}}_multiSessionGrid')">➕ Tambah Kolom</button>
@@ -1307,7 +1347,9 @@ body.dark-mode .tab-link.active {
                 </div>
 
                 <div class="summary-and-result-grid">
+                    
                     <div class="grey-summary-box">
+                        
                         <div class="summary-item-row">
                             <div class="summary-label">Rata-rata (Aktual)</div>
                             <div id="{{INSTANCE_ID}}_avgValueDisplay" class="summary-value avg">0 ekor</div>
@@ -1324,6 +1366,15 @@ body.dark-mode .tab-link.active {
                             <div class="summary-label">📦 Kebutuhan Box</div>
                             <div id="{{INSTANCE_ID}}_kebutuhanBox" class="summary-value box">0 Box</div>
                         </div>
+                        
+                        <div id="{{INSTANCE_ID}}_limitKapasitasToggleContainer" class="simulasi-toggle-container" style="justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--color-border);">
+                            <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-accent);">Batasi ke Kapasitas Truk?</span>
+                            <label class="switch">
+                                <input type="checkbox" id="{{INSTANCE_ID}}_limitKapasitasToggle" onchange="recalcAllHitungan('{{INSTANCE_ID}}')" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
                         <div class="summary-item-row" id="{{INSTANCE_ID}}_simulasiBoxRow" style="display: none;">
                             <div class="summary-label" style="font-weight: 700; color: var(--color-alert-text);">⚠ Simulasi Box Real (Over Capacity)</div>
                             <div id="{{INSTANCE_ID}}_simulasiBoxReal" class="summary-value simulation"></div>
@@ -1331,44 +1382,73 @@ body.dark-mode .tab-link.active {
                     </div>
 
                     <div class="green-result-box">
-                        <div class="summary-item-row">
-                            <div class="summary-label">
-                                Benur Per Kantong (Real)<br>
-                                <small class="text-muted" style="font-size: 0.75em;">(Rata-rata - A1)</small>
-                            </div>
-                            <div id="{{INSTANCE_ID}}_benurPerKantongReal" class="summary-value real-sj">0 ekor/kantong</div>
-                        </div>
-                        <div class="summary-item-row" id="{{INSTANCE_ID}}_benurPerKantongSJRow" style="display: none;">
-                            <div class="summary-label">
-                                Benur Per Kantong (SJ)<br>
-                                <small class="text-muted" style="font-size: 0.75em;">(Rata-rata - A1 - A2)</small>
-                            </div>
-                            <div id="{{INSTANCE_ID}}_benurPerKantongSJ" class="summary-value real-sj">0 ekor/kantong</div>
-                        </div>
-                    </div>
 
-                    <section class="card card-selisih" id="{{INSTANCE_ID}}_selisihBox" style="display: none;">
-                        <h2 class="selisih-title">🐠 Rekap Packing</h2>
-                        <div class="selisih-row">
-                            <span class="selisih-label">Total Benur Packing</span>
-                            <span class="selisih-value" id="{{INSTANCE_ID}}_selisih_totalPacking">0</span>
+                        <div id="{{INSTANCE_ID}}_manualBenurToggleContainer" class="simulasi-toggle-container" style="justify-content: space-between; margin-bottom: 5px;">
+                            <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-alert-text);">Gunakan Override Manual?</span>
+                            <label class="switch">
+                                <input type="checkbox" id="{{INSTANCE_ID}}_manualBenurToggle" onchange="toggleManualBenurInput('{{INSTANCE_ID}}')">
+                                <span class="slider round"></span>
+                            </label>
                         </div>
-                        <div class="selisih-row">
-                            <span class="selisih-label">Selisih (vs Order)</span>
-                            <span class="selisih-value" id="{{INSTANCE_ID}}_selisih_selisihOrder">0</span>
+
+                        <div class="summary-item-row" id="{{INSTANCE_ID}}_manualBenurInputRow" style="background: var(--color-card-recap); padding: 8px; border-radius: 6px; margin-top: 5px; display: none;">
+                            <div class="summary-label" style="font-size: 0.85em; font-style: italic;">
+                                Override Manual (Ekor):
+                            </div>
+                            <div class="allowance-inputs">
+                                <input type="number" id="{{INSTANCE_ID}}_manualBenurOverride" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 100px; font-weight: 700; text-align: right; color: var(--color-alert-text);">
+                                <button class="btn" onclick="clearManualBenur('{{INSTANCE_ID}}')" style="padding: 5px 8px; font-size: 0.7em; line-height: 1; min-width: 30px;" title="Reset Override">🔄</button>
+                            </div>
+                        </div>
+
+                        <div class="tester-result-box split-layout" id="{{INSTANCE_ID}}_benurPerKantongWrapper" 
+                             style="padding: 10px 5px; margin-top: 10px; border-top: 1px dashed var(--color-border); background: transparent; border: none; box-shadow: none;">
+                            
+                            <div class="result-box-split" id="{{INSTANCE_ID}}_benurPerKantongRealBox" style="background: var(--color-tester-result-bg); border-color: var(--color-card-hitung-border);">
+                                <div class="label" id="{{INSTANCE_ID}}_benurPerKantongRealLabel" style="font-size: 0.7em; color: var(--color-tester-result-text);">
+                                    Benur/Kantong (Real)
+                                    <small class="text-muted" style="font-size: 0.9em; display: block; color: inherit; opacity: 0.7;">(Rata-rata - A1)</small>
+                                </div>
+                                <div id="{{INSTANCE_ID}}_benurPerKantongReal" class="result-value" style="font-size: 1.5em; color: var(--color-text-sum);">
+                                    <span>0</span> <small>ekor/kantong</small>
+                                </div>
+                            </div>
+                            
+                            <div class="result-box-split estimasi-box" id="{{INSTANCE_ID}}_benurPerKantongSJBox" style="display: none; background: var(--color-card-bg); border-color: var(--color-accent);">
+                                <div class="label" id="{{INSTANCE_ID}}_benurPerKantongSJLabel" style="font-size: 0.7em; color: var(--color-accent);">
+                                    Benur/Kantong (SJ)
+                                    <small class="text-muted" style="font-size: 0.9em; display: block; color: inherit; opacity: 0.7;">(Rata-rata - A1 - A2)</small>
+                                </div>
+                                <div id="{{INSTANCE_ID}}_benurPerKantongSJ" class="result-value" style="font-size: 1.5em; color: var(--color-accent);">
+                                    <span>0</span> <small>ekor/kantong</small>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+
+                    <section class="grey-summary-box" id="{{INSTANCE_ID}}_selisihBox" style="display: none; margin-top: 15px;">
+                        <div class="summary-item-row" style="border-bottom: 1px solid var(--color-border);">
+                            <div class="summary-label" style="font-weight: 700; color: var(--color-accent); font-size: 0.95em;">🐠 Rekap Packing</div>
+                        </div>
+
+                        <div class="summary-item-row">
+                            <span class="summary-label">Total Benur Packing</span>
+                            <span class="summary-value real-sj" id="{{INSTANCE_ID}}_selisih_totalPacking">0</span>
+                        </div>
+                        <div class="summary-item-row">
+                            <span class="summary-label">Selisih (vs Order)</span>
+                            <span class="summary-value" id="{{INSTANCE_ID}}_selisih_selisihOrder">0</span>
                         </div>
                     
                         <div id="{{INSTANCE_ID}}_selisihWarningBox" style="display: none; margin-top: 15px; border-top: 1px dashed var(--color-recap-border); padding-top: 15px; text-align: center;">
                             <h3 style="font-size: 0.9em; color: var(--color-alert-text); margin: 0 0 8px 0;">⚠ Peringatan Selisih! Cek Ulang:</h3>
-                            <div class="simulasi-toggle-container">
+                            <div class="simulasi-toggle-container" style="justify-content: center;">
                                 <span class="simulasi-toggle-label">Gunakan Simulasi</span>
                                 <label class="switch">
                                     <input type="checkbox" id="{{INSTANCE_ID}}_simulasiToggle" onchange="toggleSimulasiUsage('{{INSTANCE_ID}}')">
                                     <span class="slider round"></span>
                                 </label>
                             </div>
-                            <div style="font-size: 0.8em; color: var(--color-recap-label); margin-bottom: 5px; display: none;">[Order] / [Box] / [Isi/Box]</div>
-                            <div id="{{INSTANCE_ID}}_selisihFormula" style="font-size: 0.85em; font-weight: 700; color: var(--color-text-main); margin-bottom: 10px; display: none;">-</div>
                             <div id="{{INSTANCE_ID}}_selisihFinalResult" style="font-size: 1.8em; font-weight: 700; color: var(--color-alert-text); text-align: center; background: var(--color-card-tester); padding: 10px; border-radius: 8px; margin-top: 10px;">
                                 0 ekor/kantong
                             </div>
@@ -1378,9 +1458,9 @@ body.dark-mode .tab-link.active {
                         </div>
                     </section>
                 </div>
-
+                        
                 <div class="actions-row">
-                </div>
+                    </div>
 
                 <div id="{{INSTANCE_ID}}_hitunganTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
             </section>
@@ -1402,7 +1482,7 @@ body.dark-mode .tab-link.active {
                 <h3 class="recap-section-title">Data Tester</h3>
                 <div class="recap-row"><span class="recap-label">No. Bak</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_nomorBak">-</span></div>
                 <div class="recap-row"><span class="recap-label">Tomota</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tomota">- ekor</span></div>
-                <div class="recap-row"><span class="recap-label">Σ Total</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerSum">0</span></div>
+                <div class="recap-row"><span class="recap-label">Σ Total</span><span class="recap-value" id="{{INSTANCE_ID}}_testerSum">0</span></div>
                 <div class="recap-row"><span class="recap-label">Density</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerDensity">-</span></div>
                 <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceTester">0 %</span></div>
                 <div class="recap-row"><span class="recap-label">Hasil Benur Tester</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_hasilTester">0</span></div>
@@ -1410,7 +1490,7 @@ body.dark-mode .tab-link.active {
 
                 <h3 class="recap-section-title">Hasil Hitungan</h3>
                 <div id="{{INSTANCE_ID}}_recap_sessionSummary">
-                </div>
+                    </div>
                 <div class="recap-row"><span class="recap-label">Rata-rata (Aktual)</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_avgValue">0 ekor</span></div>
                 <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceHitung">0% / 0%</span></div>
                 <div class="recap-row"><span class="recap-label">Kebutuhan Box</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_kebutuhanBox">0 Box</span></div>
@@ -1427,9 +1507,8 @@ body.dark-mode .tab-link.active {
                 <div id="{{INSTANCE_ID}}_recapTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
             </section>
 
-        </div> 
-</div>
- </template>
+        </div> </div> </template>
+
 <div class="floating-nav-bar">
     
     <div class="floating-nav-group left">
@@ -1458,6 +1537,7 @@ body.dark-mode .tab-link.active {
         </section>
     </div>
 </div>
+
 <script>
 
 // ===================================
@@ -1501,11 +1581,6 @@ function openCard(evt, cardIdToOpen) {
 // ===================================
 // GLOBAL VARIABLES & SETUP
 // ===================================
-// ... (sisa kode JavaScript Anda yang sudah ada) ...
-
-// ===================================
-// GLOBAL VARIABLES & SETUP
-// ===================================
 
 let instanceCounter = 0;
 let activeInstanceIndex = 0; // 0-based index
@@ -1520,7 +1595,7 @@ const TRASH_STORAGE_KEY = 'shrimpCountData_v4_TRASH';
 const sopirDB = {
   "Didi": { "nohp": "085351360595", "plat": "DK 8656 UE" },
   "Yandi": { "nohp": "081236248730", "plat": "DK 8252 UB" },
-  "Suharsono": { "nohp": "081399102574", "plat": "DK 8250 UB" },
+  "Suharsono": { "nohp": "081399102754", "plat": "DK 8250 UB" },
   "Rusdiana": { "nohp": "081287812738", "plat": "DK 8040 UD" },
   "Yana": { "nohp": "082146659061", "plat": "DK 8655 UE" },
   "Rizki": { "nohp": "081398994440", "plat": " DK 8995 UE" },
@@ -1592,16 +1667,9 @@ function updateCarouselControls() {
     const total = slideTrack.children.length;
     const indicatorText = `${activeInstanceIndex + 1} / ${total}`;
     
-    // Hapus referensi ke kontrol lama yang sudah di-display:none
-    // document.getElementById('slideIndicator').textContent = indicatorText;
     document.getElementById('floatingIndicator').textContent = indicatorText;
-    
-    // document.getElementById('prevSlideBtn').style.display = (activeInstanceIndex > 0) ? 'inline-block' : 'none';
     document.getElementById('floatingPrevBtn').disabled = (activeInstanceIndex <= 0);
-    
-    // document.getElementById('nextSlideBtn').style.display = (activeInstanceIndex < total - 1) ? 'inline-block' : 'none';
     document.getElementById('floatingNextBtn').disabled = (activeInstanceIndex >= total - 1);
-
     document.getElementById('floatingNavCenter').style.display = (total > 1) ? 'flex' : 'none';
 
     const currentInstance = slideTrack.children[activeInstanceIndex];
@@ -1631,17 +1699,16 @@ function addInstance() {
     
     populateDriverOptions(instanceId);
     updateTruckDetails(instanceId);
-    initBoxesTester(instanceId);
-    addHitunganSession(instanceId);
-    addHitunganSession(instanceId);
+    initBoxesTester(instanceId); 
+    addHitunganSession(instanceId); 
+    addHitunganSession(instanceId); 
     updateRecap(instanceId);
 
-    if (arguments.length === 0) {
+    if (arguments.length === 0) { // Hanya pindah slide jika ini adalah panggilan manual (bukan load)
         goToSlide(instanceCounter - 1);
     }
 }
 
-// [REVISI TOTAL] Fungsi Hapus dengan logika Keranjang Sampah + Bug Fix
 function removeInstance() {
     const total = slideTrack.children.length;
     if (total <= 1) {
@@ -1693,7 +1760,9 @@ function removeInstance() {
     for (let i = 0; i < slideTrack.children.length; i++) {
         const item = slideTrack.children[i];
         const newIdNumber = i + 1;
-        const oldIdNumber = parseInt(item.id.split('_')[1]);
+        const oldIdNumberText = item.id.split('_')[1];
+        if (!oldIdNumberText) continue; // Safety check
+        const oldIdNumber = parseInt(oldIdNumberText);
         
         if (oldIdNumber !== newIdNumber) {
             const newInstanceId = `instance_${newIdNumber}`;
@@ -1701,6 +1770,7 @@ function removeInstance() {
             const oldStorageKey = `${LOCAL_STORAGE_KEY}_${oldInstanceId}`;
             const newStorageKey = `${LOCAL_STORAGE_KEY}_${newInstanceId}`;
 
+            // Pindahkan data di localStorage
             try {
                 const dataToMove = localStorage.getItem(oldStorageKey);
                 if (dataToMove) {
@@ -1711,17 +1781,17 @@ function removeInstance() {
                  console.warn(`Gagal me-rename localStorage dari ${oldStorageKey} ke ${newStorageKey}`, e);
             }
 
+            // Update DOM id dan HTML
             item.id = newInstanceId;
             let newHTML = item.innerHTML.replace(new RegExp(oldInstanceId, 'g'), newInstanceId);
             newHTML = newHTML.replace(new RegExp(`Data Panen ${oldIdNumber}`, 'g'), `Data Panen ${newIdNumber}`);
             newHTML = newHTML.replace(new RegExp(`Rekap Panen ${oldIdNumber}`, 'g'), `Rekap Panen ${newIdNumber}`);
             item.innerHTML = newHTML;
-
-            // [PERBAIKAN BUG KOLOM HILANG]
-            // Panggil loadData untuk memuat ulang data (termasuk kolom dinamis)
-            // ke dalam HTML yang baru saja di-reset.
-            loadData(newInstanceId, true); // true = silent (tidak ada pop-up)
-
+            
+            // PENTING: Muat ulang data ke DOM yang baru di-rename
+            loadData(newInstanceId, true); // true = silent
+            
+            // Re-attach event listener (jika ada yang hilang)
             const oldRemoveBtn = item.querySelector(`[id^="${oldInstanceId}_removeBtn"]`);
             if(oldRemoveBtn) oldRemoveBtn.id = `${newInstanceId}_removeBtn`;
         }
@@ -1753,6 +1823,7 @@ function populateDriverOptions(instanceId) {
 function updateDriverDetails(instanceId) {
     const driverSelect = getEl(instanceId, 'driver');
     const platInput = getEl(instanceId, 'platNomor');
+    if (!driverSelect || !platInput) return; // Safety check
     const driverName = driverSelect.value;
     if (driverName && sopirDB[driverName]) {
         platInput.value = sopirDB[driverName].plat.trim();
@@ -1787,12 +1858,15 @@ function updateTruckDetails(instanceId){
   updateRecap(instanceId);
 }
 function timestampNow(instanceId, elementId){
+  const el = getEl(instanceId, elementId);
+  if (!el) return;
   const d=new Date();
   const opt={day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'};
-  getEl(instanceId, elementId).textContent='🕒 Terakhir diperbarui: '+d.toLocaleString('id-ID',opt);
+  el.textContent='🕒 Terakhir diperbarui: '+d.toLocaleString('id-ID',opt);
 }
 function getDensityDivisor(instanceId) {
     const jenisTrukEl = getEl(instanceId, 'jenisTruk');
+    if (!jenisTrukEl) return 5; // Default
     const jenis = jenisTrukEl.value.toLowerCase();
     return jenis.includes('bandara') ? 3 : 5;
 }
@@ -1814,6 +1888,9 @@ function recalcAllTester(instanceId){
   const densTesterEl = getEl(instanceId, 'testerDensity');
   const allowanceInput = getEl(instanceId, 'allowanceTester');
   const finalResultEl = getEl(instanceId, 'finalTesterResult');
+  // Safety checks
+  if (!gridTester || !sumTesterEl || !densTesterEl || !allowanceInput || !finalResultEl) return;
+  
   const vals=[...gridTester.querySelectorAll('input')].map(i=>safeParseFloat(i.value));
   const s=vals.reduce((a,b)=>a+b,0);
   sumTesterEl.textContent=s.toLocaleString();
@@ -1826,9 +1903,13 @@ function recalcAllTester(instanceId){
   }
   finalResultEl.textContent = finalBenurTester.toLocaleString();
   const estimasiBoxEl = getEl(instanceId, 'estimasiBoxTester');
-  const nominalText = getEl(instanceId, 'nominalOrder').value.replace(/\./g,'');
+  const nominalOrderEl = getEl(instanceId, 'nominalOrder');
+  const isiBoxEl = getEl(instanceId, 'isiBox');
+  if (!estimasiBoxEl || !nominalOrderEl || !isiBoxEl) return;
+
+  const nominalText = nominalOrderEl.value.replace(/\./g,'');
   const nominalOrderEkor = parseFloat(nominalText)||0;
-  const isiBox = parseFloat(getEl(instanceId, 'isiBox').value)||0;
+  const isiBox = parseFloat(isiBoxEl.value)||0;
   let estimasiBox = 0;
   if (nominalOrderEkor > 0 && finalBenurTester > 0 && isiBox > 0) {
       estimasiBox = Math.ceil(nominalOrderEkor / finalBenurTester / isiBox);
@@ -1840,7 +1921,8 @@ function recalcAllTester(instanceId){
 }
 function initBoxesTester(instanceId){
     const gridTester = getEl(instanceId, 'hitGridTester');
-    gridTester.innerHTML='';
+    if (!gridTester) return; // Safety check
+    gridTester.innerHTML=''; // Kosongkan dulu
     for(let i=0;i<8;i++){
         const box=document.createElement('div');box.className='calc-box';
         const input=document.createElement('input');input.type='number';input.placeholder='0';
@@ -1865,176 +1947,288 @@ let sessionCounter = {};
 function recalcSession(instanceId, sessionId) {
     const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
     const sumEl = document.getElementById(`${instanceId}_sessionSum${sessionId}`);
-    if (!grid) return;
+    if (!grid || !sumEl) return; // Safety check
     const vals = [...grid.querySelectorAll('input')].map(i => safeParseFloat(i.value));
     const s = vals.reduce((a,b)=>a+b,0);
     sumEl.innerHTML = s.toLocaleString('id-ID');
 }
+
+/**
+ * [BARU] Menampilkan/menyembunyikan input override manual
+ */
+function toggleManualBenurInput(instanceId) {
+    const toggle = getEl(instanceId, 'manualBenurToggle');
+    const inputRow = getEl(instanceId, 'manualBenurInputRow');
+    if (!toggle || !inputRow) return;
+    
+    if (toggle.checked) {
+        inputRow.style.display = 'flex';
+    } else {
+        inputRow.style.display = 'none';
+        // Jika toggle dimatikan, hapus nilainya dan hitung ulang
+        clearManualBenur(instanceId, true); // true = silent (jangan panggil recalcDuaKali)
+    }
+    // Hitung ulang setelah UI diubah
+    recalcAllHitungan(instanceId);
+}
+
+/**
+ * [MODIFIKASI] Menghapus override manual benur/kantong
+ */
+function clearManualBenur(instanceId, silent = false) {
+    const manualInput = getEl(instanceId, 'manualBenurOverride');
+    if (manualInput) {
+        manualInput.value = '';
+    }
+    
+    // [BARU] Juga matikan toggle-nya
+    const manualToggle = getEl(instanceId, 'manualBenurToggle');
+    if (manualToggle) {
+        manualToggle.checked = false;
+    }
+    
+    // [BARU] Sembunyikan lagi input row
+    const inputRow = getEl(instanceId, 'manualBenurInputRow');
+     if (inputRow) {
+        inputRow.style.display = 'none';
+    }
+
+    if (!silent) {
+        recalcAllHitungan(instanceId); // Hitung ulang
+    }
+}
+
+/**
+ * [PEROMBAKAN TOTAL V5.2] Fungsi recalcAllHitungan dengan logika simulasi stabil
+ */
 function recalcAllHitungan(instanceId) {
+    // --- Bagian 1: Kumpulkan Semua Data Input ---
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
+    if (!multiSessionGrid) return; // Safety check utama
+    
     const sessions = multiSessionGrid.querySelectorAll('.hit-session');
     let totalSum = 0;
     let validSessions = 0;
     sessions.forEach(session => {
         const sessionId = session.dataset.sessionId;
         recalcSession(instanceId, sessionId);
-        const sumText = document.getElementById(`${instanceId}_sessionSum${sessionId}`).textContent.replace(/\./g,'');
-        const sumVal = parseFloat(sumText)||0;
-        if (sumVal > 0) {
-            totalSum += sumVal;
-            validSessions++;
+        const sumTextEl = document.getElementById(`${instanceId}_sessionSum${sessionId}`);
+        if(sumTextEl) {
+            const sumText = sumTextEl.textContent.replace(/\./g,'');
+            const sumVal = parseFloat(sumText)||0;
+            if (sumVal > 0) {
+                totalSum += sumVal;
+                validSessions++;
+            }
         }
     });
     const averageSum = validSessions > 0 ? totalSum / validSessions : 0;
-    const nominalText = getEl(instanceId, 'nominalOrder').value.replace(/\./g,'');
+    const avgRounded = Math.round(averageSum);
+    
+    const nominalOrderEl = getEl(instanceId, 'nominalOrder');
+    const isiBoxEl = getEl(instanceId, 'isiBox');
+    const kapasitasAngkutEl = getEl(instanceId, 'kapasitasAngkut');
+    const allowance1El = getEl(instanceId, 'allowance1');
+    const allowance2El = getEl(instanceId, 'allowance2');
+    const orderDisplayEl = getEl(instanceId, 'orderDisplay');
+    const avgValueDisplayEl = getEl(instanceId, 'avgValueDisplay');
+
+    if (!nominalOrderEl || !isiBoxEl || !kapasitasAngkutEl || !allowance1El || !allowance2El || !orderDisplayEl || !avgValueDisplayEl) {
+        console.error(`[${instanceId}] Error: Elemen input dasar tidak ditemukan.`);
+        return;
+    }
+
+    const nominalText = nominalOrderEl.value.replace(/\./g,'');
     const nominalOrderEkor = parseFloat(nominalText)||0;
-    const isiBox = parseFloat(getEl(instanceId, 'isiBox').value)||0;
-    const kapasitasAngkut = parseFloat(getEl(instanceId, 'kapasitasAngkut').value)||0;
-    const allowance1Input = safeParseFloat(getEl(instanceId, 'allowance1').value);
-    const allowance2Input = safeParseFloat(getEl(instanceId, 'allowance2').value);
+    const isiBox = parseFloat(isiBoxEl.value)||0;
+    const kapasitasAngkut = parseFloat(kapasitasAngkutEl.value)||0;
+    const allowance1Input = safeParseFloat(allowance1El.value);
+    const allowance2Input = safeParseFloat(allowance2El.value);
     const allowance1 = allowance1Input / 100;
     const allowance2 = allowance2Input / 100;
-    getEl(instanceId, 'orderDisplay').textContent = nominalOrderEkor.toLocaleString();
-    const avgRounded = Math.round(averageSum);
-    getEl(instanceId, 'avgValueDisplay').textContent = avgRounded.toLocaleString() + ' ekor';
-    const benurPerKantong_Real_Raw = avgRounded * (1 - allowance1);
-    const benurPerKantong_SJ_Raw = avgRounded * (1 - (allowance1 + allowance2));
-    const benurPerKantong_Real_Display = roundToNearestTen(benurPerKantong_Real_Raw);
-    const benurPerKantong_SJ_Display = roundToNearestTen(benurPerKantong_SJ_Raw);
-    let kebutuhanBox = 0;
-    let boxRoundedText = '0 Box';
+    
+    orderDisplayEl.textContent = nominalOrderEkor.toLocaleString();
+    avgValueDisplayEl.textContent = avgRounded.toLocaleString() + ' ekor';
+
+    // --- Bagian 2: Tentukan Nilai Benur/Kantong MURNI (Tahap 1) ---
+    const calculatedBenur_Real_Murni = roundToNearestTen(avgRounded * (1 - allowance1));
+    
+    let kebutuhanBox_Murni = 0;
+    if (nominalOrderEkor > 0 && calculatedBenur_Real_Murni > 0 && isiBox > 0) {
+        kebutuhanBox_Murni = Math.ceil(nominalOrderEkor / calculatedBenur_Real_Murni / isiBox);
+    }
+
+    const isOverCapacity = (kebutuhanBox_Murni > kapasitasAngkut) && (kapasitasAngkut > 0);
+    const limitKapasitasToggle = getEl(instanceId, 'limitKapasitasToggle');
+    const limitKapasitas = limitKapasitasToggle && limitKapasitasToggle.checked && isOverCapacity;
+    
+    let kebutuhanBox_Terbatas = kebutuhanBox_Murni;
+    let benurPerKantong_SimulasiOverCapacity = 0;
     let simulationNeeded = false;
-    let simulasiEkorPerKantong = 0;
-    if (nominalOrderEkor > 0 && benurPerKantong_Real_Display > 0 && isiBox > 0) {
-        const totalKantongDibutuhkan = nominalOrderEkor / benurPerKantong_Real_Display;
-        const boxSebelumBulat = totalKantongDibutuhkan / isiBox;
-        kebutuhanBox = Math.ceil(boxSebelumBulat);
-        let pembulatanText = '';
-        boxRoundedText = kebutuhanBox.toLocaleString() + ' Box' + pembulatanText;
-        if (kebutuhanBox > kapasitasAngkut && kapasitasAngkut > 0) {
-            simulationNeeded = true;
-            kebutuhanBox = kapasitasAngkut;
-            boxRoundedText = kapasitasAngkut.toLocaleString() + ' Box (MAX)';
-            const simulasiTotalKantong = kapasitasAngkut * isiBox;
-            if (simulasiTotalKantong > 0) {
-                simulasiEkorPerKantong = roundToNearestTen(nominalOrderEkor / simulasiTotalKantong);
-            }
+
+    if (limitKapasitas) {
+        simulationNeeded = true;
+        kebutuhanBox_Terbatas = kapasitasAngkut; 
+        const simulasiTotalKantong = kapasitasAngkut * isiBox;
+        if (simulasiTotalKantong > 0) {
+            benurPerKantong_SimulasiOverCapacity = roundToNearestTen(nominalOrderEkor / simulasiTotalKantong);
         }
     }
-    getEl(instanceId, 'kebutuhanBox').textContent = boxRoundedText;
-    getEl(instanceId, 'benurPerKantongReal').textContent = benurPerKantong_Real_Display.toLocaleString() + ' ekor/kantong';
-    getEl(instanceId, 'benurPerKantongSJ').textContent = benurPerKantong_SJ_Display.toLocaleString() + ' ekor/kantong';
+
+    const kebutuhanBoxEl = getEl(instanceId, 'kebutuhanBox');
+    if (kebutuhanBoxEl) {
+        kebutuhanBoxEl.textContent = kebutuhanBox_Terbatas.toLocaleString() + (limitKapasitas ? ' Box (MAX)' : ' Box');
+    }
+    
     const simulasiBoxRow = getEl(instanceId, 'simulasiBoxRow');
-    let finalEkorPerKantongRealUntukHitung = benurPerKantong_Real_Display;
-    if (simulationNeeded) {
-        simulasiBoxRow.style.display = 'flex';
-        getEl(instanceId, 'simulasiBoxReal').textContent = simulasiEkorPerKantong.toLocaleString() + ' ekor/kantong';
-        finalEkorPerKantongRealUntukHitung = simulasiEkorPerKantong;
-    } else {
-        simulasiBoxRow.style.display = 'none';
+    if (simulasiBoxRow) {
+        if (simulationNeeded) {
+            simulasiBoxRow.style.display = 'flex';
+            getEl(instanceId, 'simulasiBoxReal').textContent = benurPerKantong_SimulasiOverCapacity.toLocaleString() + ' ekor/kantong';
+        } else {
+            simulasiBoxRow.style.display = 'none';
+        }
     }
-    const sjRow = getEl(instanceId, 'benurPerKantongSJRow');
-    if (allowance2Input > 0) {
-        sjRow.style.display = 'flex';
+    
+    const benurPerKantong_Real_Dasar = simulationNeeded ? benurPerKantong_SimulasiOverCapacity : calculatedBenur_Real_Murni;
+
+    // --- Bagian 3: Tentukan Nilai Benur/Kantong FINAL (Tahap 2) ---
+    const manualBenurToggle = getEl(instanceId, 'manualBenurToggle');
+    const manualBenurInput = getEl(instanceId, 'manualBenurOverride');
+    const manualBenurValue = manualBenurInput ? safeParseFloat(manualBenurInput.value) : 0;
+    const useManualBenurToggle = manualBenurToggle && manualBenurToggle.checked;
+
+    const simulasiSelisihToggle = getEl(instanceId, 'simulasiToggle');
+    const useSimulasiSelisih = simulasiSelisihToggle && simulasiSelisihToggle.checked;
+    
+    let benurPerKantong_Real_Final = 0;
+    let usingManualBenur = false;
+    let usingSimulasiSelisih = false;
+    let selisihSimulasiValue = 0; // Akan diisi nanti
+
+    // Prioritas 1: Manual Override
+    if (useManualBenurToggle && manualBenurValue > 0) {
+        benurPerKantong_Real_Final = manualBenurValue;
+        usingManualBenur = true;
     } else {
-        sjRow.style.display = 'none';
+        // Prioritas 2 & 3: Simulasi atau Dasar (akan ditentukan di Bagian 4)
+        benurPerKantong_Real_Final = benurPerKantong_Real_Dasar; // Default ke dasar
     }
+    
+    // --- Bagian 4: Hitung Selisih & Tentukan Nilai Simulasi (Tahap 3) ---
+    // [PERBAIKAN V5.2] Logika ini sekarang berjalan SETELAH nilai dasar/manual ditentukan
     const selisihBoxEl = getEl(instanceId, 'selisihBox');
     const totalPackingEl = getEl(instanceId, 'selisih_totalPacking');
     const selisihOrderEl = getEl(instanceId, 'selisih_selisihOrder');
     const selisihWarningBox = getEl(instanceId, 'selisihWarningBox');
-    const selisihFormulaEl = getEl(instanceId, 'selisihFormula');
     const selisihFinalResultEl = getEl(instanceId, 'selisihFinalResult');
-    if (kebutuhanBox > 0 && isiBox > 0 && finalEkorPerKantongRealUntukHitung > 0) {
-        const totalPacking = kebutuhanBox * isiBox * finalEkorPerKantongRealUntukHitung;
-        const selisihOrder = totalPacking - nominalOrderEkor;
-        totalPackingEl.textContent = totalPacking.toLocaleString('id-ID') + ' ekor';
-        let selisihText = (selisihOrder >= 0 ? '+' : '') + selisihOrder.toLocaleString('id-ID') + ' ekor';
-        selisihOrderEl.textContent = selisihText;
-        selisihOrderEl.classList.toggle('positive', selisihOrder >= 0);
-        selisihOrderEl.classList.toggle('negative', selisihOrder < 0);
-        selisihBoxEl.style.display = 'block'; 
-        const batasWajar = nominalOrderEkor * 0.002; 
-        if (Math.abs(selisihOrder) > batasWajar && nominalOrderEkor > 0 && kebutuhanBox > 0 && isiBox > 0) {
-            selisihWarningBox.style.display = 'block';
-            let targetTotalPacking;
-            let newBenurPerKantong;
-            let formulaText;
-            const h3El = getEl(instanceId, 'selisihWarningBox').querySelector('h3');
-            if (selisihOrder > 0) {
-                targetTotalPacking = nominalOrderEkor * 1.001;
-                if(h3El) h3El.textContent = '⚠ Selisih PLUS! Simulasi agar +0.1%:';
-                formulaText = `[(${nominalOrderEkor.toLocaleString('id-ID')} * 1.001)] / [${kebutuhanBox}] / [${isiBox}]`;
+
+    if (selisihBoxEl && totalPackingEl && selisihOrderEl && kebutuhanBox_Terbatas > 0 && isiBox > 0) {
+        
+        // (A) Hitung selisih "murni" (tanpa toggle simulasi)
+        const totalPacking_Murni = kebutuhanBox_Terbatas * isiBox * benurPerKantong_Real_Dasar;
+        const selisihOrder_Murni = totalPacking_Murni - nominalOrderEkor;
+        
+        const batasWajar = nominalOrderEkor * 0.001; 
+
+        // [PERBAIKAN LOGIKA V5.2] Hanya tampilkan box simulasi jika:
+        // 1. TIDAK pakai manual override
+        // 2. Selisihnya POSITIF
+        // 3. Selisihnya > 0.1%
+        if (selisihWarningBox && !usingManualBenur && selisihOrder_Murni > batasWajar && nominalOrderEkor > 0) {
+            
+            // Hitung nilai target simulasi
+            const targetTotalPacking = nominalOrderEkor * 1.001; // Target +0.1%
+            const newBenurPerKantong = targetTotalPacking / kebutuhanBox_Terbatas / isiBox;
+            selisihSimulasiValue = roundToNearestTen(newBenurPerKantong); // Simpan nilai simulasi
+
+            // [PERBAIKAN LOGIKA V5.2] Sembunyikan box jika nilainya sudah sama
+            if (benurPerKantong_Real_Dasar === selisihSimulasiValue) {
+                 selisihWarningBox.style.display = 'none';
+                 if (simulasiSelisihToggle) simulasiSelisihToggle.checked = false;
             } else {
-                targetTotalPacking = nominalOrderEkor * 0.999;
-                if(h3El) h3El.textContent = '⚠ Selisih MINUS! Simulasi agar -0.1%:';
-                formulaText = `[(${nominalOrderEkor.toLocaleString('id-ID')} * 0.999)] / [${kebutuhanBox}] / [${isiBox}]`;
+                selisihWarningBox.style.display = 'block';
+                if(selisihFinalResultEl) selisihFinalResultEl.textContent = selisihSimulasiValue.toLocaleString('id-ID') + ' ekor/kantong';
+            
+                const newTotalPacking = kebutuhanBox_Terbatas * isiBox * selisihSimulasiValue;
+                const newSelisih = newTotalPacking - nominalOrderEkor;
+                const selisihSimulasiResultEl = getEl(instanceId, 'selisihSimulasiResult');
+                if (selisihSimulasiResultEl) {
+                    selisihSimulasiResultEl.textContent = 'Estimasi Selisih Baru: ' + (newSelisih >= 0 ? '+' : '') + newSelisih.toLocaleString('id-ID') + ' ekor';
+                }
             }
-            newBenurPerKantong = targetTotalPacking / kebutuhanBox / isiBox;
-            selisihFormulaEl.textContent = formulaText;
-            const hasilBulat = roundToNearestTen(newBenurPerKantong);
-            selisihFinalResultEl.textContent = hasilBulat.toLocaleString('id-ID') + ' ekor/kantong';
-            const newTotalPacking = kebutuhanBox * isiBox * hasilBulat;
-            const newSelisih = newTotalPacking - nominalOrderEkor;
-            const selisihSimulasiResultEl = getEl(instanceId, 'selisihSimulasiResult');
-            if (selisihSimulasiResultEl) {
-                selisihSimulasiResultEl.textContent = 'Estimasi Selisih Baru: ' + (newSelisih >= 0 ? '+' : '') + newSelisih.toLocaleString('id-ID') + ' ekor';
+            
+            // (B) Cek apakah simulasi harus diterapkan
+            if (useSimulasiSelisih && selisihSimulasiValue > 0) {
+                 benurPerKantong_Real_Final = selisihSimulasiValue; // Terapkan nilai simulasi
+                 usingSimulasiSelisih = true;
             }
-        } else {
+
+        } else if (selisihWarningBox) {
             selisihWarningBox.style.display = 'none';
-            const simulasiToggle = getEl(instanceId, 'simulasiToggle');
-            if (simulasiToggle) simulasiToggle.checked = false;
+            if (simulasiSelisihToggle) simulasiSelisihToggle.checked = false;
         }
-        const simulasiToggle = getEl(instanceId, 'simulasiToggle');
-        const useSimulasi = selisihWarningBox.style.display === 'block' && simulasiToggle && simulasiToggle.checked;
-        let finalBenurReal = finalEkorPerKantongRealUntukHitung;
-        let finalBenurSJ = benurPerKantong_SJ_Display;
-        if (useSimulasi) {
-            const hasilBulatSimulasi = parseFloat(getEl(instanceId, 'selisihFinalResult').textContent.replace(/\./g, '')) || 0;
-            if (hasilBulatSimulasi > 0) {
-                finalBenurReal = hasilBulatSimulasi;
-                const sjAdjustment = avgRounded * allowance2;
-                finalBenurSJ = roundToNearestTen(finalBenurReal - sjAdjustment);
-            }
-        }
-        const realDisplayEl = getEl(instanceId, 'benurPerKantongReal');
-        const sjDisplayEl = getEl(instanceId, 'benurPerKantongSJ');
-        realDisplayEl.textContent = finalBenurReal.toLocaleString() + ' ekor/kantong';
-        sjDisplayEl.textContent = finalBenurSJ.toLocaleString() + ' ekor/kantong';
-        const realParentRow = realDisplayEl.closest('.summary-item-row');
-        const sjParentRow = sjDisplayEl.closest('.summary-item-row');
-        if (realParentRow) {
-            realDisplayEl.style.color = useSimulasi ? 'var(--color-alert-text)' : 'var(--color-text-sum)';
-            realParentRow.style.background = useSimulasi ? 'var(--color-card-tester)' : '';
-            const realLabel = realParentRow.querySelector('.summary-label');
-            if(realLabel) realLabel.style.color = useSimulasi ? 'var(--color-alert-text)' : 'var(--color-text-main)';
-        }
-        if (sjParentRow) {
-            sjDisplayEl.style.color = useSimulasi ? 'var(--color-alert-text)' : 'var(--color-text-sum)';
-            sjParentRow.style.background = useSimulasi ? 'var(--color-card-tester)' : '';
-            const sjLabel = sjParentRow.querySelector('.summary-label');
-            if(sjLabel) sjLabel.style.color = useSimulasi ? 'var(--color-alert-text)' : 'var(--color-text-main)';
-        }
-    } else {
+
+        // (C) Hitung Total Packing FINAL (berdasarkan nilai final)
+        const totalPacking_Final = kebutuhanBox_Terbatas * isiBox * benurPerKantong_Real_Final;
+        const selisihOrder_Final = totalPacking_Final - nominalOrderEkor;
+        
+        // [PERBAIKAN LOGIKA 1] Tampilkan Selisih FINAL
+        totalPackingEl.textContent = totalPacking_Final.toLocaleString('id-ID') + ' ekor';
+        selisihOrderEl.textContent = (selisihOrder_Final >= 0 ? '+' : '') + selisihOrder_Final.toLocaleString('id-ID') + ' ekor';
+        selisihOrderEl.classList.toggle('positive', selisihOrder_Final >= 0);
+        selisihOrderEl.classList.toggle('negative', selisihOrder_Final < 0);
+        selisihBoxEl.style.display = 'block'; 
+
+    } else if (selisihBoxEl) {
         selisihBoxEl.style.display = 'none'; 
         if (selisihWarningBox) selisihWarningBox.style.display = 'none';
-        const realDisplayEl = getEl(instanceId, 'benurPerKantongReal');
-        const sjDisplayEl = getEl(instanceId, 'benurPerKantongSJ');
-        const realParentRow = realDisplayEl.closest('.summary-item-row');
-        const sjParentRow = sjDisplayEl.closest('.summary-item-row');
-        if (realParentRow) {
-            realDisplayEl.style.color = 'var(--color-text-sum)';
-            realParentRow.style.background = '';
-            const realLabel = realParentRow.querySelector('.summary-label');
-            if(realLabel) realLabel.style.color = 'var(--color-text-main)';
-        }
-        if (sjParentRow) {
-            sjDisplayEl.style.color = 'var(--color-text-sum)';
-            sjParentRow.style.background = '';
-            const sjLabel = sjParentRow.querySelector('.summary-label');
-            if(sjLabel) sjLabel.style.color = 'var(--color-text-main)';
-        }
+        if (simulasiSelisihToggle) simulasiSelisihToggle.checked = false;
     }
+    
+    // --- Bagian 5: Hitung Nilai SJ FINAL & Tampilkan ---
+    const sjAdjustment = benurPerKantong_Real_Final * allowance2;
+    const benurPerKantong_SJ_Final = roundToNearestTen(benurPerKantong_Real_Final - sjAdjustment);
+    
+    const realDisplayEl = getEl(instanceId, 'benurPerKantongReal');
+    const sjDisplayEl = getEl(instanceId, 'benurPerKantongSJ');
+    
+    if(realDisplayEl) {
+        const span = realDisplayEl.querySelector('span');
+        if (span) span.textContent = benurPerKantong_Real_Final.toLocaleString();
+    }
+    if(sjDisplayEl) {
+        const span = sjDisplayEl.querySelector('span');
+        if (span) span.textContent = benurPerKantong_SJ_Final.toLocaleString();
+    }
+    
+    const sjRow = getEl(instanceId, 'benurPerKantongSJBox');
+    if (allowance2Input > 0) {
+        if(sjRow) sjRow.style.display = 'block';
+    } else {
+        if(sjRow) sjRow.style.display = 'none';
+    }
+
+    // --- Bagian 6: Styling Box Hasil ---
+    const realDisplayBox = getEl(instanceId, 'benurPerKantongRealBox');
+    const sjDisplayBox = getEl(instanceId, 'benurPerKantongSJBox');
+
+    let highlightFont = usingManualBenur || simulationNeeded || usingSimulasiSelisih;
+    let highlightBg = usingManualBenur || simulationNeeded;
+
+    if (realDisplayBox && realDisplayEl) {
+        realDisplayEl.style.color = highlightFont ? 'var(--color-alert-text)' : 'var(--color-text-sum)';
+        realDisplayBox.style.background = highlightBg ? 'var(--color-card-tester)' : 'var(--color-tester-result-bg)';
+        const realLabel = realDisplayBox.querySelector('.label');
+        if(realLabel) realLabel.style.color = highlightFont ? 'var(--color-alert-text)' : 'var(--color-tester-result-text)';
+    }
+    if (sjDisplayBox && sjDisplayEl) {
+        sjDisplayEl.style.color = highlightFont ? 'var(--color-alert-text)' : 'var(--color-accent)';
+        sjDisplayBox.style.background = highlightBg ? 'var(--color-card-tester)' : 'var(--color-card-bg)';
+        const sjLabel = sjDisplayBox.querySelector('.label');
+        if(sjLabel) sjLabel.style.color = highlightFont ? 'var(--color-alert-text)' : 'var(--color-accent)';
+    }
+    
     timestampNow(instanceId, 'hitunganTimestamp');
     updateRecap(instanceId);
     triggerAutoSave(instanceId);
@@ -2044,6 +2238,7 @@ function toggleSimulasiUsage(instanceId) {
 }
 function addHitunganSession(instanceId) {
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
+    if (!multiSessionGrid) return; // Safety check
     if (!sessionCounter[instanceId]) {
         sessionCounter[instanceId] = 0;
     }
@@ -2062,8 +2257,10 @@ function addHitunganSession(instanceId) {
         <div id="${instanceId}_sessionGrid${sessionId}" class="hit-grid"></div>
     `;
     multiSessionGrid.appendChild(newSession);
+    
+    // Buat grid untuk sesi baru
+    const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
     for (let i = 0; i < 8; i++) {
-        const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
         const box = document.createElement('div');
         box.className = 'calc-box';
         const input = document.createElement('input');
@@ -2077,6 +2274,7 @@ function addHitunganSession(instanceId) {
 }
 function removeHitunganSession(instanceId) {
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
+    if (!multiSessionGrid) return;
     const sessions = multiSessionGrid.querySelectorAll('.hit-session');
     if (sessions.length > 0) {
         sessions[sessions.length - 1].remove();
@@ -2086,12 +2284,17 @@ function removeHitunganSession(instanceId) {
 function resetHitungan(instanceId) {
     if (!confirm('Reset semua input Hitungan, Allowance, dan Override untuk Data Panen ini?')) return;
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
-    multiSessionGrid.innerHTML = '';
+    if(multiSessionGrid) multiSessionGrid.innerHTML = '';
     sessionCounter[instanceId] = 0;
     addHitunganSession(instanceId);
     addHitunganSession(instanceId);
     getEl(instanceId, 'allowance1').value = '0';
     getEl(instanceId, 'allowance2').value = '0';
+    
+    const simulasiToggle = getEl(instanceId, 'simulasiToggle');
+    if (simulasiToggle) simulasiToggle.checked = false;
+    
+    clearManualBenur(instanceId, true); // true = silent
     recalcAllHitungan(instanceId);
 }
 addCalcBox = (fullGridId) => {
@@ -2099,32 +2302,41 @@ addCalcBox = (fullGridId) => {
     const instanceId = parts[0] + '_' + parts[1];
     const gridType = parts[2];
     const grid = document.getElementById(fullGridId);
+    if (!grid) return; // Safety check
+    
     const c=grid.querySelectorAll('.calc-box').length;
-    if(c>=maxBox){alert('Maks '+maxBox+' kolom per sesi.');return;}
-    const box=document.createElement('div');box.className='calc-box';
-    const input=document.createElement('input');input.type='number';input.placeholder='0';
+    if(gridType === 'hitGridTester' && c>=maxBox){alert('Maks '+maxBox+' kolom per sesi.');return;}
+
     if (gridType === 'hitGridTester') {
+        const box=document.createElement('div');box.className='calc-box';
+        const input=document.createElement('input');input.type='number';input.placeholder='0';
         input.oninput = () => recalcAllTester(instanceId);
         box.appendChild(input);
         grid.appendChild(box);
     } else if (gridType === 'multiSessionGrid') {
         const sessions = grid.querySelectorAll('.hit-session');
         if (sessions.length === 0) { alert('Tambahkan Baris Hitungan terlebih dahulu.'); return; }
+        // Cek kolom di sesi pertama
+        const firstSessionGrid = sessions[0].querySelector('.hit-grid');
+        if (firstSessionGrid && firstSessionGrid.querySelectorAll('.calc-box').length >= maxBox) {
+             alert('Maks '+maxBox+' kolom per sesi.');return;
+        }
+        
         sessions.forEach(session => {
             const sessionId = session.dataset.sessionId;
             const sessionGrid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
-            const newBox = document.createElement('div');
-            newBox.className = 'calc-box';
-            const newInput = document.createElement('input');
-            newInput.type = 'number';
-            newInput.placeholder = '0';
-            newInput.oninput = () => { recalcSession(instanceId, sessionId); recalcAllHitungan(instanceId); };
-            newBox.appendChild(newInput);
-            sessionGrid.appendChild(newBox);
+            if (sessionGrid) {
+                const newBox = document.createElement('div');
+                newBox.className = 'calc-box';
+                const newInput = document.createElement('input');
+                newInput.type = 'number';
+                newInput.placeholder = '0';
+                newInput.oninput = () => { recalcSession(instanceId, sessionId); recalcAllHitungan(instanceId); };
+                newBox.appendChild(newInput);
+                sessionGrid.appendChild(newBox);
+            }
         });
-    }
-    if (gridType.startsWith('sessionGrid')) {
-        recalcAllHitungan(instanceId);
+        recalcAllHitungan(instanceId); // Pindah ke sini
     }
 };
 removeCalcBox = (fullGridId) => {
@@ -2132,6 +2344,8 @@ removeCalcBox = (fullGridId) => {
     const instanceId = parts[0] + '_' + parts[1];
     const gridType = parts[2];
     const grid = document.getElementById(fullGridId);
+    if (!grid) return; // Safety check
+    
     let shouldRecalc = false;
     if (gridType === 'hitGridTester') {
         const b=grid.querySelectorAll('.calc-box');
@@ -2143,11 +2357,13 @@ removeCalcBox = (fullGridId) => {
         sessions.forEach(session => {
             const sessionId = session.dataset.sessionId;
             const sessionGrid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
-            const b = sessionGrid.querySelectorAll('.calc-box');
-            if (b.length > 0) {
-                b[b.length-1].remove();
-                recalcSession(instanceId, sessionId);
-                shouldRecalc = true;
+            if (sessionGrid) {
+                const b = sessionGrid.querySelectorAll('.calc-box');
+                if (b.length > 0) {
+                    b[b.length-1].remove();
+                    recalcSession(instanceId, sessionId);
+                    shouldRecalc = true;
+                }
             }
         });
         if (shouldRecalc) {
@@ -2162,7 +2378,11 @@ removeCalcBox = (fullGridId) => {
 // ===================================
 function updateRecap(instanceId) {
     const setRecap = (targetId, sourceEl, isInput = true, fallback = '-', suffix = '') => {
-        if (!sourceEl) return;
+        if (!sourceEl) {
+             const elFallback = getEl(instanceId, targetId);
+             if (elFallback) elFallback.textContent = fallback + suffix;
+             return;
+        }
         const val = isInput ? sourceEl.value : sourceEl.textContent;
         const el = getEl(instanceId, targetId);
         if (el) {
@@ -2185,35 +2405,72 @@ function updateRecap(instanceId) {
     setRecap('recap_allowanceTester', getEl(instanceId, 'allowanceTester'), true, '0', ' %');
     setRecap('recap_hasilTester', getEl(instanceId, 'finalTesterResult'), false, '0');
     setRecap('recap_estimasiBoxTester', getEl(instanceId, 'estimasiBoxTester'), false, '0 Box');
-    const sessions = getEl(instanceId, 'multiSessionGrid').querySelectorAll('.hit-session');
+    
+    const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
     let sessionHtml = '';
-    sessions.forEach(session => {
-        const label = session.querySelector('.session-label').textContent.trim();
-        const sum = document.getElementById(`${instanceId}_sessionSum${session.dataset.sessionId}`).textContent.trim();
-        sessionHtml += `<div class="recap-row-small"><span class="recap-label">${label}</span><span class="recap-value">Σ ${sum}</span></div>`;
-    });
-    getEl(instanceId, 'recap_sessionSummary').innerHTML = sessionHtml || '<div class="recap-row-small"><span class="recap-label">Tidak ada data</span></div>';
-    setRecap('recap_avgValue', getEl(instanceId, 'avgValueDisplay'), false);
-    const a1 = getEl(instanceId, 'allowance1').value || '0';
-    const a2 = getEl(instanceId, 'allowance2').value || '0';
-    getEl(instanceId, 'recap_allowanceHitung').textContent = `${a1}% / ${a2}%`;
-    setRecap('recap_kebutuhanBox', getEl(instanceId, 'kebutuhanBox'), false);
-    setRecap('recap_benurReal', getEl(instanceId, 'benurPerKantongReal'), false);
-    const sjRow = getEl(instanceId, 'benurPerKantongSJRow');
-    const sjRowRecap = getEl(instanceId, 'recap_benurSJ_row');
-    if (sjRow && sjRow.style.display === 'flex') {
-        setRecap('recap_benurSJ', getEl(instanceId, 'benurPerKantongSJ'), false);
-        sjRowRecap.style.display = 'flex';
-    } else if (sjRowRecap) {
-        sjRowRecap.style.display = 'none';
+    if (multiSessionGrid) {
+        const sessions = multiSessionGrid.querySelectorAll('.hit-session');
+        sessions.forEach(session => {
+            const labelEl = session.querySelector('.session-label');
+            const sumEl = document.getElementById(`${instanceId}_sessionSum${session.dataset.sessionId}`);
+            if (labelEl && sumEl) {
+                const label = labelEl.textContent.trim();
+                const sum = sumEl.textContent.trim();
+                sessionHtml += `<div class="recap-row-small"><span class="recap-label">${label}</span><span class="recap-value">Σ ${sum}</span></div>`;
+            }
+        });
     }
+    const recapSessionSummaryEl = getEl(instanceId, 'recap_sessionSummary');
+    if (recapSessionSummaryEl) {
+        recapSessionSummaryEl.innerHTML = sessionHtml || '<div class="recap-row-small"><span class="recap-label">Tidak ada data</span></div>';
+    }
+
+    setRecap('recap_avgValue', getEl(instanceId, 'avgValueDisplay'), false);
+    const a1El = getEl(instanceId, 'allowance1');
+    const a2El = getEl(instanceId, 'allowance2');
+    const a1 = a1El ? (a1El.value || '0') : '0';
+    const a2 = a2El ? (a2El.value || '0') : '0';
+    const recapAllowanceEl = getEl(instanceId, 'recap_allowanceHitung');
+    if (recapAllowanceEl) recapAllowanceEl.textContent = `${a1}% / ${a2}%`;
+    
+    setRecap('recap_kebutuhanBox', getEl(instanceId, 'kebutuhanBox'), false);
+    
+    // Ambil nilai dari span di dalam div
+    const benurRealEl = getEl(instanceId, 'benurPerKantongReal');
+    const recapBenurRealEl = getEl(instanceId, 'recap_benurReal');
+    if (benurRealEl && recapBenurRealEl) {
+        const span = benurRealEl.querySelector('span');
+        if (span) {
+            recapBenurRealEl.textContent = span.textContent.trim() + ' ekor/kantong';
+        }
+    }
+    
+    const sjRow = getEl(instanceId, 'benurPerKantongSJBox');
+    const sjRowRecap = getEl(instanceId, 'recap_benurSJ_row');
+    if (sjRow && sjRowRecap) {
+        if (sjRow.style.display === 'block') {
+            const benurSJEl = getEl(instanceId, 'benurPerKantongSJ');
+            if (benurSJEl) {
+                const span = benurSJEl.querySelector('span');
+                if (span) {
+                    getEl(instanceId, 'recap_benurSJ').textContent = span.textContent.trim() + ' ekor/kantong';
+                }
+            }
+            sjRowRecap.style.display = 'flex';
+        } else {
+            sjRowRecap.style.display = 'none';
+        }
+    }
+
     const simRow = getEl(instanceId, 'simulasiBoxRow');
     const simRowRecap = getEl(instanceId, 'recap_simulasi_row');
-    if (simRow && simRow.style.display === 'flex') {
-        setRecap('recap_simulasi', getEl(instanceId, 'simulasiBoxReal'), false);
-        simRowRecap.style.display = 'flex';
-    } else if (simRowRecap) {
-        simRowRecap.style.display = 'none';
+    if (simRow && simRowRecap) {
+        if (simRow.style.display === 'flex') {
+            setRecap('recap_simulasi', getEl(instanceId, 'simulasiBoxReal'), false);
+            simRowRecap.style.display = 'flex';
+        } else {
+            simRowRecap.style.display = 'none';
+        }
     }
     timestampNow(instanceId, 'recapTimestamp');
     triggerAutoSave(instanceId);
@@ -2238,16 +2495,34 @@ function saveData(instanceId, silent = false) {
         dataToSave.nomorBak = getEl(instanceId, 'nomorBak').value;
         dataToSave.tomota = getEl(instanceId, 'tomota').value;
         dataToSave.allowanceTester = getEl(instanceId, 'allowanceTester').value;
-        dataToSave.testerGrid = [...getEl(instanceId, 'hitGridTester').querySelectorAll('input')].map(inp => inp.value);
+        
+        const testerGridEl = getEl(instanceId, 'hitGridTester');
+        if (testerGridEl) {
+            dataToSave.testerGrid = [...testerGridEl.querySelectorAll('input')].map(inp => inp.value);
+        }
+        
         dataToSave.allowance1 = getEl(instanceId, 'allowance1').value;
         dataToSave.allowance2 = getEl(instanceId, 'allowance2').value;
         dataToSave.sessionsGrid = [];
-        const sessions = getEl(instanceId, 'multiSessionGrid').querySelectorAll('.hit-session');
-        sessions.forEach(session => {
-            const sessionId = session.dataset.sessionId;
-            const inputs = [...document.getElementById(`${instanceId}_sessionGrid${sessionId}`).querySelectorAll('input')].map(inp => inp.value);
-            dataToSave.sessionsGrid.push(inputs);
-        });
+        
+        const multiSessionGridEl = getEl(instanceId, 'multiSessionGrid');
+        if (multiSessionGridEl) {
+            const sessions = multiSessionGridEl.querySelectorAll('.hit-session');
+            sessions.forEach(session => {
+                const sessionId = session.dataset.sessionId;
+                const gridEl = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+                if (gridEl) {
+                    const inputs = [...gridEl.querySelectorAll('input')].map(inp => inp.value);
+                    dataToSave.sessionsGrid.push(inputs);
+                }
+            });
+        }
+        
+        // Simpan juga data toggle/override
+        dataToSave.limitKapasitasToggle = getEl(instanceId, 'limitKapasitasToggle').checked;
+        dataToSave.manualBenurToggle = getEl(instanceId, 'manualBenurToggle').checked;
+        dataToSave.manualBenurOverride = getEl(instanceId, 'manualBenurOverride').value;
+        dataToSave.simulasiToggle = getEl(instanceId, 'simulasiToggle').checked;
         
         const storageKey = `${LOCAL_STORAGE_KEY}_${instanceId}`;
         localStorage.setItem(storageKey, JSON.stringify(dataToSave));
@@ -2298,7 +2573,6 @@ function reformatDate(dateString) {
 
 /**
  * [REVISI] Bagikan rincian ke Customer
- * [PATCH] REVISI 4.9: Memperbaiki logika terbalik antara SJ dan Real
  */
 function shareToCustomer(instanceId) {
     // 1. Ambil Data Panen
@@ -2314,17 +2588,38 @@ function shareToCustomer(instanceId) {
     const driverPlat = getEl(instanceId, 'platNomor').value || driverData.plat; // Ambil dari input, fallback ke DB
 
     // 3. Ambil Data Hitungan
-    const boxText = getEl(instanceId, 'kebutuhanBox').textContent.split(' ')[0];
+    const kebutuhanBoxEl = getEl(instanceId, 'kebutuhanBox');
+    const isiBoxEl = getEl(instanceId, 'isiBox');
+    const allowance2El = getEl(instanceId, 'allowance2');
+    const benurRealEl = getEl(instanceId, 'benurPerKantongReal');
+    const benurSJEl = getEl(instanceId, 'benurPerKantongSJ');
+
+    // Safety check jika elemen tidak ada
+    if (!kebutuhanBoxEl || !isiBoxEl || !allowance2El || !benurRealEl || !benurSJEl) {
+        alert("Error: Elemen hitungan tidak ditemukan. Tidak bisa membagikan data.");
+        return;
+    }
+
+    const boxText = kebutuhanBoxEl.textContent.split(' ')[0];
     const kebutuhanBox = parseFloat(boxText.replace(/[\.,]/g, '')) || 0;
-    const isiBox = parseFloat(getEl(instanceId, 'isiBox').value) || 0;
+    const isiBox = parseFloat(isiBoxEl.value) || 0;
     const totalKantong = kebutuhanBox * isiBox;
     
-    const a2 = parseFloat(getEl(instanceId, 'allowance2').value) || 0;
+    const a2 = parseFloat(allowance2El.value) || 0;
     
-    const benurRealText = getEl(instanceId, 'benurPerKantongReal').textContent.split(' ')[0];
+    // Ambil nilai dari span
+    const benurRealSpan = benurRealEl.querySelector('span');
+    const benurSJSpan = benurSJEl.querySelector('span');
+    
+    if (!benurRealSpan || !benurSJSpan) {
+        alert("Error: Elemen nilai <span> tidak ditemukan. Tidak bisa membagikan data.");
+        return;
+    }
+    
+    const benurRealText = benurRealSpan.textContent.split(' ')[0];
     const benurReal_Value = parseFloat(benurRealText.replace(/[\.,]/g, '')) || 0;
     
-    const benurSJText = getEl(instanceId, 'benurPerKantongSJ').textContent.split(' ')[0];
+    const benurSJText = benurSJSpan.textContent.split(' ')[0];
     const benurSJ_Value = parseFloat(benurSJText.replace(/[\.,]/g, '')) || 0;
 
     let text = "Assalamu'alaikum Wr. Wb.\n";
@@ -2334,25 +2629,18 @@ function shareToCustomer(instanceId) {
 
     if (a2 > 0) {
         // --- [PERBAIKAN LOGIKA] FORMAT JIKA A2 > 0 ---
-        
-        // Hitungan utama (Invoice) harus berdasarkan Nilai SJ (Surat Jalan)
         const bruto_SJ = totalKantong * benurSJ_Value; 
         const netto_SJ = Math.round(bruto_SJ * 0.9);
-        // Hitungan sekunder ("Real") harus berdasarkan Nilai Real (Internal)
         const totalReal = totalKantong * benurReal_Value; 
 
-        // Tampilkan nilai SJ di baris utama (Invoice)
         text += `${formatWithDots(kebutuhanBox)} Box, ${formatWithDots(totalKantong)} Kantong @${formatWithDots(benurSJ_Value)} Ekor\n`;
         text += `Bruto = ${formatWithDots(bruto_SJ)} (Bak ${nomorBak})\n`;
         text += `Netto = ${formatWithDots(netto_SJ)}\n\n`;
-        
-        // Tampilkan nilai Real di baris "Hitungan Real" (Internal)
         text += `Hitungan Real:\n`;
         text += `${formatWithDots(kebutuhanBox)} Box, ${formatWithDots(totalKantong)} Kantong @${formatWithDots(benurReal_Value)} ekor = ${formatWithDots(totalReal)}\n\n`;
         
     } else {
         // --- FORMAT STANDAR (A2 = 0) ---
-        // (Di sini, Real_Value dan SJ_Value nilainya sama, jadi tidak masalah)
         const bruto = totalKantong * benurReal_Value;
         const netto = Math.round(bruto * 0.9);
         
@@ -2376,15 +2664,39 @@ function shareAdmin(instanceId) {
     const customer = getEl(instanceId, 'customer').value || '-';
     const driver = getEl(instanceId, 'driver').value || '-';
     const tujuan = getEl(instanceId, 'tujuan').value || '-';
-    const avgAktualText = getEl(instanceId, 'avgValueDisplay').textContent.replace(' ekor', '').trim();
-    const boxText = getEl(instanceId, 'kebutuhanBox').textContent;
+    const avgAktualEl = getEl(instanceId, 'avgValueDisplay');
+    const kebutuhanBoxEl = getEl(instanceId, 'kebutuhanBox');
+    const isiBoxEl = getEl(instanceId, 'isiBox');
+    const benurRealEl = getEl(instanceId, 'benurPerKantongReal');
+    const benurSJEl = getEl(instanceId, 'benurPerKantongSJ');
+    const allowance2El = getEl(instanceId, 'allowance2');
+
+    // Safety check
+    if (!avgAktualEl || !kebutuhanBoxEl || !isiBoxEl || !benurRealEl || !benurSJEl || !allowance2El) {
+        alert("Error: Elemen hitungan tidak ditemukan. Tidak bisa mengirim rincian.");
+        return;
+    }
+
+    const avgAktualText = avgAktualEl.textContent.replace(' ekor', '').trim();
+    const boxText = kebutuhanBoxEl.textContent;
     const boxNumberString = boxText.split(' Box')[0];
     const boxValue = parseFloat(boxNumberString.replace(/\./g, '')) || 0;
-    const isiBox = parseFloat(getEl(instanceId, 'isiBox').value) || 0;
+    const isiBox = parseFloat(isiBoxEl.value) || 0;
     const totalKantong = (boxValue * isiBox).toLocaleString('id-ID');
-    const benurReal = getEl(instanceId, 'benurPerKantongReal').textContent.replace(' ekor/kantong', '').trim();
-    const benurSJ = getEl(instanceId, 'benurPerKantongSJ').textContent.replace(' ekor/kantong', '').trim();
-    const a2 = parseFloat(getEl(instanceId, 'allowance2').value) || 0;
+    
+    // Ambil nilai dari span
+    const benurRealSpan = benurRealEl.querySelector('span');
+    const benurSJSpan = benurSJEl.querySelector('span');
+    
+    if (!benurRealSpan || !benurSJSpan) {
+        alert("Error: Elemen nilai <span> tidak ditemukan. Tidak bisa mengirim rincian.");
+        return;
+    }
+    
+    const benurReal = benurRealSpan.textContent.trim();
+    const benurSJ = benurSJSpan.textContent.trim();
+    
+    const a2 = parseFloat(allowance2El.value) || 0;
     const line1 = `${customer}/${tujuan}`;
     const line2 = `${driver}/Act ${avgAktualText}`;
     const lineReal = `Real: ${boxValue} Box, ${totalKantong} Kantong @${benurReal} Ekor (+1)`;
@@ -2416,52 +2728,116 @@ function loadDataFromObject(instanceId, data) {
         getEl(instanceId, 'nomorBak').value = data.nomorBak || '';
         getEl(instanceId, 'tomota').value = data.tomota || '';
         getEl(instanceId, 'allowanceTester').value = data.allowanceTester || '0';
-        const testerInputs = getEl(instanceId, 'hitGridTester').querySelectorAll('input');
-        if (data.testerGrid) {
-            // Pastikan jumlah kolom sesuai
-            const diff = data.testerGrid.length - testerInputs.length;
-            if (diff > 0) {
-                for(let i=0; i<diff; i++) { addCalcBox(`${instanceId}_hitGridTester`); }
-            }
-            // Ambil lagi input list setelah ditambah
-            const newTesterInputs = getEl(instanceId, 'hitGridTester').querySelectorAll('input');
-            data.testerGrid.forEach((val, index) => {
-                if (newTesterInputs[index]) newTesterInputs[index].value = val || '';
+        
+        // Load Grid Tester
+        const testerGridEl = getEl(instanceId, 'hitGridTester');
+        if (testerGridEl && data.testerGrid) {
+            // Hapus grid default (8)
+            testerGridEl.innerHTML = ''; 
+            // Buat ulang kolom sesuai data
+            data.testerGrid.forEach(val => {
+                const box = document.createElement('div');
+                box.className = 'calc-box';
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.placeholder = '0';
+                input.value = val || '';
+                input.oninput = () => recalcAllTester(instanceId);
+                box.appendChild(input);
+                testerGridEl.appendChild(box);
             });
-        }
-        getEl(instanceId, 'allowance1').value = data.allowance1 || '0';
-        getEl(instanceId, 'allowance2').value = data.allowance2 || '0';
-        getEl(instanceId, 'multiSessionGrid').innerHTML = '';
-        sessionCounter[instanceId] = 0;
-        if (data.sessionsGrid && data.sessionsGrid.length > 0) {
-            data.sessionsGrid.forEach(sessionData => {
-                addHitunganSession(instanceId); // Buat sesi baru
-                const sessionId = sessionCounter[instanceId];
-                const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
-                const sessionInputs = grid.querySelectorAll('input');
-                
-                // Pastikan jumlah kolom sesuai
-                const diff = sessionData.length - sessionInputs.length;
-                if (diff > 0) {
-                    for(let i=0; i<diff; i++) { addCalcBox(`${instanceId}_multiSessionGrid`); }
+            // Jika data tersimpan < 8, tambahkan sisanya
+            const diff = 8 - data.testerGrid.length;
+            if (diff > 0) {
+                for (let i = 0; i < diff; i++) {
+                   addCalcBox(`${instanceId}_hitGridTester`);
                 }
-                // Ambil lagi input list setelah ditambah
-                const newSessionInputs = grid.querySelectorAll('input');
-                sessionData.forEach((val, index) => {
-                    if (newSessionInputs[index]) {
-                        newSessionInputs[index].value = val || '';
+            }
+        } else {
+            initBoxesTester(instanceId); // Fallback jika tidak ada data grid
+        }
+
+        getEl(instanceId, 'allowance1').value = data.allowance1 || '0';
+        getEl(instanceId, 'allowance2').value = data.allowance2 || '0'; 
+
+        // Load Grid Sesi Hitungan
+        const multiSessionGridEl = getEl(instanceId, 'multiSessionGrid');
+        if (multiSessionGridEl) {
+            multiSessionGridEl.innerHTML = ''; // Kosongkan
+            sessionCounter[instanceId] = 0; // Reset counter
+            
+            if (data.sessionsGrid && data.sessionsGrid.length > 0) {
+                data.sessionsGrid.forEach(sessionData => {
+                    // 1. Buat sesi (baris) baru
+                    sessionCounter[instanceId]++;
+                    const sessionId = sessionCounter[instanceId];
+                    const newSession = document.createElement('div');
+                    newSession.className = 'hit-session';
+                    newSession.dataset.sessionId = sessionId;
+                    newSession.innerHTML = `
+                        <div class="session-summary">
+                            <span class="session-label">Hitungan ${sessionId}:</span>
+                            <span class="results">
+                                Σ <span id="${instanceId}_sessionSum${sessionId}" class="sum-value">0</span>
+                            </span>
+                        </div>
+                        <div id="${instanceId}_sessionGrid${sessionId}" class="hit-grid"></div>
+                    `;
+                    multiSessionGridEl.appendChild(newSession);
+                    
+                    // 2. Isi grid (kolom) untuk sesi itu
+                    const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+                    if (grid && sessionData) {
+                         sessionData.forEach(val => {
+                            const box = document.createElement('div');
+                            box.className = 'calc-box';
+                            const input = document.createElement('input');
+                            input.type = 'number';
+                            input.placeholder = '0';
+                            input.value = val || '';
+                            input.oninput = function() { recalcSession(instanceId, sessionId); recalcAllHitungan(instanceId); };
+                            box.appendChild(input);
+                            grid.appendChild(box);
+                        });
+                        // Jika data tersimpan < 8, tambahkan sisanya
+                        const diff = 8 - sessionData.length;
+                        if (diff > 0) {
+                            for (let i = 0; i < diff; i++) {
+                                addCalcBox(`${instanceId}_multiSessionGrid`);
+                            }
+                        }
                     }
                 });
-            });
-        } else {
-            addHitunganSession(instanceId);
-            addHitunganSession(instanceId);
+            } else {
+                // Fallback jika tidak ada data sesi tersimpan
+                addHitunganSession(instanceId);
+                addHitunganSession(instanceId);
+            }
         }
+        
+        // Load data toggle/override
+        const limitToggle = getEl(instanceId, 'limitKapasitasToggle');
+        if (limitToggle) limitToggle.checked = data.limitKapasitasToggle !== undefined ? data.limitKapasitasToggle : true; // Default 'true'
+        
+        const manualToggle = getEl(instanceId, 'manualBenurToggle');
+        if (manualToggle) manualToggle.checked = data.manualBenurToggle || false;
+        
+        const manualInput = getEl(instanceId, 'manualBenurOverride');
+        if (manualInput) manualInput.value = data.manualBenurOverride || '';
+        
+        const simulasiToggle = getEl(instanceId, 'simulasiToggle');
+        if (simulasiToggle) simulasiToggle.checked = data.simulasiToggle || false;
+        
+        // Update UI berdasarkan data toggle yang dimuat
+        toggleManualBenurInput(instanceId); // Ini akan show/hide input override
+
+        // Panggil semua fungsi kalkulasi ulang
         updateTruckDetails(instanceId);
         recalcAllTester(instanceId);
         recalcAllHitungan(instanceId);
         formatCurrency(getEl(instanceId, 'nominalOrder'));
         updateRecap(instanceId);
+        
     } catch (e) {
         console.error(`Gagal memuat data ke ${instanceId}:`, e);
     }
@@ -2592,14 +2968,9 @@ function calcEquals() {
 // [REVISI] FUNGSI KERANJANG SAMPAH (Menjadi Card)
 // ===================================
 
-/**
- * Mengambil data dari keranjang sampah
- */
 function getTrashData() {
     const trashRaw = localStorage.getItem(TRASH_STORAGE_KEY);
-    if (!trashRaw) {
-        return [];
-    }
+    if (!trashRaw) { return []; }
     try {
         return JSON.parse(trashRaw);
     } catch (e) {
@@ -2608,9 +2979,6 @@ function getTrashData() {
     }
 }
 
-/**
- * Menyimpan data ke keranjang sampah
- */
 function saveTrashData(trashArray) {
     try {
         localStorage.setItem(TRASH_STORAGE_KEY, JSON.stringify(trashArray));
@@ -2620,12 +2988,8 @@ function saveTrashData(trashArray) {
     }
 }
 
-/**
- * [REVISI] Mengisi daftar list di card keranjang sampah
- */
 function populateTrashList() {
     const trashArray = getTrashData();
-    // [FIX] Target kedua list sampah, karena ada duplikat di HTML
     const listEls = document.querySelectorAll('#staticTrashList'); 
     
     if (listEls.length === 0) return;
@@ -2661,16 +3025,9 @@ function populateTrashList() {
     });
 }
 
-
-/**
- * [REVISI] Mengganti fungsi showTrash (modal) menjadi toggle card
- */
 function showTrash() {
-    // [FIX] Target kedua kontainer sampah
     const cardEls = document.querySelectorAll('#trashCardContainer');
     if (cardEls.length === 0) return;
-
-    // Ambil status dari kontainer pertama (asumsi keduanya sinkron)
     const cardEl = cardEls[0];
     
     if (cardEl.style.display === 'none') {
@@ -2684,9 +3041,6 @@ function showTrash() {
     }
 }
 
-/**
- * Memulihkan data dari keranjang sampah
- */
 function restoreFromTrash(index) {
     if (!confirm("Pulihkan data ini? Data akan ditambahkan sebagai slide baru di akhir.")) return;
 
@@ -2702,13 +3056,10 @@ function restoreFromTrash(index) {
     loadDataFromObject(newInstanceId, restoredData);
     goToSlide(instanceCounter - 1);
     
-    populateTrashList(); // [REVISI] Refresh list, bukan tutup modal
+    populateTrashList(); 
     alert("Data berhasil dipulihkan!");
 }
 
-/**
- * Menghapus data permanen dari keranjang sampah
- */
 function deleteFromTrash(index) {
     if (!confirm("Yakin ingin MENGHAPUS PERMANEN data ini? Tindakan ini tidak dapat dibatalkan.")) return;
 
@@ -2718,13 +3069,13 @@ function deleteFromTrash(index) {
     trashArray.splice(index, 1);
     saveTrashData(trashArray);
     
-    populateTrashList(); // [REVISI] Refresh list, bukan panggil showTrash
+    populateTrashList(); 
 }
 // === [AKHIR] FUNGSI KERANJANG SAMPAH ===
 
 
 // ===================================
-// INITIALIZATION
+// [PERBAIKAN] INITIALIZATION
 // ===================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -2776,11 +3127,12 @@ document.addEventListener('DOMContentLoaded', () => {
         addInstance(); // Buat 1 instance default
     } 
     else {
-        for (let i = 0; i < savedInstanceCount; i++) {
-            addInstance(); // Buat instance (DOM)
-        }
+        // Loop untuk memuat data yang ada
         for (let i = 0; i < savedInstanceCount; i++) {
             const instanceIdToLoad = `instance_${i + 1}`;
+            // 1. Buat DOM-nya dulu
+            addInstance(); 
+            // 2. Muat data ke DOM tersebut
             loadData(instanceIdToLoad, true); // Muat data (silent)
         }
     }
