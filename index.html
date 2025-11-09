@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PLBShrimpCount V6.8c (Perbaikan Badge)</title>
+<title>PLBShrimpCount V6.8</title>
 
 <link rel="icon" type="image/jpeg" href="logo-plb.png">
 
@@ -1409,7 +1409,7 @@ body.dark-mode .tab-link.active {
     padding-top: 10px; 
     flex-grow: 1; 
     overflow: hidden; /* [V6.4] Sembunyikan panel yg bergeser */
-    padding-bottom: 90px; 
+    padding-bottom: 50px; 
 }
 /* [V6.4] Wrapper untuk semua panel (400% width) */
 .card-tab-track {
@@ -1467,7 +1467,7 @@ body.dark-mode .tab-link.active {
   font-size: 0.7em;
   padding: 3px 8px; 
   border-radius: 6px;
-  color: #fff;
+  color: #fff;  /* <-- DIKEMBALIKAN. Ini PENTING untuk "Terkirim" & "Edited" */
   flex-shrink: 0; 
   
   /* [REVISI V6.8] Pemosisian Balon Teks */
@@ -1481,12 +1481,12 @@ body.dark-mode .tab-link.active {
   /* [REVISI V6.8c] PERBAIKAN BUG: Tambahkan 'opacity' ke transisi */
   transition: background 0.3s, transform 0.2s, opacity 0.2s ease-out;
   transform: scale(0.9);
-  opacity: 0;
+  opacity: 0; /* <-- DIKEMBALIKAN ke 0 agar animasi 'pop' bisa berjalan */
   pointer-events: none; /* Tidak bisa diklik */
 }
 .status-badge.visible {
     transform: scale(1);
-    opacity: 1;
+    opacity: 1; /* <-- Kelas .visible inilah yang memunculkannya */
 }
 
 /* Panah kecil di bawah badge */
@@ -1514,68 +1514,7 @@ body.dark-mode .tab-link.active {
 
   <h1 class="title">
     <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
-    <span class="version">V6.8c</span>
-    <span class="build-badge">Pro</span>
-  </h1>
-  <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
-  <p class="sponsor">This app has been built for internal use and restricted purpose only! ⓒ 2025 All Right Reserved</p>
-</header>
-
-<div id="carouselWrapper" class="carousel-wrapper">
-    <div id="slideTrack" class="slide-track">
-        </div>
-</div>
-
-<div class="carousel-controls">
-</div>
-
-<div id="calculatorContainer" class="calculator-container">
-    <div class="calculator-card">
-        <input type="text" id="calcDisplay" class="calc-display-input" value="0" readonly>
-        <div class="calc-grid">
-            <button class="calc-btn clear" onclick="calcClear()">AC</button>
-            <button class="calc-btn clear" onclick="calcBackspace()">DEL</button>
-            <button class="calc-btn clear" onclick="calcPercent()">%</button>
-            <button class="calc-btn operator" onclick="calcOperator('/')">÷</button>
-
-            <button class="calc-btn" onclick="calcInput('7')">7</button>
-            <button class="calc-btn" onclick="calcInput('8')">8</button>
-            <button class="calc-btn" onclick="calcInput('9')">9</button>
-            <button class="calc-btn operator" onclick="calcOperator('*')">×</button>
-
-            <button class="calc-btn" onclick="calcInput('4')">4</button>
-            <button class="calc-btn" onclick="calcInput('5')">5</button>
-            <button class="calc-btn" onclick="calcInput('6')">6</button>
-            <button class="calc-btn operator" onclick="calcOperator('-')">−</button>
-
-            <button class="calc-btn" onclick="calcInput('1')">1</button>
-            <button class="calc-btn" onclick="calcInput('2')">2</button>
-            <button class="calc-btn" onclick="calcInput('3')">3</button>
-            <button class="calc-btn operator" onclick="calcOperator('+')">+</button>
-
-            <button class="calc-btn zero" onclick="calcInput('0')">0</button>
-            <button class="calc-btn" onclick="calcInput('.')">.</button>
-            <button class="calc-btn operator" onclick="calcEquals()">=</button>
-        </div>
-    </div>
-</div>
-
-<button class="calc-toggle-btn" onclick="toggleCalculator()">🧮</button>
-
-</style>
-</head>
-
-
-<body>
-
-<header class="app-header visible">
-  <button id="vaultToggleBtn" class="dark-mode-toggle" onclick="toggleVault()" title="Buka Vault Data Panen">🗄️</button>
-  
-  <button id="darkModeToggle" class="dark-mode-toggle" title="Ganti Tema">🌙</button>
-
-  <h1 class="title">
-    <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
-    <span class="version">V6.8c</span>
+    <span class="version">V6.8</span>
     <span class="build-badge">Pro</span>
   </h1>
   <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
@@ -1785,7 +1724,7 @@ body.dark-mode .tab-link.active {
 
                                     <div class="qc-grid full-width" style="margin-top: 0px;">
                                         <div>
-                                            <label># No. Scooping</label>
+                                            <label>#️⃣ No. Scooping</label>
                                             <input id="{{INSTANCE_ID}}_qcNoScooping" placeholder="-" oninput="updateRecap('{{INSTANCE_ID}}')">
                                         </div>
                                     </div>
@@ -2101,6 +2040,7 @@ let activeInstanceIndex = 0; // 0-based index
 const slideTrack = document.getElementById('slideTrack');
 const maxBox = 12; // Maksimal kolom hitungan per sesi
 let autoSaveTimeout;
+let statusLockTimeout = null; // <-- TAMBAHKAN BARIS INI
 
 // [REVISI V6.0] Kunci Penyimpanan
 const LOCAL_STORAGE_KEY = 'shrimpCountData_v5_SESSION'; 
@@ -2165,6 +2105,12 @@ function checkDarkModePreference() {
  * [REVISI] Logika badge 'Edited' juga ditangani di sini.
  */
 function triggerAutoSave(instanceId) {
+    // JIKA STATUS DIKUNCI (karena baru saja disimpan), JANGAN LAKUKAN APAPUN.
+    if (statusLockTimeout) {
+        clearTimeout(autoSaveTimeout); // Batalkan juga timer yang sedang berjalan
+        return; 
+    }
+
     const slideItem = document.getElementById(instanceId);
     if (!slideItem) return;
 
@@ -3292,10 +3238,8 @@ function shareAdmin(instanceId) {
 // ===================================
 
 /**
- * [REVISI V6.8c - PERBAIKAN BUG BADGE]
- * Penanda Status (Draft, Terkirim, Edited)
+ * [REVISI V6.8 - REQ 1] Penanda Status (Draft, Terkirim, Edited)
  * Badge dipindahkan ke tab Rekap.
- * Ditambahkan setTimeout untuk memperbaiki bug "race condition"
  */
 function markStatus(instanceID, status) {
   const slideItem = document.getElementById(instanceID);
@@ -3330,11 +3274,8 @@ function markStatus(instanceID, status) {
       badge.classList.add('status-draft');
   }
   
-  // [REVISI V6.8c] PERBAIKAN BUG: Terapkan 'visible' setelah browser "bernapas"
-  // Ini memaksa transisi opacity untuk berjalan
-  setTimeout(() => {
-    badge.classList.add('visible');
-  }, 10); // Penundaan 10ms sudah cukup
+  // [REVISI V6.8] Tampilkan badge dengan animasi
+  badge.classList.add('visible');
 }
 
 /**
@@ -3657,6 +3598,9 @@ function saveDataToVault(instanceId) {
     // [REVISI V6.8] Ubah pesan konfirmasi
     if (!confirm("Simpan data panen ini ke Vault? \n\nData ini akan ditandai sebagai 'Terkirim'.")) return;
     
+    clearTimeout(autoSaveTimeout); // Hentikan auto-save
+    clearTimeout(statusLockTimeout); // Hentikan lock sebelumnya (jika ada)
+
     try {
         const newData = gatherDataFromInstance(instanceId);
         let vaultArray = getVaultData();
@@ -3664,16 +3608,16 @@ function saveDataToVault(instanceId) {
         vaultArray.push(newData);
         saveVaultData(vaultArray);
         
-        // [REVISI V6.8] Ubah pesan sukses
         alert("Data Panen berhasil disimpan ke Vault! 🗄️");
-        populateVaultList(); // Update daftar jika vault sedang terbuka
+        populateVaultList(); 
         
-        // [REVISI V6.8] Tandai status "Terkirim"
-        markStatus(instanceId, 'Terkirim');
-        // [REVISI V6.8] lockInstanceForm(instanceId); // Fitur kunci dihapus
+        markStatus(instanceId, 'Terkirim'); // Set status
+        saveSessionData(instanceId, true, 'Terkirim'); // Simpan status
         
-        // [REVISI V6.8] Perbarui data SESI dengan status 'Terkirim'
-        saveSessionData(instanceId, true, 'Terkirim'); 
+        // KUNCI status "Terkirim" agar tidak diubah oleh auto-save selama 3 detik
+        statusLockTimeout = setTimeout(() => {
+            statusLockTimeout = null; 
+        }, 3000); // Kunci selama 3 detik
         
     } catch (e) {
         console.error("Gagal menyimpan ke Vault:", e);
