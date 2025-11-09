@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PLBShrimpCount V6.8 (Revisi Badge & Load)</title>
+<title>PLBShrimpCount V6.8c (Perbaikan Badge)</title>
 
 <link rel="icon" type="image/jpeg" href="logo-plb.png">
 
@@ -1478,8 +1478,8 @@ body.dark-mode .tab-link.active {
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   z-index: 1; /* Di atas tab link lain */
   
-  /* [REVISI V6.8] Panah Balon Teks */
-  transition: background 0.3s, transform 0.2s;
+  /* [REVISI V6.8c] PERBAIKAN BUG: Tambahkan 'opacity' ke transisi */
+  transition: background 0.3s, transform 0.2s, opacity 0.2s ease-out;
   transform: scale(0.9);
   opacity: 0;
   pointer-events: none; /* Tidak bisa diklik */
@@ -1514,7 +1514,68 @@ body.dark-mode .tab-link.active {
 
   <h1 class="title">
     <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
-    <span class="version">V6.8</span>
+    <span class="version">V6.8c</span>
+    <span class="build-badge">Pro</span>
+  </h1>
+  <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
+  <p class="sponsor">This app has been built for internal use and restricted purpose only! ⓒ 2025 All Right Reserved</p>
+</header>
+
+<div id="carouselWrapper" class="carousel-wrapper">
+    <div id="slideTrack" class="slide-track">
+        </div>
+</div>
+
+<div class="carousel-controls">
+</div>
+
+<div id="calculatorContainer" class="calculator-container">
+    <div class="calculator-card">
+        <input type="text" id="calcDisplay" class="calc-display-input" value="0" readonly>
+        <div class="calc-grid">
+            <button class="calc-btn clear" onclick="calcClear()">AC</button>
+            <button class="calc-btn clear" onclick="calcBackspace()">DEL</button>
+            <button class="calc-btn clear" onclick="calcPercent()">%</button>
+            <button class="calc-btn operator" onclick="calcOperator('/')">÷</button>
+
+            <button class="calc-btn" onclick="calcInput('7')">7</button>
+            <button class="calc-btn" onclick="calcInput('8')">8</button>
+            <button class="calc-btn" onclick="calcInput('9')">9</button>
+            <button class="calc-btn operator" onclick="calcOperator('*')">×</button>
+
+            <button class="calc-btn" onclick="calcInput('4')">4</button>
+            <button class="calc-btn" onclick="calcInput('5')">5</button>
+            <button class="calc-btn" onclick="calcInput('6')">6</button>
+            <button class="calc-btn operator" onclick="calcOperator('-')">−</button>
+
+            <button class="calc-btn" onclick="calcInput('1')">1</button>
+            <button class="calc-btn" onclick="calcInput('2')">2</button>
+            <button class="calc-btn" onclick="calcInput('3')">3</button>
+            <button class="calc-btn operator" onclick="calcOperator('+')">+</button>
+
+            <button class="calc-btn zero" onclick="calcInput('0')">0</button>
+            <button class="calc-btn" onclick="calcInput('.')">.</button>
+            <button class="calc-btn operator" onclick="calcEquals()">=</button>
+        </div>
+    </div>
+</div>
+
+<button class="calc-toggle-btn" onclick="toggleCalculator()">🧮</button>
+
+</style>
+</head>
+
+
+<body>
+
+<header class="app-header visible">
+  <button id="vaultToggleBtn" class="dark-mode-toggle" onclick="toggleVault()" title="Buka Vault Data Panen">🗄️</button>
+  
+  <button id="darkModeToggle" class="dark-mode-toggle" title="Ganti Tema">🌙</button>
+
+  <h1 class="title">
+    <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
+    <span class="version">V6.8c</span>
     <span class="build-badge">Pro</span>
   </h1>
   <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
@@ -1724,7 +1785,7 @@ body.dark-mode .tab-link.active {
 
                                     <div class="qc-grid full-width" style="margin-top: 0px;">
                                         <div>
-                                            <label>#️⃣ No. Scooping</label>
+                                            <label># No. Scooping</label>
                                             <input id="{{INSTANCE_ID}}_qcNoScooping" placeholder="-" oninput="updateRecap('{{INSTANCE_ID}}')">
                                         </div>
                                     </div>
@@ -3231,8 +3292,10 @@ function shareAdmin(instanceId) {
 // ===================================
 
 /**
- * [REVISI V6.8 - REQ 1] Penanda Status (Draft, Terkirim, Edited)
+ * [REVISI V6.8c - PERBAIKAN BUG BADGE]
+ * Penanda Status (Draft, Terkirim, Edited)
  * Badge dipindahkan ke tab Rekap.
+ * Ditambahkan setTimeout untuk memperbaiki bug "race condition"
  */
 function markStatus(instanceID, status) {
   const slideItem = document.getElementById(instanceID);
@@ -3267,8 +3330,11 @@ function markStatus(instanceID, status) {
       badge.classList.add('status-draft');
   }
   
-  // [REVISI V6.8] Tampilkan badge dengan animasi
-  badge.classList.add('visible');
+  // [REVISI V6.8c] PERBAIKAN BUG: Terapkan 'visible' setelah browser "bernapas"
+  // Ini memaksa transisi opacity untuk berjalan
+  setTimeout(() => {
+    badge.classList.add('visible');
+  }, 10); // Penundaan 10ms sudah cukup
 }
 
 /**
