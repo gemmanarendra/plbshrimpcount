@@ -2,9 +2,11 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PLB ShrimpCount</title>
+<title>PLBShrimpCount V6.8 (Revisi Badge & Load)</title>
 
 <link rel="icon" type="image/jpeg" href="logo-plb.png">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;700&display=swap" rel="stylesheet">
 <style>
@@ -130,7 +132,7 @@ body{
   font-weight:var(--font-weight-thin);
   background:var(--color-bg);color:var(--color-text-main);
   transition: background .3s, color .3s;
-  font-size: 13px;
+  font-size: 12px;
   display: flex;
   flex-direction: column;
   height: 100dvh; 
@@ -138,6 +140,20 @@ body{
 }
 /* Animasi */
 @keyframes fadeSlideIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+@keyframes simpleFadeIn{from{opacity:0}to{opacity:1}}
+@keyframes simpleFadeOut{from{opacity:1}to{opacity:0}}
+
+/* [REVISI V6.3] Animasi Vault baru (Spring/Pop) */
+@keyframes vaultIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes vaultOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+}
+
+
 header{opacity:0;transform:translateY(25px);transition:opacity .8s ease,transform .8s ease}
 header.visible{opacity:1;transform:translateY(0)}
 
@@ -145,37 +161,35 @@ header.visible{opacity:1;transform:translateY(0)}
 .app-header{
   text-align:center;padding: 15px 15px 10px;
   border-radius:0 0 20px 20px;
-  background: var(--color-header-bg); /* Latar solid modern */
+  background: var(--color-header-bg);
   box-shadow: 0 4px 10px var(--color-shadow);
   position: relative;
   flex-shrink: 0;
-  z-index: 100; /* Pastikan di atas */
+  z-index: 100;
 }
 
 .title{
     font-size:1.2em;
     margin:0;
-    color: var(--color-header-text); /* Teks header putih */
+    color: var(--color-header-text);
     font-weight: 700;
-
-    /* --- [PERBAIKAN BUG STABILITAS] --- */
-    white-space: nowrap; /* Paksa judul tetap 1 baris */
-    overflow: hidden;    /* Sembunyikan jika terlalu panjang */
-    text-overflow: ellipsis; /* Beri tanda "..." jika terpotong */
-    padding: 0 30px; /* Beri jarak agar tidak mentok tombol */
+    white-space: nowrap; 
+    overflow: hidden;    
+    text-overflow: ellipsis; 
+    padding: 0 30px; 
 }
 body.dark-mode .title { color: var(--color-header-text); }
 body.dark-mode .title-pl,
 body.dark-mode .title-b {
     color: inherit;
 }
-/* Hapus warna spesifik, biarkan mewarisi dari .title */
+/* INI ADALAH WARNA PERUSAHAAN JANGAN DIGANTI */
 .title-pl { color: #00008B; }
 .title-b { color: #ADD8E6; }
 
 .version{font-size:.45em;color:var(--color-header-text);vertical-align:super; opacity: 0.7;}
 .build-badge{
-  background: rgba(255,255,255,0.2); /* Badge transparan */
+  background: rgba(255,255,255,0.2);
   color:var(--color-header-text);
   font-size:.65em;border-radius:8px;padding:2px 6px;margin-left:6px; font-weight: 400;
 }
@@ -184,7 +198,6 @@ body.dark-mode .title-b {
 .sponsor b{color:var(--color-accent)}
 .timestamp{font-size:.7em;color:#999}
 
-/* [PERBAIKAN V5.2] Tombol Header (Animasi Zoom) */
 .dark-mode-toggle {
     position: absolute;
     top: 50%; 
@@ -200,19 +213,14 @@ body.dark-mode .title-b {
     font-size: 0.9em; 
     line-height: 1;
     box-shadow: 0 1px 3px var(--color-shadow);
-    transition: transform 0.2s, background 0.3s; /* <-- UBAH Transisi */
+    transition: transform 0.2s, background 0.3s; 
     
     display: flex;
     align-items: center;
     justify-content: center;
 }
-#trashToggleBtn {
-    left: 20px;
-    right: auto;
-}
-/* [PERBAIKAN V5.2] Animasi Zoom In (Membesar) */
 .dark-mode-toggle:hover {
-    transform: translateY(-50%) scale(1.1); /* <-- PERBAIKI Transform */
+    transform: translateY(-50%) scale(1.1); 
 }
 
 /* --- [REVISI] CARD UMUM & INPUT (GAYA MODERN) --- */
@@ -220,7 +228,7 @@ body.dark-mode .title-b {
   background:var(--color-card-bg);
   border:1px solid var(--color-border);
   border-radius:var(--radius-card);
-  padding:30px 20px; /* Padding atas dikurangi */
+  padding:30px 20px; 
   margin:25px 0 0;
   box-shadow:var(--shadow-card);
   position:relative;
@@ -230,28 +238,42 @@ body.dark-mode .title-b {
     margin-top:0;
     color: var(--color-accent);
     font-size:1.05em;
-    font-weight: 700; /* Lebih tebal */
+    font-weight: 700; 
 }
+/* [REVISI V6.2] Tata letak H2 di card data (agar tombol rapi) */
 .card-data h2 {
     color: var(--color-accent);
     font-weight: 700;
-    font-size: 1.15em;
+    font-size: 1.1em; /* Sedikit lebih kecil agar muat */
     margin-bottom: 20px;
     border-bottom: 1px dashed var(--color-border);
     padding-bottom: 10px;
+    
+    /* Flexbox untuk merapikan judul, badge, dan tombol */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
 }
+.card-data h2 .title-text {
+    flex-grow: 1; /* Ambil sisa ruang */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 label{
     display:block;
     margin-top:12px;
     font-size:.9em;
-    font-weight: 400; /* Sedikit lebih tebal */
+    font-weight: 400; 
     color: var(--color-text-light);
 }
 input,select{
-  width:100%;padding: 10px 12px; /* Lebih tinggi */
+  width:100%;padding: 10px 12px; 
   margin-top:4px;
   border:1px solid var(--color-border);
-  border-radius:var(--radius-input); /* Radius baru */
+  border-radius:var(--radius-input); 
   font-size:.9em;font-family:var(--font-main);
   transition:.3s;
   background: var(--color-input-bg);
@@ -261,8 +283,27 @@ input,select{
 input:focus,select:focus{
   outline:none;
   border-color:var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-shadow); /* Bayangan fokus modern */
+  box-shadow: 0 0 0 3px var(--color-shadow); 
 }
+/* [BARU V6.2] Style untuk input yang dikunci (Final) */
+input:disabled, select:disabled,
+input:disabled + .input-unit {
+    background: var(--color-bg) !important;
+    color: var(--color-text-light) !important;
+    opacity: 0.8;
+    border-style: dashed;
+    cursor: not-allowed;
+}
+/* [REVISI V6.3] Kunci tombol lebih jelas */
+.card-project-btn:disabled,
+.btn:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+
 .card-tester{background:var(--color-card-tester);}
 .card-hitung{background:var(--color-card-hitung);}
 
@@ -319,15 +360,15 @@ input:focus,select:focus{
 /* [REVISI] Tombol */
 .actions-row{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
 .btn{
-  background: var(--color-accent-light); /* Latar biru muda */
+  background: var(--color-accent-light); 
   border: 1px solid var(--color-accent-light);
-  padding: 8px 12px; /* Lebih besar */
-  border-radius: var(--radius-input); /* Radius baru */
+  padding: 8px 12px; 
+  border-radius: var(--radius-input); 
   cursor:pointer;
-  font-size:.7em; /* Font lebih besar */
+  font-size:.7em; 
   font-weight: 700;
   transition:.2s;
-  color: var(--color-accent); /* Teks biru tua */
+  color: var(--color-accent); 
 }
 body.dark-mode .btn {
   background: var(--color-accent-light);
@@ -349,21 +390,25 @@ body.dark-mode .btn.primary:hover { color: var(--color-accent-text); }
   font-size:.65em;color:var(--color-text-lighter);font-weight:300;opacity:.8
 }
 
+/* [REVISI V6.0] Tombol Save di Rekap */
 .card-recap .actions-row {
     margin-top: 25px;
     border-top: 1px dashed var(--color-recap-border);
     padding-top: 15px;
     justify-content: space-around;
+    flex-wrap: wrap; /* Izinkan wrap */
+    gap: 10px; /* Tambah gap */
 }
 .card-recap .actions-row .btn {
     flex-grow: 1;
-    flex-basis: 180px;
+    flex-basis: 150px; /* Sedikit lebih kecil agar muat 3 */
     text-align: center;
-    font-size: 0.85em;
+    font-size: 0.8em; /* Sedikit lebih kecil */
     background: var(--color-card-bg);
     color: var(--color-accent);
     border: 1px solid var(--color-accent);
     font-weight: 700;
+    padding: 10px 12px; /* Lebih tinggi */
 }
 body.dark-mode .card-recap .actions-row .btn {
     background: var(--color-card-recap);
@@ -378,6 +423,18 @@ body.dark-mode .card-recap .actions-row .btn {
 body.dark-mode .card-recap .actions-row .btn:hover {
     background: var(--color-accent-light);
     color: var(--color-accent-text);
+}
+/* Tombol Save Utama (Kuning) */
+.card-recap .actions-row .btn.save-to-vault {
+    background: #FFC107;
+    border-color: #FFC107;
+    color: #212529;
+    font-size: 0.85em;
+    flex-basis: 100%; /* Ambil 1 baris penuh */
+}
+.card-recap .actions-row .btn.save-to-vault:hover {
+    background: #ffca2c;
+    color: #212529;
 }
 
 
@@ -403,7 +460,7 @@ body.dark-mode .card-recap .actions-row .btn:hover {
     min-width: 100%;
     max-width: 400px;
     flex-shrink: 0;
-    padding: 0 20px;
+    padding: 0 15px; /* [V6.4] Ubah padding ke slide-item */
     height: 100%; 
     display: flex;
     flex-direction: column;
@@ -424,6 +481,7 @@ body.dark-mode .card-recap .actions-row .btn:hover {
     display: flex;
     gap: 6px;
     z-index: 50;
+    flex-shrink: 0; /* [V6.2] Mencegah tombol mengecil */
 }
 .card-project-btn {
     width: 24px;
@@ -450,12 +508,6 @@ body.dark-mode .card-recap .actions-row .btn:hover {
 }
 .remove-btn {
     color: var(--color-delete-text);
-}
-.remove-btn:disabled {
-    color: var(--color-text-lighter);
-    cursor: not-allowed;
-    opacity: 0.8;
-    transform: none !important;
 }
 .reset-btn {
     color: var(--color-alert-text);
@@ -595,13 +647,13 @@ body.dark-mode .result-box-split.estimasi-box .label {
 .order-nominal-display {
     text-align: center;
     padding: 15px 10px;
-    background: var(--color-tester-result-bg); /* Latar hijau semantik */
+    background: var(--color-tester-result-bg); 
     border: 1px solid var(--color-card-hitung-border);
-    border-radius: var(--radius-input); /* Radius baru */
+    border-radius: var(--radius-input); 
     margin-bottom: 20px;
-    max-width: 300px; /* <-- Atur lebar maksimum box, sesuaikan jika perlu */
-    margin-left: auto;   /* <-- Tambahkan ini */
-    margin-right: auto;  /* <-- Tambahkan ini */
+    max-width: 300px; 
+    margin-left: auto;   
+    margin-right: auto;  
 }
 body.dark-mode .order-nominal-display {
     background: var(--color-tester-result-bg);
@@ -609,7 +661,7 @@ body.dark-mode .order-nominal-display {
 }
 .order-nominal-display .label {
     font-size: 0.85em;
-    color: var(--color-text-sum); /* Teks hijau */
+    color: var(--color-text-sum); 
     margin-bottom: 5px;
     opacity: 0.8;
 }
@@ -617,7 +669,7 @@ body.dark-mode .order-nominal-display .label { color: var(--color-text-sum); }
 .order-nominal-display .value {
     font-size: 1.8em;
     font-weight: 700;
-    color: var(--color-text-sum); /* Teks hijau */
+    color: var(--color-text-sum); 
     line-height: 1.1;
 }
 
@@ -652,16 +704,16 @@ body.dark-mode .order-nominal-display .label { color: var(--color-text-sum); }
 /* [REVISI] Box Summary Abu-abu & Hijau */
 .grey-summary-box, .green-result-box {
     padding: 15px;
-    border-radius: var(--radius-card); /* Radius Card */
-    box-shadow: none; /* Hapus bayangan ganda */
+    border-radius: var(--radius-card); 
+    box-shadow: none; 
     border: 1px solid var(--color-border);
 }
 .grey-summary-box {
-    background: var(--color-bg); /* Lebih menyatu dgn body */
+    background: var(--color-bg); 
 }
 .green-result-box {
-    background: var(--color-card-bg); /* Putih */
-    border: 1px solid var(--color-card-hitung-border); /* Border hijau */
+    background: var(--color-card-bg); 
+    border: 1px solid var(--color-card-hitung-border); 
     margin-top: 15px;
 }
 body.dark-mode .grey-summary-box {
@@ -691,9 +743,9 @@ body.dark-mode .green-result-box {
     font-size: 1.2em;
     font-weight: 700;
 }
-.summary-value.avg {color: var(--color-text-sum);} /* Hijau */
+.summary-value.avg {color: var(--color-text-sum);} 
 body.dark-mode .summary-value.avg {color: var(--color-text-sum);}
-.summary-value.box {color: var(--color-alert-text);} /* Oranye */
+.summary-value.box {color: var(--color-alert-text);} 
 body.dark-mode .summary-value.box {color: var(--color-alert-text);}
 .summary-value.real-sj {color: var(--color-text-sum);}
 .summary-value.simulation {
@@ -782,17 +834,14 @@ body.dark-mode .calc-btn.clear:hover, body.dark-mode .calc-btn.toggle-sign:hover
     width: 50px; height: 50px; font-size: 1.5em; box-shadow: 0 4px 8px var(--color-shadow);
     cursor: pointer; transition: background 0.3s, transform 0.2s;
 }
-/* [PERBAIKAN V5.2] Animasi Zoom In (Membesar) */
 .calc-toggle-btn:hover {
     background: #0056b3;
-    transform: scale(1.1); /* <-- TAMBAHKAN Animasi Zoom */
+    transform: scale(1.1); 
 }
-
 
 /* === [REVISI] Toggle Switch Simulasi (Gaya Modern) === */
 .simulasi-toggle-container {
     display: flex;
-    
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
@@ -805,9 +854,9 @@ body.dark-mode .calc-btn.clear:hover, body.dark-mode .calc-btn.toggle-sign:hover
 .switch {
     position: relative;
     display: inline-block;
-    width: 44px; /* Lebar switch */
-    height: 24px; /* Tinggi switch */
-    flex-shrink: 0; /* <-- DITAMBAH: agar switch tidak gepeng */
+    width: 44px; 
+    height: 24px; 
+    flex-shrink: 0; 
 }
 .switch input { 
     opacity: 0;
@@ -827,8 +876,8 @@ body.dark-mode .calc-btn.clear:hover, body.dark-mode .calc-btn.toggle-sign:hover
 .slider:before {
     position: absolute;
     content: "";
-    height: 18px; /* Ukuran knob */
-    width: 18px; /* Ukuran knob */
+    height: 18px; 
+    width: 18px; 
     left: 3px;
     bottom: 3px;
     background-color: white;
@@ -836,10 +885,10 @@ body.dark-mode .calc-btn.clear:hover, body.dark-mode .calc-btn.toggle-sign:hover
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 input:checked + .slider {
-    background-color: var(--color-accent); /* Warna Biru Aksen */
+    background-color: var(--color-accent); 
 }
 input:checked + .slider:before {
-    transform: translateX(20px); /* Pergeseran knob */
+    transform: translateX(20px); 
 }
 .slider.round {
     border-radius: 24px;
@@ -847,12 +896,18 @@ input:checked + .slider:before {
 .slider.round:before {
     border-radius: 50%;
 }
-/* === [AKHIR] REVISI 5 === */
+/* [V6.2] Style untuk switch yang terkunci */
+.switch input:disabled + .slider {
+    background-color: var(--color-border) !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 
 /* === [REVISI] Penyesuaian Font Mobile === */
 @media (max-width: 360px) {
     body {
-        font-size: 13px; /* Tetap di 13px */
+        font-size: 13px; 
     }
     .title { font-size: 1.1em; }
     .subtitle { font-size: 0.8em; }
@@ -869,7 +924,7 @@ input:checked + .slider:before {
         grid-template-columns: repeat(auto-fit,minmax(70px,1fr));
     }
 }
-/* === [REVISI] Floating Nav Bar Bawah === */
+/* === [REVISI V6.0] Floating Nav Bar Bawah === */
 
 /* 1. Kontainer Utama */
 .floating-nav-bar {
@@ -877,21 +932,20 @@ input:checked + .slider:before {
     bottom: 0;
     left: 0;
     width: 100%;
-    padding: 12px 15px 15px; /* Padding bawah lebih besar */
-    /* Latar belakang gradien agar teks terbaca */
+    padding: 12px 15px 15px; 
     background: linear-gradient(180deg, 
         rgba(255,255,255,0) 0%, 
         rgba(255,255,255,0.8) 20%, 
         var(--color-bg) 100%
     );
-    box-shadow: none; /* Hapus bayangan, andalkan gradien */
+    box-shadow: none; 
     
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 10px;
     z-index: 998;
-    pointer-events: none; /* Kontainer tidak bisa diklik */
+    pointer-events: none; 
 }
 body.dark-mode .floating-nav-bar {
     background: linear-gradient(180deg, 
@@ -906,7 +960,7 @@ body.dark-mode .floating-nav-bar {
     display: flex;
     align-items: center;
     gap: 10px;
-    pointer-events: auto; /* Tombol bisa diklik */
+    pointer-events: auto; 
 }
 .floating-nav-group.center {
     position: absolute; 
@@ -915,21 +969,20 @@ body.dark-mode .floating-nav-bar {
     display: none; 
 }
 .floating-nav-group.right {
-    margin-left: auto; /* Dorong ke kanan */
+    margin-left: auto; 
 }
 
-/* [PERBAIKAN V5.2] Style Tombol Bulat (Animasi Zoom) */
+/* [REVISI V6.0] Style Tombol Bulat (Termasuk Tombol Vault) */
 .floating-nav-btn {
-    background: var(--color-accent); /* Biru Aksen */
-    color: var(--color-accent-text); /* Putih */
+    background: var(--color-accent); 
+    color: var(--color-accent-text); 
     border: none;
     border-radius: 50%;
-    width: 40px; /* Lebih besar */
-    height: 40px; /* Lebih besar */
+    width: 40px; 
+    height: 40px; 
     font-size: 1.3em;
-    box-shadow: 0 4px 12px var(--color-shadow-dark); /* Bayangan lebih kuat */
+    box-shadow: 0 4px 12px var(--color-shadow-dark); 
     cursor: pointer;
-    /* [PERBAIKAN V5.2] Transisi hover "zoom" */
     transition: background 0.3s, transform 0.2s, box-shadow 0.2s ease-out;
     
     display: flex;
@@ -938,18 +991,18 @@ body.dark-mode .floating-nav-bar {
     line-height: 1;
     padding: 0;
 }
-/* [PERBAIKAN V5.2] Animasi hover "zoom" */
 .floating-nav-btn:hover {
-    transform: scale(1.1); /* <-- GANTI ANIMASI JADI ZOOM */
-    box-shadow: 0 8px 20px var(--color-shadow-dark); /* <-- PERBESAR BAYANGAN */
+    transform: scale(1.1); 
+    box-shadow: 0 8px 20px var(--color-shadow-dark); 
 }
-/* Tombol Save berwarna Kuning Telur */
-.floating-nav-btn.save-btn {
-    background: #FFC107; 
-    color: #212529;       
+/* [REVISI V6.0] Tombol Vault (Menggantikan Save) */
+.floating-nav-btn.vault-btn {
+    background: #212529; /* Hitam/Dark */
+    color: #FFFFFF;       
+    font-size: 1.5em; /* Ikon vault sedikit lebih besar */
 }
-body.dark-mode .floating-nav-btn.save-btn {
-    background: #FFC107; 
+body.dark-mode .floating-nav-btn.vault-btn {
+    background: #EAF0F6; 
     color: #212529;       
 }
 
@@ -981,218 +1034,488 @@ body.dark-mode .floating-nav-btn.save-btn {
 body > .calc-toggle-btn {
     display: none !important;
 }
-/* === [AKHIR PATCH CSS] === */
 
-/* === [REVISI] CSS Card Keranjang Sampah (Floating Panel) === */
-
-/* 1. Kontainer Utama (Panel Mengambang) */
-.trash-popup-container {
-    position: absolute;
-    top: 70px; 
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 990; 
-    width: 90%;
-    max-width: 360px; 
-    max-height: 60vh; 
-    
-    background: var(--color-bg); /* Latar belakang body */
+/* === [REVISI V6.4] CSS Accordion (Animasi Grid) === */
+.card-accordion {
+    margin-top: 10px;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-card);
-    box-shadow: 0 5px 20px var(--color-shadow-dark); /* Bayangan lebih kuat */
-    border: 1px solid var(--color-border);
-
-    overflow: hidden; 
+    overflow: hidden; /* Penting untuk rounded corner */
 }
-
-/* 2. Atur .slide-item khusus di dalam trash */
-.trash-popup-container .slide-item {
-    padding: 0; 
-    height: auto;
-    max-height: 60vh; 
-    overflow-y: auto; 
-}
-
-/* 3. Atur .card-trash khusus di dalam trash */
-.trash-popup-container .card-trash {
-    margin: 0; 
-    box-shadow: none; 
-    border: none; 
-}
-/* === [AKHIR] CSS Card Keranjang Sampah === */
-
-/* [REVISI] CSS untuk Card Keranjang Sampah (GAYA BARU) */
-.card-trash {
-    background: var(--color-card-recap); 
-    border-color: var(--color-recap-border);
-}
-.trash-list {
-    max-height: 400px;
-    overflow-y: auto;
-}
-.trash-modal-list-item { 
-    background: var(--color-card-bg); /* Latar kartu */
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-input); /* Radius baru */
-    padding: 10px 15px;
-    margin-bottom: 10px;
+.accordion-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    padding: 12px 15px;
+    cursor: pointer;
+    background: var(--color-accent-light);
+    transition: background 0.3s;
 }
-.trash-item-info strong {
-    display: block;
-    font-size: 1em;
-    color: var(--color-text-main);
+.accordion-header:hover {
+    background: var(--color-tab-nav-bg);
 }
-.trash-item-info span {
-    font-size: 0.8em;
-    color: var(--color-text-light);
+body.dark-mode .accordion-header {
+    background: var(--color-accent-light);
 }
-.trash-item-actions { display: flex; gap: 8px; }
-.trash-item-actions .btn { font-size: 0.8em; padding: 5px 8px; }
-.trash-item-actions .restore { 
-    border-color: var(--color-text-sum); 
-    color: var(--color-text-sum); 
+body.dark-mode .accordion-header:hover {
+    background: var(--color-header-btn-bg);
+}
+.accordion-header h3 {
+    margin: 0;
+    font-size: 0.95em;
+    font-weight: 700;
+    color: var(--color-accent);
+}
+body.dark-mode .accordion-header h3 {
+    color: var(--color-accent);
+}
+.accordion-toggle-icon {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--color-accent);
+    transition: transform 0.3s ease;
+}
+
+.accordion-header.active .accordion-toggle-icon {
+    transform: rotate(45deg);
+}
+
+/* [V6.4] Animasi grid mulus */
+.accordion-panel {
+    display: grid;
+    grid-template-rows: 0fr; /* Awalnya 0 */
+    transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Transisi profesional */
+    background: var(--color-card-bg);
+}
+body.dark-mode .accordion-panel {
+    background: var(--color-card-bg);
+}
+.accordion-header.active + .accordion-panel {
+    grid-template-rows: 1fr; /* Menjadi 1 */
+}
+/* [V6.4] Wrapper untuk konten di dalam grid */
+.accordion-content-wrapper {
+    overflow: hidden;
+    padding: 0px 20px;
+    /* [PERBAIKAN BUG #2] Tambahkan padding bawah */
+    padding-bottom: 0px;
+}
+/* [V6.4] Penyesuaian untuk rekap */
+.accordion-panel.recap-panel {
     background: transparent;
 }
-body.dark-mode .trash-item-actions .restore { 
-    background: var(--color-tester-result-bg); 
-    border-color: var(--color-card-hitung-border);
+.accordion-panel.recap-panel .accordion-content-wrapper {
+    padding: 0px 0 0 0;
 }
-.trash-item-actions .delete { 
+
+/* Grid 2 kolom untuk input QC */
+.qc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0px 15px;
+}
+/* [PERBAIKAN BUG #2] RAPIKAN GRID QC */
+.qc-grid.full-width {
+    grid-template-columns: 1fr; /* Hanya 1 kolom */
+}
+.qc-grid.full-width label {
+    margin-top: 12px; /* Beri jarak antar input */
+}
+.qc-grid label {
+    margin-top: 12px;
+}
+/* Style untuk input dengan satuan */
+.input-with-unit {
+    position: relative;
+}
+.input-unit {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-lighter);
+    font-size: 0.85em;
+    font-weight: 400;
+    pointer-events: none;
+}
+/* Sesuaikan input agar tidak tumpang tindih dengan unit */
+.input-with-unit input {
+    padding-right: 45px; 
+}
+.input-with-unit input[type=number] {
+    padding-right: 45px;
+}
+/* === [AKHIR] CSS Accordion === */
+
+
+/* === [REVISI V6.0] CSS Card Vault (Brankas Data) === */
+
+/* 1. Kontainer Overlay (Latar belakang gelap) */
+.vault-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: rgba(0,0,0,0.19); /* Latar gelap transparan */
+    z-index: 1998;
+    display: none; /* Default tersembunyi */
+    transition: opacity 0.3s ease-out; /* [V6.3] Transisi halus */
+    opacity: 0;
+}
+.vault-overlay.visible {
+    display: block;
+    opacity: 1;
+}
+
+/* 2. Kontainer Utama (Panel Pop-up Profesional) */
+.vault-container {
+    position: fixed;
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1999; 
+    width: 95%;
+    max-width: 600px; /* LEBIH LEBAR */
+    height: 85dvh; /* LEBIH TINGGI */
+    
+    background: var(--color-bg); /* Latar belakang body */
+    border-radius: var(--radius-card);
+    box-shadow: 0 10px 30px var(--color-shadow-dark); /* Bayangan lebih kuat */
+    border: 1px solid var(--color-border);
+
+    overflow: hidden; /* Kontrol di dalam */
+    display: none; /* Default tersembunyi */
+    flex-direction: column; /* Tata letak Vertikal */
+    
+    /* [REVISI V6.3] Animasi baru */
+    transform-origin: center center;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+    transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.vault-container.visible {
+    display: flex;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+.vault-container.is-hiding {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+
+/* 3. Header Vault (Judul + Tombol Export) */
+.vault-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0; /* Header tidak mengecil */
+    background: var(--color-card-bg);
+}
+.vault-header h2 {
+    margin: 0;
+    font-size: 1.1em;
+    color: var(--color-accent);
+}
+.vault-export-btn {
+    background: var(--color-text-sum);
+    color: white;
+    border: none;
+    border-radius: var(--radius-input);
+    padding: 8px 12px;
+    font-size: 0.8em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+.vault-export-btn:hover {
+    background: #156d44;
+    transform: scale(1.05);
+}
+/* [BARU V6.1] Style tombol saat disabled (untuk loading) */
+.vault-export-btn:disabled {
+    background: var(--color-text-light);
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* 4. Daftar Vault (Bisa scroll) */
+.vault-list {
+    flex-grow: 1; /* Ambil sisa ruang */
+    overflow-y: auto;
+    padding: 15px;
+}
+.vault-list-item { 
+    background: var(--color-card-bg); 
+    border: 1px solid var(--color-border);
+    border-left: 5px solid var(--color-accent); /* Penanda Profesional */
+    border-radius: var(--radius-input); 
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 5px var(--color-shadow);
+    /* [REVISI V6.4] Transisi hapus yang lebih baik */
+    transition: transform 0.3s cubic-bezier(0.6, -0.28, 0.74, 0.05), 
+                opacity 0.3s cubic-bezier(0.6, -0.28, 0.74, 0.05),
+                max-height 0.4s 0.1s ease, 
+                padding 0.4s 0.1s ease, 
+                margin 0.4s 0.1s ease, 
+                border-width 0.4s 0.1s ease;
+    overflow: hidden;
+    max-height: 100px; /* Tinggi wajar */
+}
+.vault-list-item:hover {
+    box-shadow: 0 4px 10px var(--color-shadow-dark);
+}
+/* [REVISI V6.4] Animasi menghapus item vault (swipe-out) */
+.vault-list-item.is-deleting {
+    transform: translateX(100px);
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-width: 0;
+}
+
+
+/* Info di dalam list item */
+.vault-item-info {
+    flex-grow: 1;
+    min-width: 0; /* Mencegah teks mendorong tombol */
+    display: flex;
+    flex-direction: column;
+}
+.vault-item-info-main {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: var(--color-text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    
+    /* [V6.3] Wadah untuk badge NEW */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+/* [BARU V6.3] Badge "NEW!" */
+.vault-new-badge {
+    background: var(--color-alert-text);
+    color: white;
+    font-size: 0.6em;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1;
+}
+
+.vault-item-info-sub {
+    font-size: 0.85em;
+    color: var(--color-text-light);
+    margin-top: 2px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Tombol di dalam list item */
+.vault-item-actions { 
+    display: flex; 
+    gap: 8px; 
+    flex-shrink: 0; /* Tombol tidak mengecil */
+}
+.vault-item-actions .btn { 
+    font-size: 0.8em; 
+    padding: 6px 10px; 
+    min-width: 60px; /* Lebar minimum */
+    text-align: center;
+}
+.vault-item-actions .restore { 
+    border-color: var(--color-accent); 
+    color: var(--color-accent); 
+    background: transparent;
+}
+body.dark-mode .vault-item-actions .restore { 
+    background: var(--color-accent-light); 
+    border-color: var(--color-accent-light);
+    color: var(--color-accent-text);
+}
+.vault-item-actions .delete { 
     border-color: var(--color-delete-text); 
     color: var(--color-delete-text); 
     background: transparent;
 }
-body.dark-mode .trash-item-actions .delete { 
+body.dark-mode .vault-item-actions .delete { 
     background: #4a2125;
     border-color: #dc3545;
 }
-/* === [AKHIR] CSS Card Sampah === */
+/* === [AKHIR] CSS Vault === */
 
-/* === [REVISI] DESAIN 1: GAYA TAB MODERN === */
 
-/* 1. Navigasi Tab (Kotak Pil di Atas) */
+/* === [REVISI V6.4] DESAIN TAB SLIDING === */
 .card-tab-nav {
     display: flex;
     justify-content: space-around;
-    background: var(--color-tab-nav-bg); /* Latar abu-abu muda */
-    margin: 15px 0 0 0; /* Margin atas */
-    padding: 4px; /* Padding untuk "pill" di dalam */
-    border-radius: 25px; /* Bentuk pil luar */
+    background: var(--color-tab-nav-bg); 
+    margin: 15px 0 0 0; 
+    padding: 4px; 
+    border-radius: 25px; 
     box-shadow: none;
     border: 1px solid var(--color-border);
     position: sticky; 
-    top: 5px; /* Jarak dari atas layar */
+    top: 5px; 
     z-index: 10;
     flex-shrink: 0; 
 }
 body.dark-mode .card-tab-nav {
-    border: none; /* Hapus border di dark mode */
+    border: none; 
 }
-
-/* 2. Tombol Tab Individual */
 .tab-link {
     flex-grow: 1;
     border: none;
-    background: transparent; /* Transparan, hanya yg aktif yg solid */
+    background: transparent; 
     color: var(--color-text-light);
-    padding: 8px 5px; /* Padding tombol */
-    border-radius: 20px; /* Pil di dalam */
+    padding: 8px 5px; 
+    border-radius: 20px; 
     font-weight: 700;
     font-size: 0.8em; 
     cursor: pointer;
     transition: background 0.3s, color 0.3s;
     text-align: center;
     white-space: nowrap; 
+    
+    /* [REVISI V6.8] Tambahkan posisi relatif untuk badge */
+    position: relative;
 }
-
-/* 3. Tombol Tab Saat Aktif */
 .tab-link.active {
-    background: var(--color-accent); /* Biru Aksen */
-    color: var(--color-accent-text); /* Putih */
+    background: var(--color-accent); 
+    color: var(--color-accent-text); 
     box-shadow: 0 2px 5px var(--color-shadow-dark);
 }
 body.dark-mode .tab-link.active {
-    color: #FFFFFF; /* Pastikan putih di dark mode */
+    color: #FFFFFF; 
 }
 
-/* 4. [REVISI] KUNCI LAYOUT 6: KONTEN TAB */
+/* [V6.4] KONTEN TAB SLIDING */
 .card-tab-content {
-    padding-top: 10px; /* Jarak dari tab ke kartu */
+    padding-top: 10px; 
     flex-grow: 1; 
-    overflow-y: auto; 
-    overflow-x: hidden;
-    /* Padding bawah agar tidak tertutup nav melayang */
+    overflow: hidden; /* [V6.4] Sembunyikan panel yg bergeser */
     padding-bottom: 90px; 
 }
+/* [V6.4] Wrapper untuk semua panel (400% width) */
+.card-tab-track {
+    display: flex;
+    width: 400%; /* 4 tab */
+    height: 100%;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Transisi slide */
+}
 
-/* 5. Panel Kartu (Default Tersembunyi) */
+/* [V6.4] Panel tab individu */
 .tab-panel {
-    display: none; 
+    width: 25%; /* 1 dari 4 tab */
+    flex-shrink: 0;
+    height: 100%;
+    overflow-y: auto; /* [V6.4] Scrollbar pindah ke sini */
+    overflow-x: hidden;
     margin-top: 0 !important; 
-    animation: fadeSlideIn 0.4s ease; 
+    padding: 0 5px 20px 5px; /* Padding untuk scroll */
 }
-.tab-panel.active {
-    display: block;
-}
+/* Sembunyikan scrollbar di panel */
+.tab-panel::-webkit-scrollbar { display: none; }
+.tab-panel { scrollbar-width: none; }
+
 
 /* === [REVISI] PENYESUAIAN CSS LAMA === */
-
-/* 1. Ubah .slide-item */
 .slide-item {
     min-width: 100%;
     max-width: 400px;
     flex-shrink: 0;
-    padding: 0 15px; /* Jarak samping utama */
+    padding: 0 15px; 
     height: 100%; 
     display: flex;
     flex-direction: column;
 }
-
-/* 2. Ubah .card di dalam tab */
-.tab-panel.card {
-    margin: 0 0 15px 0; /* Margin bawah antar kartu */
-    box-shadow: var(--shadow-card); /* Shadow konsisten */
+.tab-panel .card { /* [V6.4] Ubah selector */
+    margin: 0 0 15px 0; 
+    box-shadow: var(--shadow-card); 
 }
-
-/* 3. Ubah h2 di kartu pertama (Data Panen) */
-.card-data h2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: -10px; 
-}
-
-/* 4. Pindahkan .card-project-controls (sudah di-override di atas) */
+/* Hapus .card-data h2 lama, sudah diganti di atas */
 
 
 /* === [BARU] SEMBUNYIKAN SCROLLBAR === */
-
-/* Sembunyikan scrollbar untuk Chrome, Safari, Edge */
-.card-tab-content::-webkit-scrollbar {
+.vault-list::-webkit-scrollbar {
     display: none;
 }
-
-/* Sembunyikan scrollbar untuk Firefox */
-.card-tab-content {
+.vault-list {
     scrollbar-width: none; /* Firefox */
+}
+
+/* === [REVISI V6.8] CSS Badge Status (Gaya Balon Teks) === */
+.status-badge {
+  display: inline-block;
+  vertical-align: middle;
+  font-weight: 700;
+  font-size: 0.7em;
+  padding: 3px 8px; 
+  border-radius: 6px;
+  color: #fff;
+  flex-shrink: 0; 
+  
+  /* [REVISI V6.8] Pemosisian Balon Teks */
+  position: absolute;
+  top: -10px; /* Muncul di atas tab */
+  right: -5px; /* Sedikit ke kanan */
+  line-height: 1.2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 1; /* Di atas tab link lain */
+  
+  /* [REVISI V6.8] Panah Balon Teks */
+  transition: background 0.3s, transform 0.2s;
+  transform: scale(0.9);
+  opacity: 0;
+  pointer-events: none; /* Tidak bisa diklik */
+}
+.status-badge.visible {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Panah kecil di bawah badge */
+.status-badge::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; /* Arahkan ke bawah */
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 4px;
+    border-style: solid;
+    border-color: transparent; 
+    /* Warna panah diatur oleh JS di 'markStatus' */
 }
 </style>
 </head>
 
+
 <body>
 
 <header class="app-header visible">
-  <button id="trashToggleBtn" class="dark-mode-toggle" onclick="showTrash()" title="Buka Keranjang Sampah">♻️</button>
+  <button id="vaultToggleBtn" class="dark-mode-toggle" onclick="toggleVault()" title="Buka Vault Data Panen">🗄️</button>
   
   <button id="darkModeToggle" class="dark-mode-toggle" title="Ganti Tema">🌙</button>
 
   <h1 class="title">
     <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
-    <span class="version">V5.2</span>
-    <span class="build-badge">Beta</span>
+    <span class="version">V6.8</span>
+    <span class="build-badge">Pro</span>
   </h1>
   <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
   <p class="sponsor">This app has been built for internal use and restricted purpose only! ⓒ 2025 All Right Reserved</p>
@@ -1204,10 +1527,11 @@ body.dark-mode .tab-link.active {
 </div>
 
 <div class="carousel-controls">
-    </div>
+</div>
+
 <div id="calculatorContainer" class="calculator-container">
     <div class="calculator-card">
-        <input type="text" id="calcDisplay" class="calc-display-input" value="0">
+        <input type="text" id="calcDisplay" class="calc-display-input" value="0" readonly>
         <div class="calc-grid">
             <button class="calc-btn clear" onclick="calcClear()">AC</button>
             <button class="calc-btn clear" onclick="calcBackspace()">DEL</button>
@@ -1240,282 +1564,383 @@ body.dark-mode .tab-link.active {
 
 
 <template id="panen-template">
-    <div class="slide-item">
-
+    <div class="slide-item"> 
         <div class="card-tab-nav">
-            <button class="tab-link active" onclick="openCard(event, '{{INSTANCE_ID}}_data')">📋 Data</button>
-            <button class="tab-link" onclick="openCard(event, '{{INSTANCE_ID}}_tester')">🔬 Tester</button>
-            <button class="tab-link" onclick="openCard(event, '{{INSTANCE_ID}}_hitung')">🔢 Hitung</button>
-            <button class="tab-link" onclick="openCard(event, '{{INSTANCE_ID}}_rekap')">📊 Rekap</button>
+            <button class="tab-link active" data-tab-index="0" onclick="openCard(event, '{{INSTANCE_ID}}_data', 0)">📋 Data</button>
+            <button class="tab-link" data-tab-index="1" onclick="openCard(event, '{{INSTANCE_ID}}_tester', 1)">🔬 Tester</button>
+            <button class="tab-link" data-tab-index="2" onclick="openCard(event, '{{INSTANCE_ID}}_hitung', 2)">🔢 Hitung</button>
+            <button class="tab-link" data-tab-index="3" onclick="openCard(event, '{{INSTANCE_ID}}_rekap', 3)" id="{{INSTANCE_ID}}_rekapTab">
+                📊 Rekap
+                <span class="status-badge" id="{{INSTANCE_ID}}_statusBadge">Draft</span>
+            </button>
         </div>
 
         <div class="card-tab-content">
-
-            <section id="{{INSTANCE_ID}}_data" class="card card-data tab-panel" style="display: block;">
-                <h2 id="{{INSTANCE_ID}}_title">
-                    📋 Data Panen {{ID}}
-                    <div class="card-project-controls">
-                        <button class="card-project-btn add-btn" onclick="addInstance()" title="Tambah Data Panen Baru">➕</button>
-                        <button class="card-project-btn reset-btn" onclick="resetCard1('{{INSTANCE_ID}}')" title="Reset Data Panen Ini">🔄</button>
-                        <button id="{{INSTANCE_ID}}_removeBtn" class="card-project-btn remove-btn" onclick="removeInstance()" title="Hapus Data Panen Ini" disabled>❌</button>
-                    </div>
-                </h2>
-
-                <label>📅 Tanggal Panen</label><input id="{{INSTANCE_ID}}_line" type="date" placeholder="YYYY-MM-DD" oninput="updateRecap('{{INSTANCE_ID}}')">
-                <label>👤 Nama Customer</label><input id="{{INSTANCE_ID}}_customer" placeholder="Nama Customer" oninput="updateRecap('{{INSTANCE_ID}}')">
-                <label>🎯 Tujuan</label><input id="{{INSTANCE_ID}}_tujuan" placeholder="Kota Tujuan" oninput="updateRecap('{{INSTANCE_ID}}')">
-                <label>📈 Order Benur (Ekor)</label><input type="text" id="{{INSTANCE_ID}}_nominalOrder" placeholder="0" oninput="formatCurrency(this); recalcAllHitungan('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}')">
-
-                <label>🚛 Jenis Truk</label>
-                <select id="{{INSTANCE_ID}}_jenisTruk" onchange="updateTruckDetails('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}'); recalcAllHitungan('{{INSTANCE_ID}}')">
-                    <option value="Euro2">Euro 2</option>
-                    <option value="Euro4">Euro 4</option>
-                    <option value="Bandara">Bandara</option>
-                </select>
-
-                <label>📦 Kapasitas Angkut (Box)</label>
-                <input type="number" id="{{INSTANCE_ID}}_kapasitasAngkut" placeholder="Auto isi">
-
-                <label>⚖️ Isi Per Box (Kantong)</label>
-                <input type="number" id="{{INSTANCE_ID}}_isiBox" placeholder="Auto isi dari jenis truk" readonly>
-
-                <label>🚚 Driver</label>
-                <select id="{{INSTANCE_ID}}_driver" onchange="updateDriverDetails('{{INSTANCE_ID}}')">
-                    </select>
-                
-                <label>🚗 Plat Nomor</label>
-                <input id="{{INSTANCE_ID}}_platNomor" placeholder="Plat Nomor (auto-fill)" oninput="updateRecap('{{INSTANCE_ID}}')">
-            </section>
-
-            <section id="{{INSTANCE_ID}}_tester" class="card card-tester tab-panel">
-                <h2>🔬 Hitungan Tester</h2>
-
-                <div class="row">
-                    <div class="col"><label>💧 Nomor Bak</label><input id="{{INSTANCE_ID}}_nomorBak" placeholder="Bak Scooring" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
-                </div>
-
-                <div class="row">
-                    <div class="col"><label>🤖 Tomota (ekor)</label><input id="{{INSTANCE_ID}}_tomota" type="number" placeholder="Tomota" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
-                </div>
-                <div class="row">
-                    <div class="col"><label>Hitungan Tester:</label></div>
-                </div>
-
-                <div id="{{INSTANCE_ID}}_hitGridTester" class="hit-grid"></div>
-                
-                <div class="summary-row">
-                    <div class="sum-box"><div class="label">Σ Total</div><div id="{{INSTANCE_ID}}_testerSum" class="value">0</div></div>
-                    <div class="density-box"><div class="label">Density (ekor/L)</div><div id="{{INSTANCE_ID}}_testerDensity" class="value">-</div></div>
-                </div>
-
-                <div class="allowance-tester-input-group">
-                    <label>Allowance Tester (%)</label>
-                    <input type="number" id="{{INSTANCE_ID}}_allowanceTester" value="0" min="0" max="100" oninput="recalcAllTester('{{INSTANCE_ID}}')">
-                </div>
-
-                <div class="tester-result-box split-layout">
-                    <div class="result-box-split">
-                        <div class="label">✨ Hasil Benur Tester (Dibulatkan)</div>
-                        <div id="{{INSTANCE_ID}}_finalTesterResult" class="result-value">0</div>
-                    </div>
-                    <div class="result-box-split estimasi-box">
-                        <div class="label">📦 Estimasi Box (Tester)</div>
-                        <div id="{{INSTANCE_ID}}_estimasiBoxTester" class="result-value">0 Box</div>
-                    </div>
-                </div>
-                <div class="actions-row">
-                    <button class="btn" onclick="addCalcBox('{{INSTANCE_ID}}_hitGridTester')">➕ Tambah Kolom</button>
-                    <button class="btn" onclick="removeCalcBox('{{INSTANCE_ID}}_hitGridTester')">❌ Hapus Kolom</button>
-                    <button class="btn" onclick="resetTester('{{INSTANCE_ID}}')">🔄 Reset Semua</button>
-                </div>
-                <div id="{{INSTANCE_ID}}_testerTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
-            </section>
-
-            <section id="{{INSTANCE_ID}}_hitung" class="card card-hitung tab-panel">
-                <h2>🔢 Hitungan</h2>
-
-                <div class="order-nominal-display">
-                    <div class="label">🎯 Order Benur (Ekor)</div>
-                    <div id="{{INSTANCE_ID}}_orderDisplay" class="value">0</div>
-                </div>
-
-                <div id="{{INSTANCE_ID}}_multiSessionGrid">
-                    </div>
-
-                <div class="actions-row actions-row-small">
-                    <button class="btn" onclick="addCalcBox('{{INSTANCE_ID}}_multiSessionGrid')">➕ Tambah Kolom</button>
-                    <button class="btn primary" onclick="addHitunganSession('{{INSTANCE_ID}}')">➕ Tambah Baris</button>
-                    <button class="btn" onclick="removeHitunganSession('{{INSTANCE_ID}}')">❌ Hapus Baris</button>
-                    <button class="btn" onclick="resetHitungan('{{INSTANCE_ID}}')">🔄 Reset Semua</button>
-                </div>
-
-                <div class="summary-and-result-grid">
-                    
-                    <div class="grey-summary-box">
+            <div class="card-tab-track" id="{{INSTANCE_ID}}_tabTrack">
+            
+                <section id="{{INSTANCE_ID}}_data" class="tab-panel">
+                    <div class="card card-data">
+                        <h2 id="{{INSTANCE_ID}}_title">
+                            <span class="title-text">📋 Data Panen {{ID}}</span>
+                            <div class="card-project-controls">
+                                <button class="card-project-btn add-btn" onclick="addInstance()" title="Tambah Data Panen Baru">➕</button>
+                                <button class="card-project-btn reset-btn" onclick="resetCard1('{{INSTANCE_ID}}')" title="Reset Data Panen Ini">🔄</button>
+                                <button id="{{INSTANCE_ID}}_removeBtn" class="card-project-btn remove-btn" onclick="removeInstance()" title="Hapus Data Panen Ini" disabled>❌</button>
+                            </div>
+                        </h2>
                         
-                        <div class="summary-item-row">
-                            <div class="summary-label">Rata-rata (Aktual)</div>
-                            <div id="{{INSTANCE_ID}}_avgValueDisplay" class="summary-value avg">0 ekor</div>
-                        </div>
-                        <div class="summary-item-row allowance-result-row">
-                            <div class="summary-label">Allowance (%)</div>
-                            <div class="allowance-inputs">
-                                <input type="number" id="{{INSTANCE_ID}}_allowance1" value="0" min="0" max="100" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 70px;">
-                                <span>-</span>
-                                <input type="number" id="{{INSTANCE_ID}}_allowance2" value="0" min="0" max="100" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 70px;">
-                            </div>
-                        </div>
-                        <div class="summary-item-row">
-                            <div class="summary-label">📦 Kebutuhan Box</div>
-                            <div id="{{INSTANCE_ID}}_kebutuhanBox" class="summary-value box">0 Box</div>
-                        </div>
+                        <label>📅 Tanggal Panen</label><input id="{{INSTANCE_ID}}_line" type="date" placeholder="YYYY-MM-DD" oninput="updateRecap('{{INSTANCE_ID}}')">
+                        <label>👤 Nama Customer</label><input id="{{INSTANCE_ID}}_customer" placeholder="Nama Customer" oninput="updateRecap('{{INSTANCE_ID}}')">
+                        <label>🎯 Tujuan</label><input id="{{INSTANCE_ID}}_tujuan" placeholder="Kota Tujuan" oninput="updateRecap('{{INSTANCE_ID}}')">
+                        <label>📈 Order Benur (Ekor)</label><input type="text" id="{{INSTANCE_ID}}_nominalOrder" placeholder="0" oninput="formatCurrency(this); recalcAllHitungan('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}')">
+
+                        <label>🚛 Jenis Truk</label>
+                        <select id="{{INSTANCE_ID}}_jenisTruk" onchange="updateTruckDetails('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}'); recalcAllHitungan('{{INSTANCE_ID}}')">
+                            <option value="Euro2">Euro 2</option>
+                            <option value="Euro4">Euro 4</option>
+                            <option value="Bandara">Bandara</option>
+                        </select>
+
+                        <label>📦 Kapasitas Angkut (Box)</label>
+                        <input type="number" id="{{INSTANCE_ID}}_kapasitasAngkut" placeholder="Auto isi">
+
+                        <label>⚖️ Isi Per Box (Kantong)</label>
+                        <input type="number" id="{{INSTANCE_ID}}_isiBox" placeholder="Auto isi dari jenis truk" readonly>
+
+                        <label>🚚 Driver</label>
+                        <select id="{{INSTANCE_ID}}_driver" onchange="updateDriverDetails('{{INSTANCE_ID}}')">
+                            </select>
                         
-                        <div id="{{INSTANCE_ID}}_limitKapasitasToggleContainer" class="simulasi-toggle-container" style="justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--color-border);">
-                            <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-accent);">Batasi ke Kapasitas Truk?</span>
-                            <label class="switch">
-                                <input type="checkbox" id="{{INSTANCE_ID}}_limitKapasitasToggle" onchange="recalcAllHitungan('{{INSTANCE_ID}}')" checked>
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-
-                        <div class="summary-item-row" id="{{INSTANCE_ID}}_simulasiBoxRow" style="display: none;">
-                            <div class="summary-label" style="font-weight: 700; color: var(--color-alert-text);">⚠ Simulasi Box Real (Over Capacity)</div>
-                            <div id="{{INSTANCE_ID}}_simulasiBoxReal" class="summary-value simulation"></div>
-                        </div>
+                        <label>🚗 Plat Nomor</label>
+                        <input id="{{INSTANCE_ID}}_platNomor" placeholder="Plat Nomor (auto-fill)" oninput="updateRecap('{{INSTANCE_ID}}')">
                     </div>
+                </section>
 
-                    <div class="green-result-box">
+                <section id="{{INSTANCE_ID}}_tester" class="tab-panel">
+                    <div class="card card-tester">
+                        <h2>🔬 Hitungan Tester</h2>
 
-                        <div id="{{INSTANCE_ID}}_manualBenurToggleContainer" class="simulasi-toggle-container" style="justify-content: space-between; margin-bottom: 5px;">
-                            <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-alert-text);">Gunakan Override Manual?</span>
-                            <label class="switch">
-                                <input type="checkbox" id="{{INSTANCE_ID}}_manualBenurToggle" onchange="toggleManualBenurInput('{{INSTANCE_ID}}')">
-                                <span class="slider round"></span>
-                            </label>
+                        <div class="row">
+                            <div class="col"><label>💧 Nomor Bak (Scooring)</label><input id="{{INSTANCE_ID}}_nomorBak" placeholder="Bak Scooring" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
                         </div>
 
-                        <div class="summary-item-row" id="{{INSTANCE_ID}}_manualBenurInputRow" style="background: var(--color-card-recap); padding: 8px; border-radius: 6px; margin-top: 5px; display: none;">
-                            <div class="summary-label" style="font-size: 0.85em; font-style: italic;">
-                                Override Manual (Ekor):
-                            </div>
-                            <div class="allowance-inputs">
-                                <input type="number" id="{{INSTANCE_ID}}_manualBenurOverride" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 100px; font-weight: 700; text-align: right; color: var(--color-alert-text);">
-                                <button class="btn" onclick="clearManualBenur('{{INSTANCE_ID}}')" style="padding: 5px 8px; font-size: 0.7em; line-height: 1; min-width: 30px;" title="Reset Override">🔄</button>
-                            </div>
+                        <div class="row">
+                            <div class="col"><label>🤖 Tomota (ekor)</label><input id="{{INSTANCE_ID}}_tomota" type="number" placeholder="Tomota" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col"><label>Hitungan Tester:</label></div>
                         </div>
 
-                        <div class="tester-result-box split-layout" id="{{INSTANCE_ID}}_benurPerKantongWrapper" 
-                             style="padding: 10px 5px; margin-top: 10px; border-top: 1px dashed var(--color-border); background: transparent; border: none; box-shadow: none;">
+                        <div id="{{INSTANCE_ID}}_hitGridTester" class="hit-grid"></div>
+                        
+                        <div class="summary-row">
+                            <div class="sum-box"><div class="label">Σ Total</div><div id="{{INSTANCE_ID}}_testerSum" class="value">0</div></div>
+                            <div class="density-box"><div class="label">Density (ekor/L)</div><div id="{{INSTANCE_ID}}_testerDensity" class="value">-</div></div>
+                        </div>
+
+                        <div class="allowance-tester-input-group">
+                            <label>Allowance Tester (%)</label>
+                            <input type="number" id="{{INSTANCE_ID}}_allowanceTester" value="0" min="0" max="100" oninput="recalcAllTester('{{INSTANCE_ID}}')">
+                        </div>
+
+                        <div class="tester-result-box split-layout">
+                            <div class="result-box-split">
+                                <div class="label">✨ Hasil Benur Tester (Dibulatkan)</div>
+                                <div id="{{INSTANCE_ID}}_finalTesterResult" class="result-value">0</div>
+                            </div>
+                            <div class="result-box-split estimasi-box">
+                                <div class="label">📦 Estimasi Box (Tester)</div>
+                                <div id="{{INSTANCE_ID}}_estimasiBoxTester" class="result-value">0 Box</div>
+                            </div>
+                        </div>
+                        <div class="actions-row">
+                            <button class="btn" onclick="addCalcBox('{{INSTANCE_ID}}_hitGridTester')">➕ Tambah Kolom</button>
+                            <button class="btn" onclick="removeCalcBox('{{INSTANCE_ID}}_hitGridTester')">❌ Hapus Kolom</button>
+                            <button class="btn" onclick="resetTester('{{INSTANCE_ID}}')">🔄 Reset Semua</button>
+                        </div>
+                        <div id="{{INSTANCE_ID}}_testerTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
+
+                        <div class="card-accordion" id="{{INSTANCE_ID}}_qcAccordion">
+                            <div class="accordion-header" onclick="toggleAccordion(event)">
+                                <h3>🧬 Quality Control (QC)</h3>
+                                <span class="accordion-toggle-icon">➕</span>
+                            </div>
+                            <div class="accordion-panel">
+                                <div class="accordion-content-wrapper">
+                                    
+                                    <div class="qc-grid">
+                                        <div>
+                                            <label>📦 Bak Asli</label>
+                                            <input id="{{INSTANCE_ID}}_qcBakAsli" placeholder="Bak Asli" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                        
+                                            <label>🌡️ Suhu</label>
+                                            <div class="input-with-unit">
+                                                <input type="number" id="{{INSTANCE_ID}}_qcSuhu" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                                <span class="input-unit">°C</span>
+                                            </div>
+                                            
+                                            <label>💧 pH</label>
+                                            <input type="number" id="{{INSTANCE_ID}}_qcPh" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
+
+                                            <label>💨 DO</label>
+                                            <div class="input-with-unit">
+                                                <input type="number" id="{{INSTANCE_ID}}_qcDo" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                                <span class="input-unit">ppm</span>
+                                            </div>
+
+                                            <label>🧂 Salinitas</label>
+                                            <div class="input-with-unit">
+                                                <input type="number" id="{{INSTANCE_ID}}_qcSalinitas" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                                <span class="input-unit">ppt</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label>🛣️ Jarak Tempuh</label>
+                                            <div class="input-with-unit">
+                                                <input type="number" id="{{INSTANCE_ID}}_qcJarak" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                                <span class="input-unit">Jam</span>
+                                            </div>
+
+                                            <label>⚖️ Biomassa</label>
+                                            <div class="input-with-unit">
+                                                <input type="number" id="{{INSTANCE_ID}}_qcBiomassa" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                                <span class="input-unit">gr</span>
+                                            </div>
+
+                                            <label>📏 Panjang</label>
+                                            <div class="input-with-unit">
+                                                <input type="number" id="{{INSTANCE_ID}}_qcPanjang" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                                <span class="input-unit">mm</span>
+                                            </div>
+                                            
+                                            <label>🌟 Stadia</label>
+                                            <input id="{{INSTANCE_ID}}_qcStadia" placeholder="contoh: pl8pl9" oninput="updateRecap('{{INSTANCE_ID}}')">
+
+                                            <label>👨‍🏭 Scooping</label>
+                                            <input id="{{INSTANCE_ID}}_qcScooping" placeholder="-" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                        </div>
+                                    </div>
+
+                                    <div class="qc-grid full-width" style="margin-top: 0px;">
+                                        <div>
+                                            <label>#️⃣ No. Scooping</label>
+                                            <input id="{{INSTANCE_ID}}_qcNoScooping" placeholder="-" oninput="updateRecap('{{INSTANCE_ID}}')">
+                                        </div>
+                                    </div>
+                                </div> </div> </div>
+                        </div>
+                </section>
+
+                <section id="{{INSTANCE_ID}}_hitung" class="tab-panel">
+                    <div class="card card-hitung">
+                        <h2>🔢 Hitungan</h2>
+
+<div class="order-nominal-display">
+                            <div class="label">🎯 Order Benur (Ekor)</div>
+                            <div id="{{INSTANCE_ID}}_orderDisplay" class="value">0</div>
+                        </div>
+
+                        <div id="{{INSTANCE_ID}}_multiSessionGrid">
+                            </div>
+
+                        <div class="actions-row actions-row-small">
+                            <button class="btn" onclick="addCalcBox('{{INSTANCE_ID}}_multiSessionGrid')">➕ Tambah Kolom</button>
+                            <button class="btn primary" onclick="addHitunganSession('{{INSTANCE_ID}}')">➕ Tambah Baris</button>
+                            <button class="btn" onclick="removeHitunganSession('{{INSTANCE_ID}}')">❌ Hapus Baris</button>
+                            <button class="btn" onclick="resetHitungan('{{INSTANCE_ID}}')">🔄 Reset Semua</button>
+                        </div>
+
+                        <div class="summary-and-result-grid">
                             
-                            <div class="result-box-split" id="{{INSTANCE_ID}}_benurPerKantongRealBox" style="background: var(--color-tester-result-bg); border-color: var(--color-card-hitung-border);">
-                                <div class="label" id="{{INSTANCE_ID}}_benurPerKantongRealLabel" style="font-size: 0.7em; color: var(--color-tester-result-text);">
-                                    Benur/Kantong (Real)
-                                    <small class="text-muted" style="font-size: 0.9em; display: block; color: inherit; opacity: 0.7;">(Rata-rata - A1)</small>
+                            <div class="grey-summary-box">
+                                
+                                <div class="summary-item-row">
+                                    <div class="summary-label">Rata-rata (Aktual)</div>
+                                    <div id="{{INSTANCE_ID}}_avgValueDisplay" class="summary-value avg">0 ekor</div>
                                 </div>
-                                <div id="{{INSTANCE_ID}}_benurPerKantongReal" class="result-value" style="font-size: 1.5em; color: var(--color-text-sum);">
-                                    <span>0</span> <small>ekor/kantong</small>
+                                <div class="summary-item-row allowance-result-row">
+                                    <div class="summary-label">Allowance (%)</div>
+                                    <div class="allowance-inputs">
+                                        <input type="number" id="{{INSTANCE_ID}}_allowance1" value="0" min="0" max="100" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 70px;">
+                                        <span>-</span>
+                                        <input type="number" id="{{INSTANCE_ID}}_allowance2" value="0" min="0" max="100" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 70px;">
+                                    </div>
+                                </div>
+                                <div class="summary-item-row">
+                                    <div class="summary-label">📦 Kebutuhan Box</div>
+                                    <div id="{{INSTANCE_ID}}_kebutuhanBox" class="summary-value box">0 Box</div>
+                                </div>
+                                
+                                <div id="{{INSTANCE_ID}}_limitKapasitasToggleContainer" class="simulasi-toggle-container" style="justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--color-border);">
+                                    <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-accent);">Batasi ke Kapasitas Truk?</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="{{INSTANCE_ID}}_limitKapasitasToggle" onchange="recalcAllHitungan('{{INSTANCE_ID}}')" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="summary-item-row" id="{{INSTANCE_ID}}_simulasiBoxRow" style="display: none;">
+                                    <div class="summary-label" style="font-weight: 700; color: var(--color-alert-text);">⚠ Simulasi Box Real (Over Capacity)</div>
+                                    <div id="{{INSTANCE_ID}}_simulasiBoxReal" class="summary-value simulation"></div>
                                 </div>
                             </div>
+
+                            <div class="green-result-box">
+
+                                <div id="{{INSTANCE_ID}}_manualBenurToggleContainer" class="simulasi-toggle-container" style="justify-content: space-between; margin-bottom: 5px;">
+                                    <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-alert-text);">Gunakan Override Manual?</span>
+                                    <label class="switch">
+                                        <input type="checkbox" id="{{INSTANCE_ID}}_manualBenurToggle" onchange="toggleManualBenurInput('{{INSTANCE_ID}}')">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+
+                                <div class="summary-item-row" id="{{INSTANCE_ID}}_manualBenurInputRow" style="background: var(--color-card-recap); padding: 8px; border-radius: 6px; margin-top: 5px; display: none;">
+                                    <div class="summary-label" style="font-size: 0.85em; font-style: italic;">
+                                        Override Manual (Ekor):
+                                    </div>
+                                    <div class="allowance-inputs">
+                                        <input type="number" id="{{INSTANCE_ID}}_manualBenurOverride" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" style="width: 100px; font-weight: 700; text-align: right; color: var(--color-alert-text);">
+                                        <button class="btn" onclick="clearManualBenur('{{INSTANCE_ID}}')" style="padding: 5px 8px; font-size: 0.7em; line-height: 1; min-width: 30px;" title="Reset Override">🔄</button>
+                                    </div>
+                                </div>
+
+                                <div class="tester-result-box split-layout" id="{{INSTANCE_ID}}_benurPerKantongWrapper" 
+                                     style="padding: 10px 5px; margin-top: 10px; border-top: 1px dashed var(--color-border); background: transparent; border: none; box-shadow: none;">
+                                    
+                                    <div class="result-box-split" id="{{INSTANCE_ID}}_benurPerKantongRealBox" style="background: var(--color-tester-result-bg); border-color: var(--color-card-hitung-border);">
+                                        <div class="label" id="{{INSTANCE_ID}}_benurPerKantongRealLabel" style="font-size: 0.7em; color: var(--color-tester-result-text);">
+                                            Benur/Kantong (Real)
+                                            <small class="text-muted" style="font-size: 0.9em; display: block; color: inherit; opacity: 0.7;">(Rata-rata - A1)</small>
+                                        </div>
+                                        <div id="{{INSTANCE_ID}}_benurPerKantongReal" class="result-value" style="font-size: 1.5em; color: var(--color-text-sum);">
+                                            <span>0</span> <small>ekor/kantong</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="result-box-split estimasi-box" id="{{INSTANCE_ID}}_benurPerKantongSJBox" style="display: none; background: var(--color-card-bg); border-color: var(--color-accent);">
+                                        <div class="label" id="{{INSTANCE_ID}}_benurPerKantongSJLabel" style="font-size: 0.7em; color: var(--color-accent);">
+                                            Benur/Kantong (SJ)
+                                            <small class="text-muted" style="font-size: 0.9em; display: block; color: inherit; opacity: 0.7;">(Rata-rata - A1 - A2)</small>
+                                        </div>
+                                        <div id="{{INSTANCE_ID}}_benurPerKantongSJ" class="result-value" style="font-size: 1.5em; color: var(--color-accent);">
+                                            <span>0</span> <small>ekor/kantong</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+
+                            <section class="grey-summary-box" id="{{INSTANCE_ID}}_selisihBox" style="display: none; margin-top: 15px;">
+                                <div class="summary-item-row" style="border-bottom: 1px solid var(--color-border);">
+                                    <div class="summary-label" style="font-weight: 700; color: var(--color-accent); font-size: 0.95em;">🐠 Rekap Packing</div>
+                                </div>
+
+                                <div class="summary-item-row">
+                                    <span class="summary-label">Total Benur Packing</span>
+                                    <span class="summary-value real-sj" id="{{INSTANCE_ID}}_selisih_totalPacking">0</span>
+                                </div>
+                                <div class="summary-item-row">
+                                    <span class="summary-label">Selisih (vs Order)</span>
+                                    <span class="summary-value" id="{{INSTANCE_ID}}_selisih_selisihOrder">0</span>
+                                </div>
                             
-                            <div class="result-box-split estimasi-box" id="{{INSTANCE_ID}}_benurPerKantongSJBox" style="display: none; background: var(--color-card-bg); border-color: var(--color-accent);">
-                                <div class="label" id="{{INSTANCE_ID}}_benurPerKantongSJLabel" style="font-size: 0.7em; color: var(--color-accent);">
-                                    Benur/Kantong (SJ)
-                                    <small class="text-muted" style="font-size: 0.9em; display: block; color: inherit; opacity: 0.7;">(Rata-rata - A1 - A2)</small>
+                                <div id="{{INSTANCE_ID}}_selisihWarningBox" style="display: none; margin-top: 15px; border-top: 1px dashed var(--color-recap-border); padding-top: 15px; text-align: center;">
+                                    <h3 style="font-size: 0.9em; color: var(--color-alert-text); margin: 0 0 8px 0;">⚠ Peringatan Selisih! Cek Ulang:</h3>
+                                    <div class="simulasi-toggle-container" style="justify-content: center;">
+                                        <span class="simulasi-toggle-label">Gunakan Simulasi</span>
+                                        <label class="switch">
+                                            <input type="checkbox" id="{{INSTANCE_ID}}_simulasiToggle" onchange="toggleSimulasiUsage('{{INSTANCE_ID}}')">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div id="{{INSTANCE_ID}}_selisihFinalResult" style="font-size: 1.8em; font-weight: 700; color: var(--color-alert-text); text-align: center; background: var(--color-card-tester); padding: 10px; border-radius: 8px; margin-top: 10px;">
+                                        0 ekor/kantong
+                                    </div>
+                                    <div id="{{INSTANCE_ID}}_selisihSimulasiResult" style="font-size: 0.9em; font-weight: 700; color: var(--color-text-light); margin-top: 8px;">
+                                        Estimasi Selisih Baru: +0 ekor
+                                    </div>
                                 </div>
-                                <div id="{{INSTANCE_ID}}_benurPerKantongSJ" class="result-value" style="font-size: 1.5em; color: var(--color-accent);">
-                                    <span>0</span> <small>ekor/kantong</small>
+                            </section>
+                        </div>
+                                
+                        <div class="actions-row">
+                            </div>
+
+                        <div id="{{INSTANCE_ID}}_hitunganTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
+                    </div>
+                </section>
+
+                <section id="{{INSTANCE_ID}}_rekap" class="tab-panel">
+                    <div class="card card-recap">
+                        <h2>📊 Rekap Panen {{ID}}</h2>
+
+                        <h3 class="recap-section-title">Data Panen</h3>
+                        <div class="recap-row"><span class="recap-label">Customer</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_customer">-</span></div>
+                        <div class="recap-row"><span class="recap-label">Tujuan</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tujuan">-</span></div>
+                        <div class="recap-row"><span class="recap-label">Tanggal Panen</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_line">-</span></div>
+                        <div class="recap-row"><span class="recap-label">Driver</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_driver">-</span></div>
+                        <div class="recap-row"><span class="recap-label">Plat Nomor</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_platNomor">-</span></div>
+                        <div class="recap-row"><span class="recap-label">Order</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_orderBenur">0</span></div>
+                        <div class="recap-row"><span class="recap-label">Truk</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_jenisTruk">-</span></div>
+                        <div class="recap-row"><span class="recap-label">Kapasitas</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_kapasitasAngkut">0 Box</span></div>
+                        <div class="recap-row"><span class="recap-label">Isi/Box</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_isiBox">0 Kantong</span></div>
+
+                        <h3 class="recap-section-title">Data Tester</h3>
+                        <div class="recap-row"><span class="recap-label">No. Bak (Scooring)</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_nomorBak">-</span></div>
+                        <div class="recap-row"><span class="recap-label">Tomota</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tomota">- ekor</span></div>
+                        <div class="recap-row"><span class="recap-label">Σ Total</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerSum">0</span></div>
+                        <div class="recap-row"><span class="recap-label">Density</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerDensity">-</span></div>
+                        <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceTester">0 %</span></div>
+                        <div class="recap-row"><span class="recap-label">Hasil Benur Tester</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_hasilTester">0</span></div>
+                        <div class="recap-row"><span class="recap-label">Estimasi Box</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_estimasiBoxTester">0 Box</span></div>
+
+                        <div class="card-accordion" id="{{INSTANCE_ID}}_recapQcAccordion">
+                            <div class="accordion-header" onclick="toggleAccordion(event)">
+                                <h3>🧬 Rekap Quality Control</h3>
+                                <span class="accordion-toggle-icon">➕</span>
+                            </div>
+                            <div class="accordion-panel recap-panel">
+                                <div class="accordion-content-wrapper">
+                                    <div class="recap-row"><span class="recap-label">Bak Asli</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcBakAsli">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">Suhu</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcSuhu">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">pH</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcPh">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">DO</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcDo">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">Salinitas</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcSalinitas">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">Jarak Tempuh</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcJarak">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">Biomassa</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcBiomassa">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">Panjang</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcPanjang">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">Stadia</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcStadia">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">Scooping</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcScooping">-</span></div>
+                                    <div class="recap-row"><span class="recap-label">No. Scooping</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_qcNoScooping">-</span></div>
                                 </div>
                             </div>
                         </div>
+                        <h3 class="recap-section-title">Hasil Hitungan</h3>
+                        <div id="{{INSTANCE_ID}}_recap_sessionSummary">
+                            </div>
+                        <div class="recap-row"><span class="recap-label">Rata-rata (Aktual)</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_avgValue">0 ekor</span></div>
+                        <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceHitung">0% / 0%</span></div>
+                        <div class="recap-row"><span class="recap-label">Kebutuhan Box</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_kebutuhanBox">0 Box</span></div>
+                        <div class="recap-row"><span class="recap-label">Benur/Kantong (Real)</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_benurReal">0 ekor/kantong</span></div>
+                        <div class="recap-row" id="{{INSTANCE_ID}}_recap_benurSJ_row" style="display: none;"><span class="recap-label">Benur/Kantong (SJ)</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_benurSJ">0 ekor/kantong</span></div>
+                        <div class="recap-row" id="{{INSTANCE_ID}}_recap_simulasi_row" style="display: none;"><span class="recap-label">⚠ Simulasi Real</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_simulasi">0 ekor/kantong</span></div>
+
+                        <div class="actions-row">
+                            <button class="btn save-to-vault" onclick="saveDataToVault('{{INSTANCE_ID}}')" title="Simpan data panen ini ke Vault">💾 Simpan ke Vault</button>
+                            <button class="btn" onclick="shareToCustomer('{{INSTANCE_ID}}')" title="Bagikan rincian panen ke Customer via Whatsapp">🤳🏻 Bagikan ke Customer</button>
+                            <button class="btn" onclick="shareAdmin('{{INSTANCE_ID}}')" title="Kirim rincian panen via WhatsApp">🚛 Kirim Rincian Panen</button>
                         </div>
 
-                    <section class="grey-summary-box" id="{{INSTANCE_ID}}_selisihBox" style="display: none; margin-top: 15px;">
-                        <div class="summary-item-row" style="border-bottom: 1px solid var(--color-border);">
-                            <div class="summary-label" style="font-weight: 700; color: var(--color-accent); font-size: 0.95em;">🐠 Rekap Packing</div>
-                        </div>
-
-                        <div class="summary-item-row">
-                            <span class="summary-label">Total Benur Packing</span>
-                            <span class="summary-value real-sj" id="{{INSTANCE_ID}}_selisih_totalPacking">0</span>
-                        </div>
-                        <div class="summary-item-row">
-                            <span class="summary-label">Selisih (vs Order)</span>
-                            <span class="summary-value" id="{{INSTANCE_ID}}_selisih_selisihOrder">0</span>
-                        </div>
-                    
-                        <div id="{{INSTANCE_ID}}_selisihWarningBox" style="display: none; margin-top: 15px; border-top: 1px dashed var(--color-recap-border); padding-top: 15px; text-align: center;">
-                            <h3 style="font-size: 0.9em; color: var(--color-alert-text); margin: 0 0 8px 0;">⚠ Peringatan Selisih! Cek Ulang:</h3>
-                            <div class="simulasi-toggle-container" style="justify-content: center;">
-                                <span class="simulasi-toggle-label">Gunakan Simulasi</span>
-                                <label class="switch">
-                                    <input type="checkbox" id="{{INSTANCE_ID}}_simulasiToggle" onchange="toggleSimulasiUsage('{{INSTANCE_ID}}')">
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                            <div id="{{INSTANCE_ID}}_selisihFinalResult" style="font-size: 1.8em; font-weight: 700; color: var(--color-alert-text); text-align: center; background: var(--color-card-tester); padding: 10px; border-radius: 8px; margin-top: 10px;">
-                                0 ekor/kantong
-                            </div>
-                            <div id="{{INSTANCE_ID}}_selisihSimulasiResult" style="font-size: 0.9em; font-weight: 700; color: var(--color-text-light); margin-top: 8px;">
-                                Estimasi Selisih Baru: +0 ekor
-                            </div>
-                        </div>
-                    </section>
-                </div>
-                        
-                <div class="actions-row">
+                        <div id="{{INSTANCE_ID}}_recapTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
                     </div>
-
-                <div id="{{INSTANCE_ID}}_hitunganTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
-            </section>
-
-            <section id="{{INSTANCE_ID}}_rekap" class="card card-recap tab-panel">
-                <h2>📊 Rekap Panen {{ID}}</h2>
-
-                <h3 class="recap-section-title">Data Panen</h3>
-                <div class="recap-row"><span class="recap-label">Customer</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_customer">-</span></div>
-                <div class="recap-row"><span class="recap-label">Tujuan</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tujuan">-</span></div>
-                <div class="recap-row"><span class="recap-label">Tanggal Panen</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_line">-</span></div>
-                <div class="recap-row"><span class="recap-label">Driver</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_driver">-</span></div>
-                <div class="recap-row"><span class="recap-label">Plat Nomor</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_platNomor">-</span></div>
-                <div class="recap-row"><span class="recap-label">Order</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_orderBenur">0</span></div>
-                <div class="recap-row"><span class="recap-label">Truk</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_jenisTruk">-</span></div>
-                <div class="recap-row"><span class="recap-label">Kapasitas</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_kapasitasAngkut">0 Box</span></div>
-                <div class="recap-row"><span class="recap-label">Isi/Box</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_isiBox">0 Kantong</span></div>
-
-                <h3 class="recap-section-title">Data Tester</h3>
-                <div class="recap-row"><span class="recap-label">No. Bak</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_nomorBak">-</span></div>
-                <div class="recap-row"><span class="recap-label">Tomota</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tomota">- ekor</span></div>
-                <div class="recap-row"><span class="recap-label">Σ Total</span><span class="recap-value" id="{{INSTANCE_ID}}_testerSum">0</span></div>
-                <div class="recap-row"><span class="recap-label">Density</span><span class="recap-value" id="{{INSTANCE_ID}}_testerDensity">-</span></div>
-                <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceTester">0 %</span></div>
-                <div class="recap-row"><span class="recap-label">Hasil Benur Tester</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_hasilTester">0</span></div>
-                <div class="recap-row"><span class="recap-label">Estimasi Box</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_estimasiBoxTester">0 Box</span></div>
-
-                <h3 class="recap-section-title">Hasil Hitungan</h3>
-                <div id="{{INSTANCE_ID}}_recap_sessionSummary">
-                    </div>
-                <div class="recap-row"><span class="recap-label">Rata-rata (Aktual)</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_avgValue">0 ekor</span></div>
-                <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceHitung">0% / 0%</span></div>
-                <div class="recap-row"><span class="recap-label">Kebutuhan Box</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_kebutuhanBox">0 Box</span></div>
-                <div class="recap-row"><span class="recap-label">Benur/Kantong (Real)</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_benurReal">0 ekor/kantong</span></div>
-                <div class="recap-row" id="{{INSTANCE_ID}}_recap_benurSJ_row" style="display: none;"><span class="recap-label">Benur/Kantong (SJ)</span><span class="recap-value final-result" id="{{INSTANCE_ID}}_recap_benurSJ">0 ekor/kantong</span></div>
-                <div class="recap-row" id="{{INSTANCE_ID}}_recap_simulasi_row" style="display: none;"><span class="recap-label">⚠ Simulasi Real</span><span class="recap-value final-result-alert" id="{{INSTANCE_ID}}_recap_simulasi">0 ekor/kantong</span></div>
-
-                <div class="actions-row">
-                    <button class="btn" onclick="saveData('{{INSTANCE_ID}}')" title="Simpan semua input data ke memori browser">💾 Save</button>
-                    <button class="btn" onclick="shareToCustomer('{{INSTANCE_ID}}')" title="Bagikan rincian panen ke Customer via Whatsapp">🤳🏻 Bagikan ke Customer</button>
-                    <button class="btn" onclick="shareAdmin('{{INSTANCE_ID}}')" title="Kirim rincian panen via WhatsApp">🚛 Kirim Rincian Panen</button>
-                </div>
-
-                <div id="{{INSTANCE_ID}}_recapTimestamp" class="time-stamp">🕒 Terakhir diperbarui: -</div>
-            </section>
-
-        </div> </div> </template>
-
+                </section>
+                
+            </div> </div> </div> </template>
 <div class="floating-nav-bar">
     
     <div class="floating-nav-group left">
-        <button id="floatingSaveBtn" class="floating-nav-btn save-btn" title="Simpan Data Panen Ini">💾</button>
+        <button id="floatingVaultBtn" class="floating-nav-btn vault-btn" onclick="toggleVault()" title="Buka Vault Data Panen">🗄️</button>
     </div>
     
     <div id="floatingNavCenter" class="floating-nav-group center">
@@ -1530,69 +1955,95 @@ body.dark-mode .tab-link.active {
 
 </div>
 
-<div id="trashCardContainer" class="trash-popup-container" style="display: none;">
-    <div class="slide-item" style="padding: 0 20px;">
-        <section class="card card-trash">
-            <h2 style="margin-bottom: 20px;">♻️ Keranjang Sampah</h2>
-            
-            <div id="staticTrashList" class="trash-list">
-                </div>
-        </section>
+<div id="vaultOverlay" class="vault-overlay" onclick="toggleVault()"></div>
+<div id="vaultContainer" class="vault-container">
+    <div class="vault-header">
+        <h2>🗄️ Vault Data Panen</h2>
+        <button id="exportVaultBtn" class="vault-export-btn" onclick="exportVaultToExcel(this)">📤 Export ke Excel</button>
     </div>
+    <div id="vaultList" class="vault-list">
+        </div>
 </div>
+
+<style>
+    .status-badge::after {
+        content: '';
+        position: absolute;
+        bottom: -4px; /* Panah di bawah */
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 4px;
+        border-style: solid;
+        border-color: transparent;
+        /* Warna diatur oleh kelas di bawah */
+    }
+    
+    /* Warna panah berdasarkan status */
+    .status-badge.status-draft::after {
+        border-top-color: #FFC107; /* Kuning */
+    }
+    .status-badge.status-terkirim::after {
+        border-top-color: var(--color-text-sum); /* Hijau */
+    }
+    .status-badge.status-edited::after {
+        border-top-color: var(--color-alert-text); /* Oranye */
+    }
+</style>
 
 <script>
 
 // ===================================
-// [BARU] FUNGSI UNTUK DESAIN 1: TAB
+// [REVISI V6.4] FUNGSI TAB SLIDING
 // ===================================
+
 /**
- * Mengganti kartu yang terlihat di dalam satu slide.
- * Dipanggil oleh tombol tab.
+ * [V6.4] Mengganti kartu yang terlihat dengan animasi geser profesional.
  */
-function openCard(evt, cardIdToOpen) {
-    // 1. Dapatkan elemen 'slide-item' terdekat
+function openCard(evt, cardIdToOpen, tabIndex) {
     const slideItem = evt.target.closest('.slide-item');
     if (!slideItem) return;
 
-    // 2. Dapatkan semua panel tab di dalam slide-item ini
-    const tabPanels = slideItem.querySelectorAll('.tab-panel');
-    
-    // 3. Sembunyikan semua panel
-    tabPanels.forEach(panel => {
-        panel.style.display = 'none';
-        panel.classList.remove('active');
-    });
+    // 1. Dapatkan track yang menampung semua panel tab
+    const tabTrack = slideItem.querySelector('.card-tab-track');
+    if (!tabTrack) return;
 
-    // 4. Hapus status 'active' dari semua tombol tab
+    // 2. Hapus status 'active' dari semua tombol tab
     const tabLinks = slideItem.querySelectorAll('.tab-link');
     tabLinks.forEach(link => {
         link.classList.remove('active');
     });
 
-    // 5. Tampilkan panel yang diklik
-    const cardToShow = document.getElementById(cardIdToOpen);
-    if (cardToShow) {
-        cardToShow.style.display = 'block';
-        cardToShow.classList.add('active');
-    }
-
-    // 5. Aktifkan tombol tab yang diklik
+    // 3. Aktifkan tombol tab yang diklik
     evt.target.classList.add('active');
+
+    // 4. Geser track ke posisi tab yang benar
+    // (0 * -25% = 0%, 1 * -25% = -25%, dst.)
+    const offset = tabIndex * -25;
+    tabTrack.style.transform = `translateX(${offset}%)`;
+}
+
+
+/**
+ * [V6.4] Membuka/menutup panel accordion (animasi CSS via grid)
+ */
+function toggleAccordion(event) {
+    const header = event.currentTarget;
+    header.classList.toggle('active');
+    // Animasi sekarang ditangani murni oleh CSS di .accordion-panel
 }
 
 // ===================================
 // GLOBAL VARIABLES & SETUP
 // ===================================
 
-let instanceCounter = 0;
 let activeInstanceIndex = 0; // 0-based index
 const slideTrack = document.getElementById('slideTrack');
 const maxBox = 12; // Maksimal kolom hitungan per sesi
 let autoSaveTimeout;
-const LOCAL_STORAGE_KEY = 'shrimpCountData_v4';
-// [PATCH] Kunci untuk keranjang sampah
-const TRASH_STORAGE_KEY = 'shrimpCountData_v4_TRASH'; 
+
+// [REVISI V6.0] Kunci Penyimpanan
+const LOCAL_STORAGE_KEY = 'shrimpCountData_v5_SESSION'; 
+const VAULT_STORAGE_KEY = 'shrimpCountData_v6_VAULT'; 
 
 // Database Sopir
 const sopirDB = {
@@ -1646,23 +2097,43 @@ function checkDarkModePreference() {
     }
 }
 
-// === Auto-Save Logic ===
+// === [REVISI] Auto-Save Logic (Hanya untuk Sesi Aktif) ===
+/**
+ * [REVISI] Logika ini (Req 2) sudah benar: auto-save HANYA aktif saat
+ * ada input (oninput -> recalcAll -> triggerAutoSave).
+ * [REVISI] Logika badge 'Edited' juga ditangani di sini.
+ */
 function triggerAutoSave(instanceId) {
+    const slideItem = document.getElementById(instanceId);
+    if (!slideItem) return;
+
+    // [REVISI] Logika Badge 'Edited' (Req 1)
+    // Jika status saat ini 'Terkirim', ubah menjadi 'Edited'
+    if (slideItem.dataset.status === 'Terkirim') {
+        markStatus(instanceId, 'Edited');
+    }
+    
     clearTimeout(autoSaveTimeout);
     autoSaveTimeout = setTimeout(() => {
-        saveData(instanceId, true);
+        // Ambil status terbaru setelah mungkin diubah
+        const currentStatus = slideItem.dataset.status || 'Draft';
+        saveSessionData(instanceId, true, currentStatus); // Simpan ke Sesi dengan status terbaru
     }, 1500);
 }
 
 // ===================================
-// TEMPLATE & CAROUSEL LOGIC
+// [REVISI V6.8] TEMPLATE & CAROUSEL LOGIC
 // ===================================
-function createInstanceHTML(id) {
-    const instanceId = `instance_${id}`;
+
+/**
+ * [V6.8] Fungsi ini sekarang menerima ID visual (misal "1") dan
+ * ID unik sistem (misal "instance_171234567")
+ */
+function createInstanceHTML(id, instanceId) {
     const templateHTML = document.getElementById('panen-template').innerHTML;
     const finalHTML = templateHTML
-        .replace(/{{INSTANCE_ID}}/g, instanceId)
-        .replace(/{{ID}}/g, id);
+        .replace(/{{INSTANCE_ID}}/g, instanceId) // Gunakan instanceId unik
+        .replace(/{{ID}}/g, id); // Gunakan id untuk visual
     return finalHTML;
 }
 
@@ -1675,14 +2146,13 @@ function updateCarouselControls() {
     document.getElementById('floatingNextBtn').disabled = (activeInstanceIndex >= total - 1);
     document.getElementById('floatingNavCenter').style.display = (total > 1) ? 'flex' : 'none';
 
-    const currentInstance = slideTrack.children[activeInstanceIndex];
-    if (currentInstance) {
-        const removeBtn = currentInstance.querySelector('.remove-btn');
-        if (removeBtn) {
-            removeBtn.disabled = (total <= 1);
-        }
-    }
+    // Perbarui status tombol hapus untuk SEMUA slide
+    const allRemoveButtons = slideTrack.querySelectorAll('.remove-btn');
+    allRemoveButtons.forEach(btn => {
+        btn.disabled = (total <= 1);
+    });
 }
+
 
 function goToSlide(index) {
     const total = slideTrack.children.length;
@@ -1694,24 +2164,54 @@ function goToSlide(index) {
     }
 }
 
-function addInstance() {
-    instanceCounter++;
-    const newInstanceHTML = createInstanceHTML(instanceCounter);
-    slideTrack.insertAdjacentHTML('beforeend', newInstanceHTML);
-    const instanceId = `instance_${instanceCounter}`;
+/**
+ * [REVISI V6.8 - PERBAIKAN BUG REQ 3]
+ * Logika 'addInstance' yang baru dan stabil.
+ * - Menerima dataToLoad dan existingInstanceId opsional.
+ * - Memperbaiki bug load "driver hilang" dan "carousel bertambah".
+ */
+function addInstance(dataToLoad = null, existingInstanceId = null) {
+    const visualId = slideTrack.children.length + 1; // ID visual (1, 2, 3...)
     
-    populateDriverOptions(instanceId);
-    updateTruckDetails(instanceId);
-    initBoxesTester(instanceId); 
-    addHitunganSession(instanceId); 
-    addHitunganSession(instanceId); 
-    updateRecap(instanceId);
+    // [FIX REQ 3] Gunakan ID yang ada jika disediakan (dari localStorage), jika tidak, buat ID baru.
+    const uniqueId = existingInstanceId ? existingInstanceId : `instance_${Date.now()}_${Math.floor(Math.random() * 100)}`; 
+    
+    const newInstanceHTML = createInstanceHTML(visualId, uniqueId);
+    slideTrack.insertAdjacentHTML('beforeend', newInstanceHTML);
+    
+    // Set ID unik ke elemen slide-item itu sendiri
+    const newSlideItem = slideTrack.lastChild;
+    newSlideItem.id = uniqueId; 
 
-    if (arguments.length === 0) { // Hanya pindah slide jika ini adalah panggilan manual (bukan load)
-        goToSlide(instanceCounter - 1);
+    // [FIX REQ 3] Selalu inisialisasi elemen dasar (seperti driver) SEBELUM memuat data
+    populateDriverOptions(uniqueId);
+    initBoxesTester(uniqueId); 
+    
+    if (dataToLoad) {
+        // Jika memuat data (dari localStorage atau Vault), panggil loadDataFromObject.
+        // loadDataFromObject akan menangani pembuatan grid hitungan.
+        loadDataFromObject(uniqueId, dataToLoad);
+    } else {
+        // Jika ini adalah slide baru (tombol +)
+        // Inisialisasi default
+        updateTruckDetails(uniqueId);
+        addHitunganSession(uniqueId); 
+        addHitunganSession(uniqueId); 
+        updateRecap(uniqueId);
+        markStatus(uniqueId, 'Draft');
+        goToSlide(slideTrack.children.length - 1); // Pindah ke slide baru
     }
+
+    // [FIX REQ 3] Selalu panggil updateCarouselControls di akhir
+    updateCarouselControls();
 }
 
+
+/**
+ * [V6.8] Logika 'removeInstance' yang baru dan aman.
+ * - TIDAK ADA LAGI "RE-INDEXING" yang rumit dan berbahaya.
+ * - Hanya menghapus DOM dan data localStorage yang spesifik.
+ */
 function removeInstance() {
     const total = slideTrack.children.length;
     if (total <= 1) {
@@ -1719,90 +2219,39 @@ function removeInstance() {
         return;
     }
 
-    if (!confirm(`Hapus Data Panen ${activeInstanceIndex + 1}? Data akan dipindah ke Keranjang Sampah.`)) return;
-
+    // Dapatkan slide aktif dan ID uniknya
     const slideToRemove = slideTrack.children[activeInstanceIndex];
-    const removedInstanceId = slideToRemove.id;
+    if (!slideToRemove) return; // Pengaman
+    
+    const removedInstanceId = slideToRemove.id; // Dapatkan ID unik (misal "instance_171234567")
+    const visualTitle = slideToRemove.querySelector('.title-text')?.textContent || `Data Panen ${activeInstanceIndex + 1}`;
+    
+    if (!confirm(`Hapus slide "${visualTitle}"? \n\n(Data yang sudah tersimpan di Vault tidak akan terhapus).`)) return;
+
     const removedStorageKey = `${LOCAL_STORAGE_KEY}_${removedInstanceId}`;
 
-    // --- LOGIKA KERANJANG SAMPAH ---
     try {
-        const dataString = localStorage.getItem(removedStorageKey);
-        if (dataString) {
-            const dataObject = JSON.parse(dataString);
-            dataObject._trashInfo = {
-                customer: dataObject.customer || "Tanpa Nama",
-                deletedOn: new Date().toISOString()
-            };
-            const trashRaw = localStorage.getItem(TRASH_STORAGE_KEY);
-            let trashArray = [];
-            if (trashRaw) {
-                try { trashArray = JSON.parse(trashRaw); } catch(e) { trashArray = []; }
-            }
-            trashArray.unshift(dataObject);
-            localStorage.setItem(TRASH_STORAGE_KEY, JSON.stringify(trashArray));
-        }
-    } catch (e) {
-        console.error("Gagal menyimpan data ke keranjang sampah:", e);
-        alert("Peringatan: Gagal memindahkan data ke keranjang sampah. Data mungkin hilang permanen.");
-    }
-    // --- AKHIR LOGIKA ---
-
-    slideTrack.removeChild(slideToRemove);
-    try {
+        // 1. Hapus dari localStorage
         localStorage.removeItem(removedStorageKey);
-    } catch (e) {
-        console.warn(`Gagal menghapus data localStorage untuk ${removedInstanceId}`, e);
-    }
-
-    if (activeInstanceIndex > 0) {
-        activeInstanceIndex--;
-    }
-
-    // Re-ID semua instance
-    for (let i = 0; i < slideTrack.children.length; i++) {
-        const item = slideTrack.children[i];
-        const newIdNumber = i + 1;
-        const oldIdNumberText = item.id.split('_')[1];
-        if (!oldIdNumberText) continue; // Safety check
-        const oldIdNumber = parseInt(oldIdNumberText);
         
-        if (oldIdNumber !== newIdNumber) {
-            const newInstanceId = `instance_${newIdNumber}`;
-            const oldInstanceId = `instance_${oldIdNumber}`;
-            const oldStorageKey = `${LOCAL_STORAGE_KEY}_${oldInstanceId}`;
-            const newStorageKey = `${LOCAL_STORAGE_KEY}_${newInstanceId}`;
-
-            // Pindahkan data di localStorage
-            try {
-                const dataToMove = localStorage.getItem(oldStorageKey);
-                if (dataToMove) {
-                    localStorage.setItem(newStorageKey, dataToMove);
-                    localStorage.removeItem(oldStorageKey);
-                }
-            } catch (e) {
-                 console.warn(`Gagal me-rename localStorage dari ${oldStorageKey} ke ${newStorageKey}`, e);
-            }
-
-            // Update DOM id dan HTML
-            item.id = newInstanceId;
-            let newHTML = item.innerHTML.replace(new RegExp(oldInstanceId, 'g'), newInstanceId);
-            newHTML = newHTML.replace(new RegExp(`Data Panen ${oldIdNumber}`, 'g'), `Data Panen ${newIdNumber}`);
-            newHTML = newHTML.replace(new RegExp(`Rekap Panen ${oldIdNumber}`, 'g'), `Rekap Panen ${newIdNumber}`);
-            item.innerHTML = newHTML;
-            
-            // PENTING: Muat ulang data ke DOM yang baru di-rename
-            loadData(newInstanceId, true); // true = silent
-            
-            // Re-attach event listener (jika ada yang hilang)
-            const oldRemoveBtn = item.querySelector(`[id^="${oldInstanceId}_removeBtn"]`);
-            if(oldRemoveBtn) oldRemoveBtn.id = `${newInstanceId}_removeBtn`;
-        }
+        // 2. Hapus dari DOM
+        slideTrack.removeChild(slideToRemove);
+    } catch (e) {
+        console.warn(`Gagal menghapus instance ${removedInstanceId}`, e);
+        alert(`Gagal menghapus data: ${e.message}`);
+        return; // Hentikan jika gagal
     }
-    
-    instanceCounter = slideTrack.children.length;
-    goToSlide(activeInstanceIndex); 
+
+    // 3. Atur ulang index aktif
+    if (activeInstanceIndex >= slideTrack.children.length) {
+        activeInstanceIndex = slideTrack.children.length - 1;
+    }
+
+    // 4. Perbarui UI (Pindah ke slide baru & update kontrol)
+    goToSlide(activeInstanceIndex);
+    // updateCarouselControls() sudah dipanggil di dalam goToSlide()
 }
+
 // ===================================
 // GENERAL HELPER FUNCTIONS
 // ===================================
@@ -1848,6 +2297,7 @@ function resetCard1(instanceId) {
     updateTruckDetails(instanceId);
     recalcAllHitungan(instanceId);
     recalcAllTester(instanceId);
+    // [REVISI] Penandaan status 'Draft' atau 'Edited' ditangani oleh triggerAutoSave
 }
 
 function updateTruckDetails(instanceId){
@@ -1891,7 +2341,6 @@ function recalcAllTester(instanceId){
   const densTesterEl = getEl(instanceId, 'testerDensity');
   const allowanceInput = getEl(instanceId, 'allowanceTester');
   const finalResultEl = getEl(instanceId, 'finalTesterResult');
-  // Safety checks
   if (!gridTester || !sumTesterEl || !densTesterEl || !allowanceInput || !finalResultEl) return;
   
   const vals=[...gridTester.querySelectorAll('input')].map(i=>safeParseFloat(i.value));
@@ -1935,12 +2384,26 @@ function initBoxesTester(instanceId){
     }
 }
 function resetTester(instanceId){
-  if(!confirm('Reset semua input Hitungan Tester untuk Data Panen ini?'))return;
+  if(!confirm('Reset semua input Hitungan Tester dan QC untuk Data Panen ini?'))return;
   getEl(instanceId, 'nomorBak').value='';
   getEl(instanceId, 'tomota').value='';
   getEl(instanceId, 'allowanceTester').value='0';
+  // [BARU V6.0] Reset QC
+  getEl(instanceId, 'qcSuhu').value='';
+  getEl(instanceId, 'qcPh').value='';
+  getEl(instanceId, 'qcDo').value='';
+  getEl(instanceId, 'qcSalinitas').value='';
+  getEl(instanceId, 'qcJarak').value='';
+  getEl(instanceId, 'qcBiomassa').value='';
+  getEl(instanceId, 'qcPanjang').value='';
+  getEl(instanceId, 'qcStadia').value='';
+  getEl(instanceId, 'qcScooping').value='';
+  getEl(instanceId, 'qcNoScooping').value='';
+  getEl(instanceId, 'qcBakAsli').value='';
+  
   initBoxesTester(instanceId);
   recalcAllTester(instanceId);
+  // [REVISI] Penandaan status 'Draft' atau 'Edited' ditangani oleh triggerAutoSave
 }
 
 // ===================================
@@ -1955,10 +2418,6 @@ function recalcSession(instanceId, sessionId) {
     const s = vals.reduce((a,b)=>a+b,0);
     sumEl.innerHTML = s.toLocaleString('id-ID');
 }
-
-/**
- * [BARU] Menampilkan/menyembunyikan input override manual
- */
 function toggleManualBenurInput(instanceId) {
     const toggle = getEl(instanceId, 'manualBenurToggle');
     const inputRow = getEl(instanceId, 'manualBenurInputRow');
@@ -1968,42 +2427,28 @@ function toggleManualBenurInput(instanceId) {
         inputRow.style.display = 'flex';
     } else {
         inputRow.style.display = 'none';
-        // Jika toggle dimatikan, hapus nilainya dan hitung ulang
         clearManualBenur(instanceId, true); // true = silent (jangan panggil recalcDuaKali)
     }
-    // Hitung ulang setelah UI diubah
     recalcAllHitungan(instanceId);
 }
-
-/**
- * [MODIFIKASI] Menghapus override manual benur/kantong
- */
 function clearManualBenur(instanceId, silent = false) {
     const manualInput = getEl(instanceId, 'manualBenurOverride');
     if (manualInput) {
         manualInput.value = '';
     }
-    
-    // [BARU] Juga matikan toggle-nya
     const manualToggle = getEl(instanceId, 'manualBenurToggle');
     if (manualToggle) {
         manualToggle.checked = false;
     }
-    
-    // [BARU] Sembunyikan lagi input row
     const inputRow = getEl(instanceId, 'manualBenurInputRow');
      if (inputRow) {
         inputRow.style.display = 'none';
     }
-
     if (!silent) {
         recalcAllHitungan(instanceId); // Hitung ulang
     }
 }
 
-/**
- * [PEROMBAKAN TOTAL V5.2] Fungsi recalcAllHitungan dengan logika simulasi stabil
- */
 function recalcAllHitungan(instanceId) {
     // --- Bagian 1: Kumpulkan Semua Data Input ---
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
@@ -2119,7 +2564,6 @@ function recalcAllHitungan(instanceId) {
     }
     
     // --- Bagian 4: Hitung Selisih & Tentukan Nilai Simulasi (Tahap 3) ---
-    // [PERBAIKAN V5.2] Logika ini sekarang berjalan SETELAH nilai dasar/manual ditentukan
     const selisihBoxEl = getEl(instanceId, 'selisihBox');
     const totalPackingEl = getEl(instanceId, 'selisih_totalPacking');
     const selisihOrderEl = getEl(instanceId, 'selisih_selisihOrder');
@@ -2134,18 +2578,12 @@ function recalcAllHitungan(instanceId) {
         
         const batasWajar = nominalOrderEkor * 0.001; 
 
-        // [PERBAIKAN LOGIKA V5.2] Hanya tampilkan box simulasi jika:
-        // 1. TIDAK pakai manual override
-        // 2. Selisihnya POSITIF
-        // 3. Selisihnya > 0.1%
         if (selisihWarningBox && !usingManualBenur && selisihOrder_Murni > batasWajar && nominalOrderEkor > 0) {
             
-            // Hitung nilai target simulasi
             const targetTotalPacking = nominalOrderEkor * 1.001; // Target +0.1%
             const newBenurPerKantong = targetTotalPacking / kebutuhanBox_Terbatas / isiBox;
             selisihSimulasiValue = roundToNearestTen(newBenurPerKantong); // Simpan nilai simulasi
 
-            // [PERBAIKAN LOGIKA V5.2] Sembunyikan box jika nilainya sudah sama
             if (benurPerKantong_Real_Dasar === selisihSimulasiValue) {
                  selisihWarningBox.style.display = 'none';
                  if (simulasiSelisihToggle) simulasiSelisihToggle.checked = false;
@@ -2176,7 +2614,6 @@ function recalcAllHitungan(instanceId) {
         const totalPacking_Final = kebutuhanBox_Terbatas * isiBox * benurPerKantong_Real_Final;
         const selisihOrder_Final = totalPacking_Final - nominalOrderEkor;
         
-        // [PERBAIKAN LOGIKA 1] Tampilkan Selisih FINAL
         totalPackingEl.textContent = totalPacking_Final.toLocaleString('id-ID') + ' ekor';
         selisihOrderEl.textContent = (selisihOrder_Final >= 0 ? '+' : '') + selisihOrder_Final.toLocaleString('id-ID') + ' ekor';
         selisihOrderEl.classList.toggle('positive', selisihOrder_Final >= 0);
@@ -2299,11 +2736,13 @@ function resetHitungan(instanceId) {
     
     clearManualBenur(instanceId, true); // true = silent
     recalcAllHitungan(instanceId);
+    // [REVISI] Penandaan status 'Draft' atau 'Edited' ditangani oleh triggerAutoSave
 }
 addCalcBox = (fullGridId) => {
     const parts = fullGridId.split('_');
-    const instanceId = parts[0] + '_' + parts[1];
-    const gridType = parts[2];
+    const instanceId = parts.slice(0, 3).join('_'); // [PERBAIKAN] Tangani ID unik (misal "instance_17123_45")
+    const gridType = parts[parts.length - 1]; // Ambil bagian terakhir
+    
     const grid = document.getElementById(fullGridId);
     if (!grid) return; // Safety check
     
@@ -2344,8 +2783,8 @@ addCalcBox = (fullGridId) => {
 };
 removeCalcBox = (fullGridId) => {
     const parts = fullGridId.split('_');
-    const instanceId = parts[0] + '_' + parts[1];
-    const gridType = parts[2];
+    const instanceId = parts.slice(0, 3).join('_'); // [PERBAIKAN] Tangani ID unik
+    const gridType = parts[parts.length - 1]; // Ambil bagian terakhir
     const grid = document.getElementById(fullGridId);
     if (!grid) return; // Safety check
     
@@ -2409,6 +2848,19 @@ function updateRecap(instanceId) {
     setRecap('recap_hasilTester', getEl(instanceId, 'finalTesterResult'), false, '0');
     setRecap('recap_estimasiBoxTester', getEl(instanceId, 'estimasiBoxTester'), false, '0 Box');
     
+    // [BARU V6.0] Rekap QC
+    setRecap('recap_qcSuhu', getEl(instanceId, 'qcSuhu'), true, '-', ' °C');
+    setRecap('recap_qcPh', getEl(instanceId, 'qcPh'), true, '-');
+    setRecap('recap_qcDo', getEl(instanceId, 'qcDo'), true, '-', ' ppm');
+    setRecap('recap_qcSalinitas', getEl(instanceId, 'qcSalinitas'), true, '-', ' ppt');
+    setRecap('recap_qcJarak', getEl(instanceId, 'qcJarak'), true, '-', ' Jam');
+    setRecap('recap_qcBiomassa', getEl(instanceId, 'qcBiomassa'), true, '-', ' gr');
+    setRecap('recap_qcPanjang', getEl(instanceId, 'qcPanjang'), true, '-', ' mm');
+    setRecap('recap_qcStadia', getEl(instanceId, 'qcStadia'));
+    setRecap('recap_qcScooping', getEl(instanceId, 'qcScooping'));
+    setRecap('recap_qcNoScooping', getEl(instanceId, 'qcNoScooping'));
+    setRecap('recap_qcBakAsli', getEl(instanceId, 'qcBakAsli'));
+    
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
     let sessionHtml = '';
     if (multiSessionGrid) {
@@ -2438,7 +2890,6 @@ function updateRecap(instanceId) {
     
     setRecap('recap_kebutuhanBox', getEl(instanceId, 'kebutuhanBox'), false);
     
-    // Ambil nilai dari span di dalam div
     const benurRealEl = getEl(instanceId, 'benurPerKantongReal');
     const recapBenurRealEl = getEl(instanceId, 'recap_benurReal');
     if (benurRealEl && recapBenurRealEl) {
@@ -2481,79 +2932,148 @@ function updateRecap(instanceId) {
 
 
 // ===================================
-// CARD 5: SAVE, LOAD, SHARE LOGIC
+// [REVISI V6.0] SAVE, LOAD, SHARE LOGIC
 // ===================================
 
-function saveData(instanceId, silent = false) {
+/**
+ * [V6.8] Mengambil data dan MENAMBAHKAN UUID untuk Vault.
+ */
+function gatherDataFromInstance(instanceId) {
+    const dataToSave = {};
+    // Card 1: Data Panen
+    dataToSave.customer = getEl(instanceId, 'customer').value;
+    dataToSave.tujuan = getEl(instanceId, 'tujuan').value;
+    dataToSave.line = getEl(instanceId, 'line').value;
+    dataToSave.nominalOrder = getEl(instanceId, 'nominalOrder').value;
+    dataToSave.jenisTruk = getEl(instanceId, 'jenisTruk').value;
+    dataToSave.kapasitasAngkut = getEl(instanceId, 'kapasitasAngkut').value;
+    dataToSave.driver = getEl(instanceId, 'driver').value;
+    dataToSave.platNomor = getEl(instanceId, 'platNomor').value;
+    
+    // Card 2: Tester
+    dataToSave.nomorBak = getEl(instanceId, 'nomorBak').value;
+    dataToSave.tomota = getEl(instanceId, 'tomota').value;
+    dataToSave.allowanceTester = getEl(instanceId, 'allowanceTester').value;
+    const testerGridEl = getEl(instanceId, 'hitGridTester');
+    if (testerGridEl) {
+        dataToSave.testerGrid = [...testerGridEl.querySelectorAll('input')].map(inp => inp.value);
+    }
+    
+    // Card 2.5: QC
+    dataToSave.qcSuhu = getEl(instanceId, 'qcSuhu').value;
+    dataToSave.qcPh = getEl(instanceId, 'qcPh').value;
+    dataToSave.qcDo = getEl(instanceId, 'qcDo').value;
+    dataToSave.qcSalinitas = getEl(instanceId, 'qcSalinitas').value;
+    dataToSave.qcJarak = getEl(instanceId, 'qcJarak').value;
+    dataToSave.qcBiomassa = getEl(instanceId, 'qcBiomassa').value;
+    dataToSave.qcPanjang = getEl(instanceId, 'qcPanjang').value;
+    dataToSave.qcStadia = getEl(instanceId, 'qcStadia').value;
+    dataToSave.qcScooping = getEl(instanceId, 'qcScooping').value;
+    dataToSave.qcNoScooping = getEl(instanceId, 'qcNoScooping').value;
+    dataToSave.qcBakAsli = getEl(instanceId, 'qcBakAsli').value;
+    
+    // Card 3: Hitungan
+    dataToSave.allowance1 = getEl(instanceId, 'allowance1').value;
+    dataToSave.allowance2 = getEl(instanceId, 'allowance2').value;
+    dataToSave.sessionsGrid = [];
+    const multiSessionGridEl = getEl(instanceId, 'multiSessionGrid');
+    if (multiSessionGridEl) {
+        const sessions = multiSessionGridEl.querySelectorAll('.hit-session');
+        sessions.forEach(session => {
+            const sessionId = session.dataset.sessionId;
+            const gridEl = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+            if (gridEl) {
+                const inputs = [...gridEl.querySelectorAll('input')].map(inp => inp.value);
+                dataToSave.sessionsGrid.push(inputs);
+            }
+        });
+    }
+    
+    // Card 3: Toggles/Overrides
+    dataToSave.limitKapasitasToggle = getEl(instanceId, 'limitKapasitasToggle').checked;
+    dataToSave.manualBenurToggle = getEl(instanceId, 'manualBenurToggle').checked;
+    dataToSave.manualBenurOverride = getEl(instanceId, 'manualBenurOverride').value;
+    dataToSave.simulasiToggle = getEl(instanceId, 'simulasiToggle').checked;
+
+    // [V6.8] Info untuk Vault (ditambah UUID)
+    dataToSave._vaultInfo = {
+        uuid: `vault_${Date.now()}_${Math.floor(Math.random() * 1000)}`, // <-- ID UNIK
+        customer: dataToSave.customer || "Tanpa Nama",
+        order: dataToSave.nominalOrder || "0",
+        tanggal: dataToSave.line || new Date().toISOString().split('T')[0],
+        savedOn: new Date().toISOString()
+    };
+    
+    // [V6.8] Data kalkulasi final untuk Excel (Termasuk Density)
+    dataToSave._finalCalc = {};
+    const benurRealEl = getEl(instanceId, 'benurPerKantongReal');
+    if (benurRealEl) {
+         const span = benurRealEl.querySelector('span');
+         if (span) dataToSave._finalCalc.benurPerKantong = span.textContent.trim().replace(/\./g,'');
+    }
+    const kebutuhanBoxEl = getEl(instanceId, 'kebutuhanBox');
+    if (kebutuhanBoxEl) {
+        dataToSave._finalCalc.kebutuhanBox = kebutuhanBoxEl.textContent.split(' ')[0].replace(/\./g,'');
+    }
+    dataToSave._finalCalc.isiBox = getEl(instanceId, 'isiBox').value;
+    const avgValueEl = getEl(instanceId, 'avgValueDisplay');
+    if(avgValueEl) {
+        dataToSave._finalCalc.avgAktual = avgValueEl.textContent.replace(' ekor', '').trim().replace(/\./g,'');
+    }
+    const testerDensityEl = getEl(instanceId, 'testerDensity');
+    if (testerDensityEl) {
+        dataToSave._finalCalc.testerDensity = testerDensityEl.textContent.trim().replace(/\./g,'');
+    }
+    
+    return dataToSave;
+}
+
+/**
+ * [REVISI V6.8] Menyimpan Sesi Aktif (dipanggil auto-save)
+ */
+function saveSessionData(instanceId, silent = false, status = 'Draft') {
     try {
-        const dataToSave = {};
-        dataToSave.customer = getEl(instanceId, 'customer').value;
-        dataToSave.tujuan = getEl(instanceId, 'tujuan').value;
-        dataToSave.line = getEl(instanceId, 'line').value;
-        dataToSave.nominalOrder = getEl(instanceId, 'nominalOrder').value;
-        dataToSave.jenisTruk = getEl(instanceId, 'jenisTruk').value;
-        dataToSave.kapasitasAngkut = getEl(instanceId, 'kapasitasAngkut').value;
-        dataToSave.driver = getEl(instanceId, 'driver').value;
-        dataToSave.platNomor = getEl(instanceId, 'platNomor').value;
-        dataToSave.nomorBak = getEl(instanceId, 'nomorBak').value;
-        dataToSave.tomota = getEl(instanceId, 'tomota').value;
-        dataToSave.allowanceTester = getEl(instanceId, 'allowanceTester').value;
+        const dataToSave = gatherDataFromInstance(instanceId);
+        // Hapus info vault, tidak perlu untuk sesi
+        delete dataToSave._vaultInfo;
+        delete dataToSave._finalCalc;
         
-        const testerGridEl = getEl(instanceId, 'hitGridTester');
-        if (testerGridEl) {
-            dataToSave.testerGrid = [...testerGridEl.querySelectorAll('input')].map(inp => inp.value);
-        }
-        
-        dataToSave.allowance1 = getEl(instanceId, 'allowance1').value;
-        dataToSave.allowance2 = getEl(instanceId, 'allowance2').value;
-        dataToSave.sessionsGrid = [];
-        
-        const multiSessionGridEl = getEl(instanceId, 'multiSessionGrid');
-        if (multiSessionGridEl) {
-            const sessions = multiSessionGridEl.querySelectorAll('.hit-session');
-            sessions.forEach(session => {
-                const sessionId = session.dataset.sessionId;
-                const gridEl = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
-                if (gridEl) {
-                    const inputs = [...gridEl.querySelectorAll('input')].map(inp => inp.value);
-                    dataToSave.sessionsGrid.push(inputs);
-                }
-            });
-        }
-        
-        // Simpan juga data toggle/override
-        dataToSave.limitKapasitasToggle = getEl(instanceId, 'limitKapasitasToggle').checked;
-        dataToSave.manualBenurToggle = getEl(instanceId, 'manualBenurToggle').checked;
-        dataToSave.manualBenurOverride = getEl(instanceId, 'manualBenurOverride').value;
-        dataToSave.simulasiToggle = getEl(instanceId, 'simulasiToggle').checked;
+        // [REVISI] Simpan status (Draft, Terkirim, atau Edited)
+        dataToSave._status = status;
         
         const storageKey = `${LOCAL_STORAGE_KEY}_${instanceId}`;
         localStorage.setItem(storageKey, JSON.stringify(dataToSave));
         
         if (!silent) {
-            alert(`Data Panen ${instanceId.split('_')[1]} disimpan! ✅`);
+            alert(`Sesi Data Panen ${instanceId} disimpan! ✅ \n(Ini adalah auto-save, gunakan tombol 'Simpan ke Vault' untuk arsip permanen)`);
         }
     } catch (e) {
-        console.error("Gagal menyimpan data:", e);
+        console.error("Gagal menyimpan data sesi:", e);
         if (!silent) {
-            alert(`Gagal menyimpan data Panen ${instanceId.split('_')[1]}.`);
+            alert(`Gagal menyimpan data Sesi Panen ${instanceId}.`);
         }
     }
 }
-function loadData(instanceId, silent = false) {
+
+/**
+ * [REVISI V6.8] Memuat Sesi Aktif (dipanggil saat load halaman)
+ */
+function loadSessionData(instanceId, silent = false) {
     const storageKey = `${LOCAL_STORAGE_KEY}_${instanceId}`;
     const savedData = localStorage.getItem(storageKey);
     if (!savedData) {
-        if (!silent) alert(`Tidak ada data tersimpan untuk Panen ${instanceId.split('_')[1]}. 📂`);
-        return;
+        if (!silent) alert(`Tidak ada data sesi tersimpan untuk Panen ${instanceId}. 📂`);
+        return false; // [PERBAIKAN] Kembalikan nilai
     }
     try {
         const data = JSON.parse(savedData);
         loadDataFromObject(instanceId, data); // Panggil helper
-        if (!silent) alert(`Data Panen ${instanceId.split('_')[1]} berhasil dimuat! ✅`);
+        if (!silent) alert(`Data Sesi Panen ${instanceId} berhasil dimuat! ✅`);
+        return true; // [PERBAIKAN] Kembalikan nilai
     } catch (e) {
-        console.error("Gagal memuat data:", e);
-        if (!silent) alert(`Gagal memuat data Panen ${instanceId.split('_')[1]}. Data tersimpan mungkin rusak.`);
+        console.error("Gagal memuat data sesi:", e);
+        if (!silent) alert(`Gagal memuat data Sesi Panen ${instanceId}. Data tersimpan mungkin rusak.`);
+        return false; // [PERBAIKAN] Kembalikan nilai
     }
 }
 
@@ -2574,9 +3094,6 @@ function reformatDate(dateString) {
     }
 }
 
-/**
- * [REVISI] Bagikan rincian ke Customer
- */
 function shareToCustomer(instanceId) {
     // 1. Ambil Data Panen
     const customer = getEl(instanceId, 'customer').value || 'Customer';
@@ -2597,7 +3114,6 @@ function shareToCustomer(instanceId) {
     const benurRealEl = getEl(instanceId, 'benurPerKantongReal');
     const benurSJEl = getEl(instanceId, 'benurPerKantongSJ');
 
-    // Safety check jika elemen tidak ada
     if (!kebutuhanBoxEl || !isiBoxEl || !allowance2El || !benurRealEl || !benurSJEl) {
         alert("Error: Elemen hitungan tidak ditemukan. Tidak bisa membagikan data.");
         return;
@@ -2610,7 +3126,6 @@ function shareToCustomer(instanceId) {
     
     const a2 = parseFloat(allowance2El.value) || 0;
     
-    // Ambil nilai dari span
     const benurRealSpan = benurRealEl.querySelector('span');
     const benurSJSpan = benurSJEl.querySelector('span');
     
@@ -2631,7 +3146,6 @@ function shareToCustomer(instanceId) {
     text += `(${tanggal}, ${tujuan})\n\n`;
 
     if (a2 > 0) {
-        // --- [PERBAIKAN LOGIKA] FORMAT JIKA A2 > 0 ---
         const bruto_SJ = totalKantong * benurSJ_Value; 
         const netto_SJ = Math.round(bruto_SJ * 0.9);
         const totalReal = totalKantong * benurReal_Value; 
@@ -2643,7 +3157,6 @@ function shareToCustomer(instanceId) {
         text += `${formatWithDots(kebutuhanBox)} Box, ${formatWithDots(totalKantong)} Kantong @${formatWithDots(benurReal_Value)} ekor = ${formatWithDots(totalReal)}\n\n`;
         
     } else {
-        // --- FORMAT STANDAR (A2 = 0) ---
         const bruto = totalKantong * benurReal_Value;
         const netto = Math.round(bruto * 0.9);
         
@@ -2674,7 +3187,6 @@ function shareAdmin(instanceId) {
     const benurSJEl = getEl(instanceId, 'benurPerKantongSJ');
     const allowance2El = getEl(instanceId, 'allowance2');
 
-    // Safety check
     if (!avgAktualEl || !kebutuhanBoxEl || !isiBoxEl || !benurRealEl || !benurSJEl || !allowance2El) {
         alert("Error: Elemen hitungan tidak ditemukan. Tidak bisa mengirim rincian.");
         return;
@@ -2687,7 +3199,6 @@ function shareAdmin(instanceId) {
     const isiBox = parseFloat(isiBoxEl.value) || 0;
     const totalKantong = (boxValue * isiBox).toLocaleString('id-ID');
     
-    // Ambil nilai dari span
     const benurRealSpan = benurRealEl.querySelector('span');
     const benurSJSpan = benurSJEl.querySelector('span');
     
@@ -2718,26 +3229,85 @@ function shareAdmin(instanceId) {
 // ===================================
 // IMPORT/EXPORT JSON LOGIC
 // ===================================
+
+/**
+ * [REVISI V6.8 - REQ 1] Penanda Status (Draft, Terkirim, Edited)
+ * Badge dipindahkan ke tab Rekap.
+ */
+function markStatus(instanceID, status) {
+  const slideItem = document.getElementById(instanceID);
+  if (!slideItem) return;
+  
+  // [REVISI V6.8] Target badge di tab rekap
+  const badge = document.getElementById(`${instanceID}_statusBadge`);
+  if (!badge) {
+      console.warn("Status badge not found for", instanceID);
+      return;
+  }
+  
+  // [REVISI V6.8] Simpan status di data attribute slide untuk referensi mudah
+  slideItem.dataset.status = status;
+  badge.textContent = status;
+  
+  // [REVISI V6.8] Hapus kelas status lama, tambahkan yang baru (untuk panah CSS)
+  badge.classList.remove('status-draft', 'status-terkirim', 'status-edited');
+  
+  // [REVISI V6.8] Atur warna berdasarkan 3 status baru
+  if (status === 'Terkirim') {
+      badge.style.background = 'var(--color-text-sum)'; // Hijau
+      badge.style.color = '#FFFFFF';
+      badge.classList.add('status-terkirim');
+  } else if (status === 'Edited') {
+      badge.style.background = 'var(--color-alert-text)'; // Oranye
+      badge.style.color = '#FFFFFF';
+      badge.classList.add('status-edited');
+  } else { // 'Draft' atau default
+      badge.style.background = '#FFC107'; // Kuning
+      badge.style.color = '#212529';
+      badge.classList.add('status-draft');
+  }
+  
+  // [REVISI V6.8] Tampilkan badge dengan animasi
+  badge.classList.add('visible');
+}
+
+/**
+ * [REVISI V6.8] Memuat data dari object ke UI (dipakai load sesi & load vault)
+ */
 function loadDataFromObject(instanceId, data) {
     try {
+        // Card 1
         getEl(instanceId, 'customer').value = data.customer || '';
         getEl(instanceId, 'tujuan').value = data.tujuan || '';
         getEl(instanceId, 'line').value = data.line || '';
         getEl(instanceId, 'nominalOrder').value = data.nominalOrder || '0';
         getEl(instanceId, 'jenisTruk').value = data.jenisTruk || 'Euro2';
         getEl(instanceId, 'kapasitasAngkut').value = data.kapasitasAngkut || '';
-        getEl(instanceId, 'driver').value = data.driver || '';
+        getEl(instanceId, 'driver').value = data.driver || ''; // [FIX REQ 3] Ini aman karena populateDriverOptions sudah jalan
         getEl(instanceId, 'platNomor').value = data.platNomor || '';
+        
+        // Card 2: Tester
         getEl(instanceId, 'nomorBak').value = data.nomorBak || '';
         getEl(instanceId, 'tomota').value = data.tomota || '';
         getEl(instanceId, 'allowanceTester').value = data.allowanceTester || '0';
         
+        // Card 2.5: QC
+        getEl(instanceId, 'qcSuhu').value = data.qcSuhu || '';
+        getEl(instanceId, 'qcPh').value = data.qcPh || '';
+        getEl(instanceId, 'qcDo').value = data.qcDo || '';
+        getEl(instanceId, 'qcSalinitas').value = data.qcSalinitas || '';
+        getEl(instanceId, 'qcJarak').value = data.qcJarak || '';
+        getEl(instanceId, 'qcBiomassa').value = data.qcBiomassa || '';
+        getEl(instanceId, 'qcPanjang').value = data.qcPanjang || '';
+        getEl(instanceId, 'qcStadia').value = data.qcStadia || '';
+        getEl(instanceId, 'qcScooping').value = data.qcScooping || '';
+        getEl(instanceId, 'qcNoScooping').value = data.qcNoScooping || '';
+        getEl(instanceId, 'qcBakAsli').value = data.qcBakAsli || '';
+        
         // Load Grid Tester
         const testerGridEl = getEl(instanceId, 'hitGridTester');
         if (testerGridEl && data.testerGrid) {
-            // Hapus grid default (8)
             testerGridEl.innerHTML = ''; 
-            // Buat ulang kolom sesuai data
             data.testerGrid.forEach(val => {
                 const box = document.createElement('div');
                 box.className = 'calc-box';
@@ -2749,7 +3319,6 @@ function loadDataFromObject(instanceId, data) {
                 box.appendChild(input);
                 testerGridEl.appendChild(box);
             });
-            // Jika data tersimpan < 8, tambahkan sisanya
             const diff = 8 - data.testerGrid.length;
             if (diff > 0) {
                 for (let i = 0; i < diff; i++) {
@@ -2757,9 +3326,10 @@ function loadDataFromObject(instanceId, data) {
                 }
             }
         } else {
-            initBoxesTester(instanceId); // Fallback jika tidak ada data grid
+            // initBoxesTester(instanceId); // [FIX REQ 3] Sudah dipanggil di addInstance
         }
 
+        // Card 3: Hitungan
         getEl(instanceId, 'allowance1').value = data.allowance1 || '0';
         getEl(instanceId, 'allowance2').value = data.allowance2 || '0'; 
 
@@ -2771,7 +3341,6 @@ function loadDataFromObject(instanceId, data) {
             
             if (data.sessionsGrid && data.sessionsGrid.length > 0) {
                 data.sessionsGrid.forEach(sessionData => {
-                    // 1. Buat sesi (baris) baru
                     sessionCounter[instanceId]++;
                     const sessionId = sessionCounter[instanceId];
                     const newSession = document.createElement('div');
@@ -2788,7 +3357,6 @@ function loadDataFromObject(instanceId, data) {
                     `;
                     multiSessionGridEl.appendChild(newSession);
                     
-                    // 2. Isi grid (kolom) untuk sesi itu
                     const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
                     if (grid && sessionData) {
                          sessionData.forEach(val => {
@@ -2802,7 +3370,6 @@ function loadDataFromObject(instanceId, data) {
                             box.appendChild(input);
                             grid.appendChild(box);
                         });
-                        // Jika data tersimpan < 8, tambahkan sisanya
                         const diff = 8 - sessionData.length;
                         if (diff > 0) {
                             for (let i = 0; i < diff; i++) {
@@ -2812,7 +3379,7 @@ function loadDataFromObject(instanceId, data) {
                     }
                 });
             } else {
-                // Fallback jika tidak ada data sesi tersimpan
+                // [FIX REQ 3] Jika data sesi kosong, tambahkan default
                 addHitunganSession(instanceId);
                 addHitunganSession(instanceId);
             }
@@ -2831,8 +3398,7 @@ function loadDataFromObject(instanceId, data) {
         const simulasiToggle = getEl(instanceId, 'simulasiToggle');
         if (simulasiToggle) simulasiToggle.checked = data.simulasiToggle || false;
         
-        // Update UI berdasarkan data toggle yang dimuat
-        toggleManualBenurInput(instanceId); // Ini akan show/hide input override
+        toggleManualBenurInput(instanceId);
 
         // Panggil semua fungsi kalkulasi ulang
         updateTruckDetails(instanceId);
@@ -2840,6 +3406,19 @@ function loadDataFromObject(instanceId, data) {
         recalcAllHitungan(instanceId);
         formatCurrency(getEl(instanceId, 'nominalOrder'));
         updateRecap(instanceId);
+        
+        // [REVISI V6.8] Logika Status Baru (Draft, Terkirim, Edited)
+        let currentStatus = data._status || 'Draft'; // Ambil status dari sesi
+        if (data._vaultInfo) {
+            // Jika dimuat dari vault, statusnya selalu 'Terkirim' (atau 'Edited' jika ada _status)
+            currentStatus = data._status || 'Terkirim'; 
+        }
+        // Konversi status lama 'Final' ke 'Terkirim'
+        if (currentStatus === 'Final') {
+            currentStatus = 'Terkirim';
+        }
+        
+        markStatus(instanceId, currentStatus); 
         
     } catch (e) {
         console.error(`Gagal memuat data ke ${instanceId}:`, e);
@@ -2849,7 +3428,7 @@ function loadDataFromObject(instanceId, data) {
 // ===================================
 // FLOATING CALCULATOR LOGIC
 // ===================================
-
+/* SEMUA FUNGSI KALKULATOR (calcClear, calcInput, dll) DISALIN DI SINI */
 const calcContainer = document.getElementById('calculatorContainer');
 const calcDisplay = document.getElementById('calcDisplay');
 let currentInput = '0';
@@ -2965,183 +3544,478 @@ function calcEquals() {
          waitingForNewInput = true;
      }
 }
+/* AKHIR FUNGSI KALKULATOR */
 
 
 // ===================================
-// [REVISI] FUNGSI KERANJANG SAMPAH (Menjadi Card)
+// [REVISI] FUNGSI PENGUNCIAN FORM (DINONAKTIFKAN)
+// ===================================
+function lockInstanceForm(instanceId) {
+    /* [REVISI V6.8] Fitur kunci dihapus sesuai permintaan. */
+}
+function unlockInstanceForm(instanceId) {
+    /* [REVISI V6.8] Fitur kunci dihapus sesuai permintaan. */
+}
+
+
+// ===================================
+// [REVISI V6.8] FUNGSI VAULT (BRANKAS DATA)
 // ===================================
 
-function getTrashData() {
-    const trashRaw = localStorage.getItem(TRASH_STORAGE_KEY);
-    if (!trashRaw) { return []; }
+function getVaultData() {
+    const vaultRaw = localStorage.getItem(VAULT_STORAGE_KEY);
+    if (!vaultRaw) { return []; }
     try {
-        return JSON.parse(trashRaw);
+        const data = JSON.parse(vaultRaw);
+        // Urutkan data terbaru di atas
+        return data.sort((a, b) => new Date(b._vaultInfo.savedOn) - new Date(a._vaultInfo.savedOn));
     } catch (e) {
-        console.error("Data keranjang sampah rusak:", e);
+        console.error("Data vault rusak:", e);
         return [];
     }
 }
 
-function saveTrashData(trashArray) {
+function saveVaultData(vaultArray) {
     try {
-        localStorage.setItem(TRASH_STORAGE_KEY, JSON.stringify(trashArray));
+        localStorage.setItem(VAULT_STORAGE_KEY, JSON.stringify(vaultArray));
     } catch (e) {
-        console.error("Gagal menyimpan keranjang sampah:", e);
-        alert("Error saat menyimpan keranjang sampah.");
+        console.error("Gagal menyimpan vault:", e);
+        alert("Error saat menyimpan vault.");
     }
 }
 
-function populateTrashList() {
-    const trashArray = getTrashData();
-    const listEls = document.querySelectorAll('#staticTrashList'); 
+/**
+ * [REVISI V6.8] Fungsi utama yang dipanggil tombol "Simpan ke Vault"
+ */
+function saveDataToVault(instanceId) {
+    // [REVISI V6.8] Ubah pesan konfirmasi
+    if (!confirm("Simpan data panen ini ke Vault? \n\nData ini akan ditandai sebagai 'Terkirim'.")) return;
     
-    if (listEls.length === 0) return;
-
-    listEls.forEach(listEl => {
-        listEl.innerHTML = ''; // Kosongkan daftar
-
-        if (trashArray.length === 0) {
-            listEl.innerHTML = '<p style="text-align: center; color: var(--color-text-light);">Keranjang sampah kosong.</p>';
-        } else {
-            trashArray.forEach((item, index) => {
-                const info = item._trashInfo || { customer: (item.customer || 'Data Lama'), deletedOn: new Date().toISOString() };
-                const customerName = info.customer || 'Tanpa Nama';
-                const date = new Date(info.deletedOn).toLocaleString('id-ID', {
-                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                });
-
-                const itemHTML = `
-                    <div class="trash-modal-list-item">
-                        <div class="trash-item-info">
-                            <strong>${customerName}</strong>
-                            <span>Dihapus: ${date}</span>
-                        </div>
-                        <div class="trash-item-actions">
-                            <button class="btn restore" onclick="restoreFromTrash(${index})">↩️ Pulihkan</button>
-                            <button class="btn delete" onclick="deleteFromTrash(${index})">❌ Hapus</button>
-                        </div>
-                    </div>
-                `;
-                listEl.insertAdjacentHTML('beforeend', itemHTML);
-            });
-        }
-    });
+    try {
+        const newData = gatherDataFromInstance(instanceId);
+        let vaultArray = getVaultData();
+        
+        vaultArray.push(newData);
+        saveVaultData(vaultArray);
+        
+        // [REVISI V6.8] Ubah pesan sukses
+        alert("Data Panen berhasil disimpan ke Vault! 🗄️");
+        populateVaultList(); // Update daftar jika vault sedang terbuka
+        
+        // [REVISI V6.8] Tandai status "Terkirim"
+        markStatus(instanceId, 'Terkirim');
+        // [REVISI V6.8] lockInstanceForm(instanceId); // Fitur kunci dihapus
+        
+        // [REVISI V6.8] Perbarui data SESI dengan status 'Terkirim'
+        saveSessionData(instanceId, true, 'Terkirim'); 
+        
+    } catch (e) {
+        console.error("Gagal menyimpan ke Vault:", e);
+        alert("Gagal menyimpan data ke Vault. Error: " + e.message);
+    }
 }
 
-function showTrash() {
-    const cardEls = document.querySelectorAll('#trashCardContainer');
-    if (cardEls.length === 0) return;
-    const cardEl = cardEls[0];
+/**
+ * [V6.8] Menampilkan daftar vault, meneruskan UUID ke tombol.
+ */
+function populateVaultList() {
+    const vaultArray = getVaultData();
+    const listEl = document.getElementById('vaultList');
     
-    if (cardEl.style.display === 'none') {
-        populateTrashList();
-        cardEls.forEach(el => {
-            el.style.display = 'block';
-            el.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        });
+    if (!listEl) return;
+    listEl.innerHTML = ''; // Kosongkan daftar
+    
+    const now = new Date();
+    const twelveHoursAgo = new Date(now.getTime() - (12 * 60 * 60 * 1000));
+
+    if (vaultArray.length === 0) {
+        listEl.innerHTML = '<p style="text-align: center; color: var(--color-text-light);">Vault data kosong.</p>';
     } else {
-        cardEls.forEach(el => el.style.display = 'none');
+        vaultArray.forEach((item) => { // Hapus 'index'
+            const info = item._vaultInfo;
+            if (!info) return; // Keamanan jika data korup
+            
+            const customerName = info.customer || 'Tanpa Nama';
+            const order = parseFloat(info.order.replace(/\./g,'') || 0).toLocaleString('id-ID');
+            const date = reformatDate(info.tanggal);
+            
+            // [V6.8] Cek apakah baru (kurang dari 12 jam)
+            const savedDate = new Date(info.savedOn);
+            const isNew = savedDate > twelveHoursAgo;
+            
+            const newBadgeHTML = isNew ? '<span class="vault-new-badge">NEW!</span>' : '';
+
+            // [V6.8] Ambil UUID
+            const uuid = info.uuid;
+            if (!uuid) {
+                console.warn("Item vault tanpa UUID ditemukan:", item);
+            }
+
+            const itemEl = document.createElement('div');
+            itemEl.className = 'vault-list-item';
+            itemEl.innerHTML = `
+                <div class="vault-item-info">
+                    <div class="vault-item-info-main">
+                        ${customerName}
+                        ${newBadgeHTML}
+                    </div>
+                    <div class="vault-item-info-sub">
+                        <span>📅 ${date}</span>
+                        <span>|</span>
+                        <span>🎯 ${order} ekor</span>
+                    </div>
+                </div>
+                <div class="vault-item-actions">
+                    <button class="btn restore" title="Muat Ulang data ini ke slide baru">🔄 Muat Ulang</button>
+                    <button class="btn delete" title="Hapus permanen data ini">❌ Hapus</button>
+                </div>
+            `;
+            
+            // [V6.8] Tambahkan event listener untuk UUID
+            itemEl.querySelector('.delete').onclick = () => deleteFromVault(uuid, itemEl);
+            itemEl.querySelector('.restore').onclick = () => loadFromVault(item); // Kirim seluruh data item
+
+            listEl.appendChild(itemEl);
+        });
     }
 }
 
-function restoreFromTrash(index) {
-    if (!confirm("Pulihkan data ini? Data akan ditambahkan sebagai slide baru di akhir.")) return;
-
-    let trashArray = getTrashData();
-    if (!trashArray[index]) return;
-
-    const [restoredData] = trashArray.splice(index, 1);
-    delete restoredData._trashInfo;
-    saveTrashData(trashArray);
+/**
+ * [V6.8] Animasi toggle Vault baru
+ */
+function toggleVault() {
+    const overlay = document.getElementById('vaultOverlay');
+    const container = document.getElementById('vaultContainer');
     
-    addInstance();
-    const newInstanceId = `instance_${instanceCounter}`;
-    loadDataFromObject(newInstanceId, restoredData);
-    goToSlide(instanceCounter - 1);
-    
-    populateTrashList(); 
-    alert("Data berhasil dipulihkan!");
+    if (container.classList.contains('visible')) {
+        // Proses menyembunyikan
+        overlay.style.opacity = 0;
+        container.classList.add('is-hiding');
+        
+        setTimeout(() => {
+            overlay.classList.remove('visible');
+            container.classList.remove('visible');
+            container.classList.remove('is-hiding');
+        }, 300); // Sesuaikan durasi (harus sama dengan transisi CSS)
+    } else {
+        // Proses menampilkan
+        populateVaultList(); // Isi data vault sebelum ditampilkan
+        overlay.classList.add('visible');
+        container.classList.add('visible');
+    }
 }
 
-function deleteFromTrash(index) {
-    if (!confirm("Yakin ingin MENGHAPUS PERMANEN data ini? Tindakan ini tidak dapat dibatalkan.")) return;
+/**
+ * [REVISI V6.8] Memuat data dari Vault ke slide baru
+ */
+function loadFromVault(restoredData) {
+    if (!confirm("Muat Ulang data ini? \n\nData akan dimuat di slide baru paling akhir. Ini tidak akan mengubah data di Vault.")) return;
 
-    let trashArray = getTrashData();
-    if (!trashArray[index]) return;
-
-    trashArray.splice(index, 1);
-    saveTrashData(trashArray);
+    // Panggil addInstance versi baru dengan data
+    addInstance(restoredData); 
     
-    populateTrashList(); 
+    // Pindah ke slide baru (addInstance TIDAK otomatis pindah jika ada dataToLoad)
+    goToSlide(slideTrack.children.length - 1); 
+
+    toggleVault(); // Tutup vault
+    // [REVISI V6.8] Ubah pesan alert
+    alert("Data berhasil dimuat ulang! \nSlide baru ini ditandai sebagai 'Terkirim' dan dapat diedit.");
 }
-// === [AKHIR] FUNGSI KERANJANG SAMPAH ===
+
+/**
+ * [V6.8] Menghapus data dari Vault menggunakan UUID
+ */
+function deleteFromVault(uuidToDelete, itemElement) {
+    if (!uuidToDelete) {
+        alert("Gagal menghapus: Data ini tidak memiliki ID unik. (Data lama?)");
+        return;
+    }
+    if (!confirm("Yakin ingin MENGHAPUS PERMANEN data ini dari Vault? Tindakan ini tidak dapat dibatalkan.")) return;
+
+    // 1. Terapkan animasi CSS
+    itemElement.classList.add('is-deleting');
+    
+    // 2. Tunggu animasi selesai
+    setTimeout(() => {
+        let vaultArray = getVaultData();
+        
+        // Cari dan Hapus data dari array menggunakan UUID
+        const newVaultArray = vaultArray.filter(item => item._vaultInfo.uuid !== uuidToDelete);
+        
+        if (newVaultArray.length < vaultArray.length) {
+            saveVaultData(newVaultArray); // Simpan array baru
+        } else {
+            console.warn(`Gagal menghapus: UUID ${uuidToDelete} tidak ditemukan di vault.`);
+        }
+        
+        // 3. Perbarui daftar (untuk re-index tombol hapus lainnya)
+        populateVaultList(); 
+    }, 400); // Durasi harus cocok dengan transisi CSS
+}
+
+
+// === [V6.8] FUNGSI EXPORT EXCEL (DENGAN PERBAIKAN DENSITY) ===
+function exportVaultToExcel(buttonElement) {
+    const originalText = buttonElement.innerHTML;
+    buttonElement.innerHTML = "⏳ Exporting...";
+    buttonElement.disabled = true;
+
+    setTimeout(() => {
+        try {
+            if (!confirm("Ekspor semua data di Vault ke file Excel?")) {
+                buttonElement.innerHTML = originalText;
+                buttonElement.disabled = false;
+                return;
+            }
+
+            const vaultData = getVaultData();
+            if (vaultData.length === 0) {
+                alert("Vault kosong. Tidak ada data untuk diekspor.");
+                buttonElement.innerHTML = originalText;
+                buttonElement.disabled = false;
+                return;
+            }
+
+            const dataToExport = [];
+            
+            dataToExport.push([
+                "Tanggal", "Nama Customer", "Bak Scooring", "Bak Asli", 
+                "Jumlah Kantong", "Benur Per Kantong", "Rata-Rata (Aktual)", "Tomota", 
+                "Density (Tester)", "Total Benur", "Panjang (mm)", "Suhu (°C)", 
+                "Jarak Tempuh (Jam)", "Stadia", "No. Scooping", "Scooping",
+                "Tujuan", "Jenis Truk", "Driver", "Plat Nomor", "DO (ppm)", "pH", "Salinitas (ppt)", "Biomassa (gr)"
+            ]);
+
+            vaultData.forEach(item => {
+                try {
+                    const calc = item._finalCalc || {};
+                    const kebutuhanBox = safeParseFloat(calc.kebutuhanBox);
+                    const isiBox = safeParseFloat(calc.isiBox);
+                    const benurPerKantong = safeParseFloat(calc.benurPerKantong);
+                    
+                    const jumlahKantong = kebutuhanBox * isiBox;
+                    const totalBenur = jumlahKantong * benurPerKantong;
+                    
+                    // [V6.8] Ambil density yang sudah dihitung dari Tester
+                    const densityTester = calc.testerDensity || '-';
+
+                    dataToExport.push([
+                        reformatDate(item.line),
+                        item.customer || '-',
+                        item.nomorBak || '-',
+                        item.qcBakAsli || '-',
+                        jumlahKantong,
+                        benurPerKantong,
+                        safeParseFloat(calc.avgAktual),
+                        safeParseFloat(item.tomota),
+                        safeParseFloat(densityTester), // <-- PERBAIKAN LOGIKA
+                        totalBenur,
+                        safeParseFloat(item.qcPanjang),
+                        safeParseFloat(item.qcSuhu),
+                        safeParseFloat(item.qcJarak),
+                        item.qcStadia || '-',
+                        item.qcNoScooping || '-',
+                        item.qcScooping || '-',
+                        item.tujuan || '-',
+                        item.jenisTruk || '-',
+                        item.driver || '-',
+                        item.platNomor || '-',
+                        safeParseFloat(item.qcDo),
+                        safeParseFloat(item.qcPh),
+                        safeParseFloat(item.qcSalinitas),
+                        safeParseFloat(item.qcBiomassa)
+                    ]);
+                } catch (e) {
+                    console.error("Gagal memproses item untuk Excel:", item, e);
+                }
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(dataToExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data Panen Vault");
+
+            const date = new Date();
+            const y = date.getFullYear();
+            const m = (date.getMonth() + 1).toString().padStart(2, '0');
+            const d = date.getDate().toString().padStart(2, '0');
+            const fileName = `PLBShrimpCount_Vault_${y}${m}${d}.xlsx`;
+            
+            XLSX.writeFile(wb, fileName);
+
+        } catch(e) {
+            alert("Gagal membuat file Excel. Error: " + e.message);
+        } finally {
+            buttonElement.innerHTML = originalText;
+            buttonElement.disabled = false;
+        }
+    }, 100); 
+}
+
+// === [AKHIR] FUNGSI VAULT ===
 
 
 // ===================================
-// [PERBAIKAN] INITIALIZATION
+// [REVISI V6.8 - PERBAIKAN BUG REQ 3] INITIALIZATION
 // ===================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Inisialisasi Tombol ---
     document.getElementById('darkModeToggle').onclick = toggleDarkMode;
-
-    // === Event listener untuk tombol navigasi melayang ===
-    const floatingSaveBtn = document.getElementById('floatingSaveBtn');
-    if (floatingSaveBtn) {
-        floatingSaveBtn.onclick = () => {
-            const track = document.getElementById('slideTrack');
-            if (!track || !track.children[activeInstanceIndex]) {
-                console.error('Tidak bisa menemukan slide yang aktif!');
-                return;
-            }
-            const currentInstanceId = track.children[activeInstanceIndex].id;
-            if (currentInstanceId) {
-                saveData(currentInstanceId, false);
-            } else {
-                alert('Error: Tidak dapat menemukan ID slide saat ini untuk disimpan.');
-            }
-        };
-    }
-    const floatingPrevBtn = document.getElementById('floatingPrevBtn');
-    if (floatingPrevBtn) {
-        floatingPrevBtn.onclick = () => goToSlide(activeInstanceIndex - 1);
-    }
-    const floatingNextBtn = document.getElementById('floatingNextBtn');
-    if (floatingNextBtn) {
-        floatingNextBtn.onclick = () => goToSlide(activeInstanceIndex + 1);
-    }
-    // === Akhir listener navigasi melayang ===
+    document.getElementById('floatingVaultBtn').onclick = toggleVault;
+    document.getElementById('floatingPrevBtn').onclick = () => goToSlide(activeInstanceIndex - 1);
+    document.getElementById('floatingNextBtn').onclick = () => goToSlide(activeInstanceIndex + 1);
 
     checkDarkModePreference();
 
-    // === Logika Load Data Saat Membuka Halaman ===
-    let savedInstanceCount = 0;
+    // === [REVISI V6.8 - PERBAIKAN BUG REQ 2 & 3] Logika Load Sesi yang baru dan stabil ===
+    let keysToLoad = [];
     try {
         const allKeys = Object.keys(localStorage);
-        const instanceKeys = allKeys.filter(key => 
+        // Cari semua kunci sesi yang valid
+        keysToLoad = allKeys.filter(key => 
             key.startsWith(LOCAL_STORAGE_KEY) && key.includes('_instance_')
         );
-        savedInstanceCount = instanceKeys.length;
     } catch (e) {
-        console.warn("Gagal mengakses localStorage untuk load data:", e);
-        savedInstanceCount = 0;
+        console.warn("Gagal mengakses localStorage untuk load data sesi:", e);
     }
 
-    if (savedInstanceCount === 0) {
+    if (keysToLoad.length === 0) {
         addInstance(); // Buat 1 instance default
     } 
     else {
-        // Loop untuk memuat data yang ada
-        for (let i = 0; i < savedInstanceCount; i++) {
-            const instanceIdToLoad = `instance_${i + 1}`;
-            // 1. Buat DOM-nya dulu
-            addInstance(); 
-            // 2. Muat data ke DOM tersebut
-            loadData(instanceIdToLoad, true); // Muat data (silent)
-        }
+        // [FIX REQ 3] Muat setiap instance dari localStorage dengan ID dan data yang benar
+        keysToLoad.sort().forEach(key => {
+            const instanceId = key.substring(LOCAL_STORAGE_KEY.length + 1); // Dapatkan ID yang BENAR
+            const savedData = localStorage.getItem(key);
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    // Panggil addInstance dengan data DAN ID yang ada
+                    addInstance(data, instanceId); 
+                } catch (e) {
+                    console.warn(`Gagal memuat sesi data untuk ${instanceId}:`, e);
+                    // Jika data rusak, buat slide kosong dengan ID yang sama agar tidak hilang
+                    addInstance(null, instanceId); 
+                }
+            }
+        });
     }
     
-    goToSlide(0);
+    goToSlide(0); // Pindah ke slide pertama SETELAH semua dimuat
     calcClear();
+    
+    // === [V6.8] PENINGKATAN KONTRAK DARK MODE ===
+    const observer = new MutationObserver(() => {
+      if (document.body.classList.contains("dark-mode")) {
+        document.documentElement.style.setProperty("--color-text-main", "#E2ECF5");
+        document.documentElement.style.setProperty("--color-text-light", "#A8B6C9");
+      } else {
+        document.documentElement.style.removeProperty("--color-text-main");
+        document.documentElement.style.removeProperty("--color-text-light");
+      }
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    if (document.body.classList.contains("dark-mode")) {
+        document.documentElement.style.setProperty("--color-text-main", "#E2ECF5");
+        document.documentElement.style.setProperty("--color-text-light", "#A8B6C9");
+    }
+    
+    // === [V6.8] GESTURE SWIPE ANTAR TAB ===
+    let tabStartX = 0;
+    document.addEventListener("touchstart", e => {
+        if (e.target.closest('.card-tab-content') || e.target.closest('.card-tab-nav')) {
+            tabStartX = e.touches[0].clientX;
+        } else {
+            tabStartX = 0;
+        }
+    }, { passive: true });
+    document.addEventListener("touchend", e => {
+      if (tabStartX === 0) return; 
+      const tabEndX = e.changedTouches[0].clientX;
+      const delta = tabEndX - tabStartX;
+      
+      if (Math.abs(delta) > 70) { 
+        const activeSlide = slideTrack.children[activeInstanceIndex];
+        if (!activeSlide) return;
+        
+        const activeTab = activeSlide.querySelector(".tab-link.active");
+        if (!activeTab) return;
+        
+        const tabs = Array.from(activeTab.parentNode.querySelectorAll(".tab-link"));
+        let idx = tabs.indexOf(activeTab);
+        
+        if (delta < 0 && idx < tabs.length - 1) { // Swipe Kiri (Next Tab)
+            tabs[idx + 1].click();
+        }
+        if (delta > 0 && idx > 0) { // Swipe Kanan (Prev Tab)
+            tabs[idx - 1].click();
+        }
+      }
+      tabStartX = 0; // Reset
+    });
+    
+    // === [V6.8] GESTURE SWIPE ANTAR SLIDE ===
+    let slideStartX = 0;
+    const carouselWrapper = document.getElementById('carouselWrapper');
+    
+    carouselWrapper.addEventListener("touchstart", e => {
+        // Jangan mulai swipe slide jika kita sedang swipe tab
+        if (e.target.closest('.card-tab-content') || e.target.closest('.card-tab-nav')) {
+            slideStartX = 0;
+            return;
+        }
+        slideStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    carouselWrapper.addEventListener("touchend", e => {
+        if (slideStartX === 0) return; // Bukan swipe slide yang valid
+        const slideEndX = e.changedTouches[0].clientX;
+        const delta = slideEndX - slideStartX;
+
+        if (Math.abs(delta) > 80) { // Butuh swipe lebih jauh (80px)
+            if (delta < 0) {
+                // Swipe Kiri (Next Slide)
+                goToSlide(activeInstanceIndex + 1);
+            } else {
+                // Swipe Kanan (Prev Slide)
+                goToSlide(activeInstanceIndex - 1);
+            }
+        }
+        slideStartX = 0; // Reset
+    });
+
+    
+    // === [V6.8] VALIDASI INPUT ANGKA ===
+    document.addEventListener("input", (e) => {
+      const el = e.target;
+      if (el.type === "number") {
+        const val = parseFloat(el.value);
+        if (val < 0) el.value = 0; // tidak boleh negatif
+        
+        const max = el.getAttribute('max');
+        if (max && val > parseFloat(max)) {
+             el.value = max; // Hormati max HTML
+        } else if (!max && val > 9999999) {
+             el.value = 9999999; // Batas umum
+        }
+      }
+    });
+    
+    // === [V6.8] TOOLTIP TAMBAHAN ===
+    const tooltips = [
+        { sel: "#darkModeToggle", text: "Ganti Tema Terang/Gelap 🌙" },
+        { sel: "#vaultToggleBtn", text: "Buka Brankas Data Panen 🗄️" },
+        { sel: ".calc-toggle-btn", text: "Buka Kalkulator 🧮" },
+        { sel: ".add-btn", text: "Tambah Data Baru ➕" },
+        { sel: ".remove-btn", text: "Hapus Data Ini ❌" },
+        { sel: ".reset-btn", text: "Reset Form Ini 🔄" }
+    ];
+    tooltips.forEach(t => {
+        document.querySelectorAll(t.sel).forEach(btn => {
+          if (!btn.title) btn.title = t.text;
+        });
+    });
+
 });
 </script>
 </body>
