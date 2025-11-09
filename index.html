@@ -136,7 +136,8 @@ body{
   display: flex;
   flex-direction: column;
   height: 100dvh; 
-  overflow: hidden; 
+  overflow: hidden;
+  align-items: center; /* <-- carousel selalu ditengah layar di mode mobile */
 }
 /* Animasi */
 @keyframes fadeSlideIn{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
@@ -166,6 +167,7 @@ header.visible{opacity:1;transform:translateY(0)}
   position: relative;
   flex-shrink: 0;
   z-index: 100;
+  width: 100%; /* <-- mode mobile */
 }
 
 .title{
