@@ -852,6 +852,10 @@ body.dark-mode .calc-btn.clear:hover, body.dark-mode .calc-btn.toggle-sign:hover
     font-size: 0.9em;
     font-weight: 700;
     color: var(--color-text-main);
+    
+    /* [V6.9] Izinkan label dan ikon info */
+    display: flex;
+    align-items: center;
 }
 .switch {
     position: relative;
@@ -1503,9 +1507,45 @@ body.dark-mode .tab-link.active {
     border-color: transparent; 
     /* Warna panah diatur oleh JS di 'markStatus' */
 }
+
+/* === [REVISI V6.9 - DARI POIN 4] CSS IKON INFO === */
+.info-tooltip {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--color-text-lighter);
+    color: var(--color-card-bg);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+    cursor: help;
+    margin-left: 6px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+.info-tooltip:hover {
+    opacity: 1;
+}
+/* Style untuk tombol reset baris (Poin 2) */
+.btn-reset-row {
+    background: transparent;
+    border: none;
+    color: var(--color-alert-text);
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 0 5px;
+    margin-left: 5px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.btn-reset-row:hover {
+    opacity: 1;
+}
 </style>
 </head>
-
 
 <body>
 
@@ -1747,7 +1787,6 @@ body.dark-mode .tab-link.active {
                             </div>
 
                         <div class="actions-row actions-row-small">
-                            <button class="btn" onclick="addCalcBox('{{INSTANCE_ID}}_multiSessionGrid')">➕ Tambah Kolom</button>
                             <button class="btn primary" onclick="addHitunganSession('{{INSTANCE_ID}}')">➕ Tambah Baris</button>
                             <button class="btn" onclick="removeHitunganSession('{{INSTANCE_ID}}')">❌ Hapus Baris</button>
                             <button class="btn" onclick="resetHitungan('{{INSTANCE_ID}}')">🔄 Reset Semua</button>
@@ -1775,7 +1814,9 @@ body.dark-mode .tab-link.active {
                                 </div>
                                 
                                 <div id="{{INSTANCE_ID}}_limitKapasitasToggleContainer" class="simulasi-toggle-container" style="justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--color-border);">
-                                    <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-accent);">Batasi ke Kapasitas Truk?</span>
+                                    <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-accent);">Batasi ke Kapasitas Truk?
+                                        <span class="info-tooltip" title="Jika Aktif: Kebutuhan Box akan dibatasi sesuai kapasitas truk. Aplikasi akan otomatis menghitung ulang benur/kantong agar total order pas.">i</span>
+                                    </span>
                                     <label class="switch">
                                         <input type="checkbox" id="{{INSTANCE_ID}}_limitKapasitasToggle" onchange="recalcAllHitungan('{{INSTANCE_ID}}')" checked>
                                         <span class="slider round"></span>
@@ -1788,7 +1829,7 @@ body.dark-mode .tab-link.active {
                                 </div>
                             </div>
 
-                            <div class="green-result-box">
+<div class="green-result-box">
 
                                 <div id="{{INSTANCE_ID}}_manualBenurToggleContainer" class="simulasi-toggle-container" style="justify-content: space-between; margin-bottom: 5px;">
                                     <span class="simulasi-toggle-label" style="font-size: 0.9em; color: var(--color-alert-text);">Gunakan Override Manual?</span>
@@ -1848,7 +1889,12 @@ body.dark-mode .tab-link.active {
                                 </div>
                             
                                 <div id="{{INSTANCE_ID}}_selisihWarningBox" style="display: none; margin-top: 15px; border-top: 1px dashed var(--color-recap-border); padding-top: 15px; text-align: center;">
-                                    <h3 style="font-size: 0.9em; color: var(--color-alert-text); margin: 0 0 8px 0;">⚠ Peringatan Selisih! Cek Ulang:</h3>
+                                    
+                                    <h3 style="font-size: 0.9em; color: var(--color-alert-text); margin: 0 0 8px 0; display: flex; align-items: center; justify-content: center;">
+                                        ⚠ Peringatan Selisih! Cek Ulang:
+                                        <span class="info-tooltip" onclick="showInfo(event)" title="Peringatan ini muncul jika Total Packing (Box * Benur/Kantong) memiliki selisih lebih dari 0.1% dari Total Order. Gunakan 'Simulasi' di bawah untuk menghitung ulang benur/kantong agar selisih pas.">i</span>
+                                    </h3>
+                                    
                                     <div class="simulasi-toggle-container" style="justify-content: center;">
                                         <span class="simulasi-toggle-label">Gunakan Simulasi</span>
                                         <label class="switch">
@@ -1993,6 +2039,17 @@ body.dark-mode .tab-link.active {
 </style>
 
 <script>
+
+// ===================================
+// [REVISI V6.9 - POIN 4] FUNGSI INFO (i)
+// ===================================
+function showInfo(event) {
+    const infoEl = event.target;
+    const message = infoEl.getAttribute('title');
+    if (message) {
+        alert(message);
+    }
+}
 
 // ===================================
 // [REVISI V6.4] FUNGSI TAB SLIDING
@@ -2419,6 +2476,28 @@ function resetTester(instanceId){
 // CARD 3 & 4: HITUNGAN MULTI SESI LOGIC
 // ===================================
 let sessionCounter = {};
+
+/**
+ * [REVISI V6.9 - POIN 2] Fungsi reset baru untuk baris di Tab 3
+ */
+function resetSessionRow(event, instanceId, sessionId) {
+    event.stopPropagation(); // Hentikan event agar tidak memicu elemen lain
+    if (!confirm(`Reset semua 8 kolom hitungan untuk Baris ${sessionId} ini?`)) return;
+    
+    const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
+    if (!grid) return;
+    
+    // Kosongkan semua input di grid ini
+    const inputs = grid.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.value = '';
+    });
+    
+    // Hitung ulang sesi ini dan seluruh kalkulasi
+    recalcSession(instanceId, sessionId);
+    recalcAllHitungan(instanceId);
+}
+
 function recalcSession(instanceId, sessionId) {
     const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
     const sumEl = document.getElementById(`${instanceId}_sessionSum${sessionId}`);
@@ -2696,11 +2775,14 @@ function addHitunganSession(instanceId) {
     const newSession = document.createElement('div');
     newSession.className = 'hit-session';
     newSession.dataset.sessionId = sessionId;
+    
+    // [REVISI V6.9 - POIN 2] Tambahkan tombol reset baris di sini
     newSession.innerHTML = `
         <div class="session-summary">
             <span class="session-label">Hitungan ${sessionId}:</span>
             <span class="results">
                 Σ <span id="${instanceId}_sessionSum${sessionId}" class="sum-value">0</span>
+                <button class="btn-reset-row" onclick="resetSessionRow(event, '${instanceId}', ${sessionId})" title="Reset Baris Ini">🔄</button>
             </span>
         </div>
         <div id="${instanceId}_sessionGrid${sessionId}" class="hit-grid"></div>
@@ -2747,6 +2829,11 @@ function resetHitungan(instanceId) {
     recalcAllHitungan(instanceId);
     // [REVISI] Penandaan status 'Draft' atau 'Edited' ditangani oleh triggerAutoSave
 }
+
+/**
+ * [REVISI V6.9 - POIN 3] Logika untuk 'multiSessionGrid' (Tab 3) DIHAPUS.
+ * Fungsi ini sekarang hanya untuk Tab 2 (Tester).
+ */
 addCalcBox = (fullGridId) => {
     const parts = fullGridId.split('_');
     const instanceId = parts.slice(0, 3).join('_'); // [PERBAIKAN] Tangani ID unik (misal "instance_17123_45")
@@ -2764,32 +2851,14 @@ addCalcBox = (fullGridId) => {
         input.oninput = () => recalcAllTester(instanceId);
         box.appendChild(input);
         grid.appendChild(box);
-    } else if (gridType === 'multiSessionGrid') {
-        const sessions = grid.querySelectorAll('.hit-session');
-        if (sessions.length === 0) { alert('Tambahkan Baris Hitungan terlebih dahulu.'); return; }
-        // Cek kolom di sesi pertama
-        const firstSessionGrid = sessions[0].querySelector('.hit-grid');
-        if (firstSessionGrid && firstSessionGrid.querySelectorAll('.calc-box').length >= maxBox) {
-             alert('Maks '+maxBox+' kolom per sesi.');return;
-        }
-        
-        sessions.forEach(session => {
-            const sessionId = session.dataset.sessionId;
-            const sessionGrid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
-            if (sessionGrid) {
-                const newBox = document.createElement('div');
-                newBox.className = 'calc-box';
-                const newInput = document.createElement('input');
-                newInput.type = 'number';
-                newInput.placeholder = '0';
-                newInput.oninput = () => { recalcSession(instanceId, sessionId); recalcAllHitungan(instanceId); };
-                newBox.appendChild(newInput);
-                sessionGrid.appendChild(newBox);
-            }
-        });
-        recalcAllHitungan(instanceId); // Pindah ke sini
     }
+    // [REVISI POIN 3] Blok 'else if (gridType === 'multiSessionGrid')' dihapus.
 };
+
+/**
+ * [REVISI V6.9 - POIN 3] Logika untuk 'multiSessionGrid' (Tab 3) DIHAPUS.
+ * Fungsi ini sekarang hanya untuk Tab 2 (Tester).
+ */
 removeCalcBox = (fullGridId) => {
     const parts = fullGridId.split('_');
     const instanceId = parts.slice(0, 3).join('_'); // [PERBAIKAN] Tangani ID unik
@@ -2802,25 +2871,8 @@ removeCalcBox = (fullGridId) => {
         const b=grid.querySelectorAll('.calc-box');
         if(b.length){b[b.length-1].remove(); shouldRecalc = true;}
         if (shouldRecalc) recalcAllTester(instanceId);
-    } else if (gridType === 'multiSessionGrid') {
-        const sessions = grid.querySelectorAll('.hit-session');
-        if (sessions.length === 0) return;
-        sessions.forEach(session => {
-            const sessionId = session.dataset.sessionId;
-            const sessionGrid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
-            if (sessionGrid) {
-                const b = sessionGrid.querySelectorAll('.calc-box');
-                if (b.length > 0) {
-                    b[b.length-1].remove();
-                    recalcSession(instanceId, sessionId);
-                    shouldRecalc = true;
-                }
-            }
-        });
-        if (shouldRecalc) {
-            recalcAllHitungan(instanceId);
-        }
     }
+    // [REVISI POIN 3] Blok 'else if (gridType === 'multiSessionGrid')' dihapus.
 };
 
 
@@ -3355,11 +3407,14 @@ function loadDataFromObject(instanceId, data) {
                     const newSession = document.createElement('div');
                     newSession.className = 'hit-session';
                     newSession.dataset.sessionId = sessionId;
+                    
+                    // [REVISI V6.9 - POIN 2] Pastikan tombol reset ada saat memuat
                     newSession.innerHTML = `
                         <div class="session-summary">
                             <span class="session-label">Hitungan ${sessionId}:</span>
                             <span class="results">
                                 Σ <span id="${instanceId}_sessionSum${sessionId}" class="sum-value">0</span>
+                                <button class="btn-reset-row" onclick="resetSessionRow(event, '${instanceId}', ${sessionId})" title="Reset Baris Ini">🔄</button>
                             </span>
                         </div>
                         <div id="${instanceId}_sessionGrid${sessionId}" class="hit-grid"></div>
@@ -3382,7 +3437,16 @@ function loadDataFromObject(instanceId, data) {
                         const diff = 8 - sessionData.length;
                         if (diff > 0) {
                             for (let i = 0; i < diff; i++) {
-                                addCalcBox(`${instanceId}_multiSessionGrid`);
+                                // [REVISI V6.9 - POIN 3] addCalcBox TIDAK BISA DIPAKAI DI SINI LAGI
+                                // Jadi kita tambahkan kolom kosong secara manual
+                                const box = document.createElement('div');
+                                box.className = 'calc-box';
+                                const input = document.createElement('input');
+                                input.type = 'number';
+                                input.placeholder = '0';
+                                input.oninput = function() { recalcSession(instanceId, sessionId); recalcAllHitungan(instanceId); };
+                                box.appendChild(input);
+                                grid.appendChild(box);
                             }
                         }
                     }
@@ -3933,6 +3997,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // === [V6.8] GESTURE SWIPE ANTAR TAB ===
+    // [REVISI V6.9 - POIN 1] Logika swipe slide (carousel) dihapus.
+    // Hanya logika swipe tab yang tersisa.
     let tabStartX = 0;
     document.addEventListener("touchstart", e => {
         if (e.target.closest('.card-tab-content') || e.target.closest('.card-tab-nav')) {
@@ -3966,36 +4032,8 @@ document.addEventListener('DOMContentLoaded', () => {
       tabStartX = 0; // Reset
     });
     
-    // === [V6.8] GESTURE SWIPE ANTAR SLIDE ===
-    let slideStartX = 0;
-    const carouselWrapper = document.getElementById('carouselWrapper');
-    
-    carouselWrapper.addEventListener("touchstart", e => {
-        // Jangan mulai swipe slide jika kita sedang swipe tab
-        if (e.target.closest('.card-tab-content') || e.target.closest('.card-tab-nav')) {
-            slideStartX = 0;
-            return;
-        }
-        slideStartX = e.touches[0].clientX;
-    }, { passive: true });
-
-    carouselWrapper.addEventListener("touchend", e => {
-        if (slideStartX === 0) return; // Bukan swipe slide yang valid
-        const slideEndX = e.changedTouches[0].clientX;
-        const delta = slideEndX - slideStartX;
-
-        if (Math.abs(delta) > 80) { // Butuh swipe lebih jauh (80px)
-            if (delta < 0) {
-                // Swipe Kiri (Next Slide)
-                goToSlide(activeInstanceIndex + 1);
-            } else {
-                // Swipe Kanan (Prev Slide)
-                goToSlide(activeInstanceIndex - 1);
-            }
-        }
-        slideStartX = 0; // Reset
-    });
-
+    // === [REVISI V6.9 - POIN 1] GESTURE SWIPE ANTAR SLIDE DIHAPUS ===
+    // Blok listener untuk 'carouselWrapper' (slideStartX) telah dihapus.
     
     // === [V6.8] VALIDASI INPUT ANGKA ===
     document.addEventListener("input", (e) => {
@@ -4030,5 +4068,142 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
+<!-- === PLB Badge Fixer - Final Smooth Transition Edition === -->
+<style>
+/* Transisi lembut untuk badge status */
+.status-badge {
+  transition: background-color 0.4s ease, color 0.4s ease, transform 0.3s ease;
+}
+
+/* Efek kecil saat berubah status */
+.status-badge.status-changed {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(0,0,0,0.2);
+}
+
+/* Panah mengikuti warna background */
+.status-badge::after {
+  border-bottom-color: var(--after-color, transparent) !important;
+  transition: border-bottom-color 0.4s ease;
+}
+</style>
+
+<script>
+(function(){
+  // 🎨 Warna status — Draft: Oranye, Terkirim: Hijau, Edited: Biru Muda
+  const STATUS_COLORS = {
+    Draft:   { bg: '#FFA500', text: '#ffffff' },  // oranye terang
+    Terkirim:{ bg: '#198754', text: '#ffffff' },  // hijau sukses
+    Edited:  { bg: '#0DCAF0', text: '#212529' }   // biru muda
+  };
+
+  // 🧩 Fungsi untuk menampilkan badge dengan transisi halus
+  function setStatusBadge(badgeEl, status) {
+    if (!badgeEl) return;
+    const col = STATUS_COLORS[status] || STATUS_COLORS.Draft;
+
+    // Tambahkan animasi transisi kecil
+    badgeEl.classList.add('status-changed');
+    setTimeout(() => badgeEl.classList.remove('status-changed'), 250);
+
+    badgeEl.textContent = status;
+    badgeEl.classList.add('visible');
+    badgeEl.style.background = col.bg;
+    badgeEl.style.color = col.text;
+    badgeEl.style.setProperty('--after-color', col.bg);
+  }
+
+  // 🔍 Cari badge dari elemen di dalam card (slide-item)
+  function findBadgeFromInside(el) {
+    const slide = el.closest('.slide-item');
+    return slide ? slide.querySelector('.status-badge') : null;
+  }
+
+  // 🚀 Inisialisasi awal: semua badge = Draft
+  function initializeExistingBadges() {
+    document.querySelectorAll('.status-badge').forEach(b => {
+      setStatusBadge(b, 'Draft');
+      b.dataset.hasSaved = "false";
+    });
+  }
+
+  // ✏️ Saat user mengedit input
+  function attachInputListeners(root) {
+    if (!root) root = document;
+    root.addEventListener('input', function(e){
+      const target = e.target;
+      if (!target) return;
+      const tag = (target.tagName || '').toLowerCase();
+      if (!['input','select','textarea'].includes(tag)) return;
+
+      const badge = findBadgeFromInside(target);
+      if (!badge) return;
+      const hasSaved = badge.dataset.hasSaved === "true";
+      const current = (badge.textContent || '').trim();
+
+      if (!hasSaved) {
+        // Belum disimpan = Draft (tetap)
+        if (current !== 'Draft') setStatusBadge(badge, 'Draft');
+      } else {
+        // Sudah disimpan dan diedit = Edited
+        if (current !== 'Edited') setStatusBadge(badge, 'Edited');
+      }
+    }, { capture: true });
+  }
+
+  // 💾 Saat klik tombol Save ke Vault
+  function attachSaveClickListener() {
+    document.addEventListener('click', function(e){
+      const btn = e.target.closest('button, a, input[type="button"], input[type="submit"]');
+      if (!btn) return;
+      const txt = (btn.innerText || btn.value || '').toLowerCase();
+      const isSaveBtn = /save|simpan|vault|terkirim|kirim/.test(txt) ||
+                        (btn.className && /save|vault|simpan/.test(btn.className));
+      if (!isSaveBtn) return;
+
+      const badge = findBadgeFromInside(btn);
+      if (!badge) return;
+      setStatusBadge(badge, 'Terkirim');
+      badge.dataset.hasSaved = "true";
+    }, true);
+  }
+
+  // 🧭 Pantau elemen baru yang muncul
+  function observeNewBadges() {
+    const mo = new MutationObserver(muts => {
+      muts.forEach(m => {
+        m.addedNodes.forEach(node => {
+          if (!(node instanceof Element)) return;
+          const badges = node.matches('.status-badge')
+            ? [node]
+            : Array.from(node.querySelectorAll('.status-badge'));
+          badges.forEach(b => {
+            setStatusBadge(b, 'Draft');
+            b.dataset.hasSaved = "false";
+          });
+        });
+      });
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // 🚦 Jalankan semua fungsi
+  initializeExistingBadges();
+  attachInputListeners(document);
+  attachSaveClickListener();
+  observeNewBadges();
+
+  // API kecil untuk akses manual (opsional)
+  window.PLB = window.PLB || {};
+  window.PLB.setStatusBadge = (inst, status)=>{
+    const badge = typeof inst === 'string' ? document.getElementById(inst) : findBadgeFromInside(inst);
+    if (badge) setStatusBadge(badge, status);
+  };
+})();
+</script>
+<!-- === END Smooth Transition Badge Fixer === -->
+
+
 </body>
 </html>
