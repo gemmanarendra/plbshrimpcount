@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PLBShrimpCount V6.8</title>
+<title>PLBShrimpCount V7.0</title>
 
 <link rel="icon" type="image/jpeg" href="logo-plb.png">
 
@@ -1545,6 +1545,7 @@ body.dark-mode .tab-link.active {
     opacity: 1;
 }
 </style>
+
 </head>
 
 <body>
@@ -1556,7 +1557,7 @@ body.dark-mode .tab-link.active {
 
   <h1 class="title">
     <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
-    <span class="version">V6.8</span>
+    <span class="version">V7.0</span>
     <span class="build-badge">Pro</span>
   </h1>
   <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
@@ -1633,8 +1634,8 @@ body.dark-mode .tab-link.active {
                         
                         <label>📅 Tanggal Panen</label><input id="{{INSTANCE_ID}}_line" type="date" placeholder="YYYY-MM-DD" oninput="updateRecap('{{INSTANCE_ID}}')">
                         <label>👤 Nama Customer</label><input id="{{INSTANCE_ID}}_customer" placeholder="Nama Customer" oninput="updateRecap('{{INSTANCE_ID}}')">
-                        <label>🎯 Tujuan</label><input id="{{INSTANCE_ID}}_tujuan" placeholder="Kota Tujuan" oninput="updateRecap('{{INSTANCE_ID}}')">
-                        <label>📈 Order Benur (Ekor)</label><input type="text" id="{{INSTANCE_ID}}_nominalOrder" placeholder="0" oninput="formatCurrency(this); recalcAllHitungan('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}')">
+                        <label>📍 Tujuan</label><input id="{{INSTANCE_ID}}_tujuan" placeholder="Kota Tujuan" oninput="updateRecap('{{INSTANCE_ID}}')">
+                        <label>🦐 Order Benur (Ekor)</label><input type="text" id="{{INSTANCE_ID}}_nominalOrder" placeholder="0" oninput="formatCurrency(this); recalcAllHitungan('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}')">
 
                         <label>🚛 Jenis Truk</label>
                         <select id="{{INSTANCE_ID}}_jenisTruk" onchange="updateTruckDetails('{{INSTANCE_ID}}'); recalcAllTester('{{INSTANCE_ID}}'); recalcAllHitungan('{{INSTANCE_ID}}')">
@@ -1653,7 +1654,7 @@ body.dark-mode .tab-link.active {
                         <select id="{{INSTANCE_ID}}_driver" onchange="updateDriverDetails('{{INSTANCE_ID}}')">
                             </select>
                         
-                        <label>🚗 Plat Nomor</label>
+                        <label>💳 Plat Nomor</label>
                         <input id="{{INSTANCE_ID}}_platNomor" placeholder="Plat Nomor (auto-fill)" oninput="updateRecap('{{INSTANCE_ID}}')">
                     </div>
                 </section>
@@ -1663,9 +1664,9 @@ body.dark-mode .tab-link.active {
                         <h2>🔬 Hitungan Tester</h2>
 
                         <div class="row">
-                            <div class="col"><label>💧 Nomor Bak (Scooring)</label><input id="{{INSTANCE_ID}}_nomorBak" placeholder="Bak Scooring" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
+                            <div class="col"><label>📋 Bak Scooring</label><input id="{{INSTANCE_ID}}_nomorBak" placeholder="Bak Scooring" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
+                            <div class="col"><label>💧 Bak Asli</label><input id="{{INSTANCE_ID}}_qcBakAsli" placeholder="Bak Asli" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
                         </div>
-
                         <div class="row">
                             <div class="col"><label>🤖 Tomota (ekor)</label><input id="{{INSTANCE_ID}}_tomota" type="number" placeholder="Tomota" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
                         </div>
@@ -1687,7 +1688,7 @@ body.dark-mode .tab-link.active {
 
                         <div class="tester-result-box split-layout">
                             <div class="result-box-split">
-                                <div class="label">✨ Hasil Benur Tester (Dibulatkan)</div>
+                                <div class="label">✍🏻 Hasil Benur Tester (Dibulatkan)</div>
                                 <div id="{{INSTANCE_ID}}_finalTesterResult" class="result-value">0</div>
                             </div>
                             <div class="result-box-split estimasi-box">
@@ -1712,9 +1713,6 @@ body.dark-mode .tab-link.active {
                                     
                                     <div class="qc-grid">
                                         <div>
-                                            <label>📦 Bak Asli</label>
-                                            <input id="{{INSTANCE_ID}}_qcBakAsli" placeholder="Bak Asli" oninput="updateRecap('{{INSTANCE_ID}}')">
-                                        
                                             <label>🌡️ Suhu</label>
                                             <div class="input-with-unit">
                                                 <input type="number" id="{{INSTANCE_ID}}_qcSuhu" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
@@ -1724,7 +1722,7 @@ body.dark-mode .tab-link.active {
                                             <label>💧 pH</label>
                                             <input type="number" id="{{INSTANCE_ID}}_qcPh" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
 
-                                            <label>💨 DO</label>
+                                            <label>🫧 DO</label>
                                             <div class="input-with-unit">
                                                 <input type="number" id="{{INSTANCE_ID}}_qcDo" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
                                                 <span class="input-unit">ppm</span>
@@ -1738,7 +1736,7 @@ body.dark-mode .tab-link.active {
                                         </div>
                                         
                                         <div>
-                                            <label>🛣️ Jarak Tempuh</label>
+                                            <label>🗺️ Jarak Tempuh</label>
                                             <div class="input-with-unit">
                                                 <input type="number" id="{{INSTANCE_ID}}_qcJarak" placeholder="0" oninput="updateRecap('{{INSTANCE_ID}}')">
                                                 <span class="input-unit">Jam</span>
@@ -1759,17 +1757,19 @@ body.dark-mode .tab-link.active {
                                             <label>🌟 Stadia</label>
                                             <input id="{{INSTANCE_ID}}_qcStadia" placeholder="contoh: pl8pl9" oninput="updateRecap('{{INSTANCE_ID}}')">
 
-                                            <label>👨‍🏭 Scooping</label>
-                                            <input id="{{INSTANCE_ID}}_qcScooping" placeholder="-" oninput="updateRecap('{{INSTANCE_ID}}')">
-                                        </div>
+                                            </div>
                                     </div>
 
-                                    <div class="qc-grid full-width" style="margin-top: 0px;">
-                                        <div>
-                                            <label>#️⃣ No. Scooping</label>
-                                            <input id="{{INSTANCE_ID}}_qcNoScooping" placeholder="-" oninput="updateRecap('{{INSTANCE_ID}}')">
-                                        </div>
-                                    </div>
+                                    <div class="qc-grid" style="margin-top: 12px;">
+    <div>
+        <label style="margin-top: 0;">👨‍🏭 Scooping</label>
+        <input id="{{INSTANCE_ID}}_qcScooping" placeholder="-" oninput="updateRecap('{{INSTANCE_ID}}')">
+    </div>
+    <div>
+        <label style="margin-top: 0;">#️⃣ No. Scooping</label>
+        <input id="{{INSTANCE_ID}}_qcNoScooping" placeholder="-" oninput="updateRecap('{{INSTANCE_ID}}')">
+    </div>
+</div>
                                 </div> </div> </div>
                         </div>
                 </section>
@@ -1935,7 +1935,7 @@ body.dark-mode .tab-link.active {
                         <div class="recap-row"><span class="recap-label">Isi/Box</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_isiBox">0 Kantong</span></div>
 
                         <h3 class="recap-section-title">Data Tester</h3>
-                        <div class="recap-row"><span class="recap-label">No. Bak (Scooring)</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_nomorBak">-</span></div>
+                        <div class="recap-row"><span class="recap-label">No. Bak Scooring</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_nomorBak">-</span></div>
                         <div class="recap-row"><span class="recap-label">Tomota</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tomota">- ekor</span></div>
                         <div class="recap-row"><span class="recap-label">Σ Total</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerSum">0</span></div>
                         <div class="recap-row"><span class="recap-label">Density</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerDensity">-</span></div>
@@ -2454,6 +2454,10 @@ function resetTester(instanceId){
   getEl(instanceId, 'nomorBak').value='';
   getEl(instanceId, 'tomota').value='';
   getEl(instanceId, 'allowanceTester').value='0';
+  // [REVISI 1] "Bak Asli" dipindah ke sini
+  getEl(instanceId, 'qcBakAsli').value='';
+  // [AKHIR REVISI 1]
+  
   // [BARU V6.0] Reset QC
   getEl(instanceId, 'qcSuhu').value='';
   getEl(instanceId, 'qcPh').value='';
@@ -2465,7 +2469,6 @@ function resetTester(instanceId){
   getEl(instanceId, 'qcStadia').value='';
   getEl(instanceId, 'qcScooping').value='';
   getEl(instanceId, 'qcNoScooping').value='';
-  getEl(instanceId, 'qcBakAsli').value='';
   
   initBoxesTester(instanceId);
   recalcAllTester(instanceId);
@@ -2920,7 +2923,9 @@ function updateRecap(instanceId) {
     setRecap('recap_qcStadia', getEl(instanceId, 'qcStadia'));
     setRecap('recap_qcScooping', getEl(instanceId, 'qcScooping'));
     setRecap('recap_qcNoScooping', getEl(instanceId, 'qcNoScooping'));
+    // [REVISI 1] "Bak Asli" dipindah ke sini
     setRecap('recap_qcBakAsli', getEl(instanceId, 'qcBakAsli'));
+    // [AKHIR REVISI 1]
     
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
     let sessionHtml = '';
@@ -3031,7 +3036,9 @@ function gatherDataFromInstance(instanceId) {
     dataToSave.qcStadia = getEl(instanceId, 'qcStadia').value;
     dataToSave.qcScooping = getEl(instanceId, 'qcScooping').value;
     dataToSave.qcNoScooping = getEl(instanceId, 'qcNoScooping').value;
+    // [REVISI 1] "Bak Asli" dipindah ke sini
     dataToSave.qcBakAsli = getEl(instanceId, 'qcBakAsli').value;
+    // [AKHIR REVISI 1]
     
     // Card 3: Hitungan
     dataToSave.allowance1 = getEl(instanceId, 'allowance1').value;
@@ -3237,7 +3244,24 @@ function shareToCustomer(instanceId) {
     window.open(`https://wa.me/?text=${encodedText}`, '_blank');
 }
 
+// ===================================
+// [REVISI 2] FUNGSI SHARE ADMIN
+// ===================================
 function shareAdmin(instanceId) {
+    // --- [REVISI 2] Ambil data QC & Tester ---
+    const suhu = getEl(instanceId, 'qcSuhu').value || '-';
+    const doVal = getEl(instanceId, 'qcDo').value || '-';
+    const ph = getEl(instanceId, 'qcPh').value || '-';
+    const sal = getEl(instanceId, 'qcSalinitas').value || '-';
+    const biomassa = getEl(instanceId, 'qcBiomassa').value || '-';
+    const tomota = getEl(instanceId, 'tomota').value || '-';
+    const bakAsli = getEl(instanceId, 'qcBakAsli').value || '-'; // Sudah dipindah ke tab 2
+    const stadia = getEl(instanceId, 'qcStadia').value || '-';
+    const panjang = getEl(instanceId, 'qcPanjang').value || '-';
+    const scooping = getEl(instanceId, 'qcScooping').value || '-';
+    const noScooping = getEl(instanceId, 'qcNoScooping').value || '-';
+
+    // --- Data lama yang masih dipakai ---
     const customer = getEl(instanceId, 'customer').value || '-';
     const driver = getEl(instanceId, 'driver').value || '-';
     const tujuan = getEl(instanceId, 'tujuan').value || '-';
@@ -3272,20 +3296,44 @@ function shareAdmin(instanceId) {
     const benurSJ = benurSJSpan.textContent.trim();
     
     const a2 = parseFloat(allowance2El.value) || 0;
-    const line1 = `${customer}/${tujuan}`;
-    const line2 = `${driver}/Act ${avgAktualText}`;
-    const lineReal = `Real: ${boxValue} Box, ${totalKantong} Kantong @${benurReal} Ekor (+1)`;
+
+    // --- [REVISI 2] Susun format teks baru ---
+    let text = `${scooping}/${noScooping}\n\n`;
+    text += `Suhu ${suhu}\n`;
+    text += `Do ${doVal}\n`;
+    text += `Ph ${ph}\n`;
+    text += `Sal ${sal}\n\n`;
+    text += `Biomassa ${biomassa}\n`;
+    text += `Tomota ${tomota}\n`;
+    text += `Kode Bak ${bakAsli} (${stadia})\n`;
+    text += `Panjang ${panjang} mm\n\n`;
+    text += `${customer}/${tujuan}\n`;
+    text += `${driver}/Act ${avgAktualText}\n\n`;
+
     const lineRealSimple = `${boxValue} Box, ${totalKantong} Kantong @${benurReal} Ekor (+1)`;
-    let text = `${line1}\n${line2}\n\n`;
+    
     if (a2 > 0) {
         const lineSJ = `SJ: ${boxValue} Box, ${totalKantong} Kantong @${benurSJ} Ekor (+1)`;
-        text += `${lineReal}\n${lineSJ}`;
+        // Sesuai permintaan, format baru tidak menyertakan baris "Real" jika ada "SJ"
+        // text += `${lineRealSimple}\n${lineSJ}`; 
+        
+        // [UPDATE] Berdasarkan format Anda, sepertinya hanya 1 baris (SJ atau Real).
+        // Jika formatnya ingin menampilkan KEDUANYA, gunakan baris yang saya komentari di atas.
+        // Jika formatnya hanya menampilkan 1 baris (SJ jika ada, Real jika tidak), 
+        // maka saya ganti logikanya:
+        text += lineSJ; // Hanya tampilkan SJ jika a2 > 0
     } else {
-        text += lineRealSimple;
+        text += lineRealSimple; // Tampilkan Real jika a2 == 0
     }
+    // --- [AKHIR REVISI 2] ---
+
     const encodedText = encodeURIComponent(text);
     window.open(`https://wa.me/?text=${encodedText}`, '_blank');
 }
+// ===================================
+// [AKHIR REVISI 2]
+// ===================================
+
 
 // ===================================
 // IMPORT/EXPORT JSON LOGIC
@@ -3363,7 +3411,9 @@ function loadDataFromObject(instanceId, data) {
         getEl(instanceId, 'qcStadia').value = data.qcStadia || '';
         getEl(instanceId, 'qcScooping').value = data.qcScooping || '';
         getEl(instanceId, 'qcNoScooping').value = data.qcNoScooping || '';
+        // [REVISI 1] "Bak Asli" dipindah ke sini
         getEl(instanceId, 'qcBakAsli').value = data.qcBakAsli || '';
+        // [AKHIR REVISI 1]
         
         // Load Grid Tester
         const testerGridEl = getEl(instanceId, 'hitGridTester');
@@ -3879,7 +3929,7 @@ function exportVaultToExcel(buttonElement) {
                         reformatDate(item.line),
                         item.customer || '-',
                         item.nomorBak || '-',
-                        item.qcBakAsli || '-',
+                        item.qcBakAsli || '-', // [REVISI 1] Ambil data bak asli
                         jumlahKantong,
                         benurPerKantong,
                         safeParseFloat(calc.avgAktual),
@@ -4069,7 +4119,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- === PLB Badge Fixer - Final Smooth Transition Edition === -->
 <style>
 /* Transisi lembut untuk badge status */
 .status-badge {
@@ -4202,8 +4251,5 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 })();
 </script>
-<!-- === END Smooth Transition Badge Fixer === -->
-
-
 </body>
 </html>
