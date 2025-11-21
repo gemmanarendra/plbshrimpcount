@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PLBShrimpCount V7.0</title>
+<title>PLBShrimpCount V8.0</title>
 
 <link rel="icon" type="image/jpeg" href="logo-plb.png">
 
@@ -1544,6 +1544,47 @@ body.dark-mode .tab-link.active {
 .btn-reset-row:hover {
     opacity: 1;
 }
+
+/* --- [BARU: STYLE MODAL SHARE] --- */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(2px);
+}
+.modal-content {
+    background: var(--color-card-bg);
+    padding: 25px;
+    border-radius: var(--radius-card);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    text-align: center;
+    width: 90%;
+    max-width: 350px;
+    border: 1px solid var(--color-border);
+}
+.modal-content h3 {
+    margin: 0 0 10px 0;
+    color: var(--color-accent);
+    font-size: 1.2em;
+}
+.modal-content p {
+    margin: 0 0 20px 0;
+    color: var(--color-text-main);
+}
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.modal-actions .btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9em;
+}
 </style>
 
 </head>
@@ -1557,7 +1598,7 @@ body.dark-mode .tab-link.active {
 
   <h1 class="title">
     <span class="title-pl">PL</span><span class="title-b">B</span> ShrimpCount
-    <span class="version">V7.0</span>
+    <span class="version">V8.0</span>
     <span class="build-badge">Pro</span>
   </h1>
   <p class="subtitle">Alat Hitung & Simulasi Packing — cepat, akurat, siap lapangan.</p>
@@ -1605,6 +1646,17 @@ body.dark-mode .tab-link.active {
 
 <button class="calc-toggle-btn" onclick="toggleCalculator()">🧮</button>
 
+<div id="shareOptionModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <h3>Pilih Format Pesan</h3>
+        <p>Kirim rincian lengkap?</p>
+        <div class="modal-actions">
+            <button class="btn primary" onclick="confirmShare(true)">Ya (Lengkap)</button>
+            <button class="btn" onclick="confirmShare(false)">Tidak (Ringkas)</button>
+            <button class="btn remove-btn" onclick="closeShareModal()" style="background: transparent; color: var(--color-text-light); border: none;">Batal</button>
+        </div>
+    </div>
+</div>
 
 <template id="panen-template">
     <div class="slide-item"> 
@@ -2363,7 +2415,6 @@ function resetCard1(instanceId) {
     updateTruckDetails(instanceId);
     recalcAllHitungan(instanceId);
     recalcAllTester(instanceId);
-    // [REVISI] Penandaan status 'Draft' atau 'Edited' ditangani oleh triggerAutoSave
 }
 
 function updateTruckDetails(instanceId){
@@ -2454,11 +2505,7 @@ function resetTester(instanceId){
   getEl(instanceId, 'nomorBak').value='';
   getEl(instanceId, 'tomota').value='';
   getEl(instanceId, 'allowanceTester').value='0';
-  // [REVISI 1] "Bak Asli" dipindah ke sini
   getEl(instanceId, 'qcBakAsli').value='';
-  // [AKHIR REVISI 1]
-  
-  // [BARU V6.0] Reset QC
   getEl(instanceId, 'qcSuhu').value='';
   getEl(instanceId, 'qcPh').value='';
   getEl(instanceId, 'qcDo').value='';
@@ -2472,7 +2519,6 @@ function resetTester(instanceId){
   
   initBoxesTester(instanceId);
   recalcAllTester(instanceId);
-  // [REVISI] Penandaan status 'Draft' atau 'Edited' ditangani oleh triggerAutoSave
 }
 
 // ===================================
@@ -2480,23 +2526,13 @@ function resetTester(instanceId){
 // ===================================
 let sessionCounter = {};
 
-/**
- * [REVISI V6.9 - POIN 2] Fungsi reset baru untuk baris di Tab 3
- */
 function resetSessionRow(event, instanceId, sessionId) {
-    event.stopPropagation(); // Hentikan event agar tidak memicu elemen lain
+    event.stopPropagation(); 
     if (!confirm(`Reset semua 8 kolom hitungan untuk Baris ${sessionId} ini?`)) return;
-    
     const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
     if (!grid) return;
-    
-    // Kosongkan semua input di grid ini
     const inputs = grid.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.value = '';
-    });
-    
-    // Hitung ulang sesi ini dan seluruh kalkulasi
+    inputs.forEach(input => { input.value = ''; });
     recalcSession(instanceId, sessionId);
     recalcAllHitungan(instanceId);
 }
@@ -2504,7 +2540,7 @@ function resetSessionRow(event, instanceId, sessionId) {
 function recalcSession(instanceId, sessionId) {
     const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
     const sumEl = document.getElementById(`${instanceId}_sessionSum${sessionId}`);
-    if (!grid || !sumEl) return; // Safety check
+    if (!grid || !sumEl) return; 
     const vals = [...grid.querySelectorAll('input')].map(i => safeParseFloat(i.value));
     const s = vals.reduce((a,b)=>a+b,0);
     sumEl.innerHTML = s.toLocaleString('id-ID');
@@ -2513,37 +2549,27 @@ function toggleManualBenurInput(instanceId) {
     const toggle = getEl(instanceId, 'manualBenurToggle');
     const inputRow = getEl(instanceId, 'manualBenurInputRow');
     if (!toggle || !inputRow) return;
-    
     if (toggle.checked) {
         inputRow.style.display = 'flex';
     } else {
         inputRow.style.display = 'none';
-        clearManualBenur(instanceId, true); // true = silent (jangan panggil recalcDuaKali)
+        clearManualBenur(instanceId, true); 
     }
     recalcAllHitungan(instanceId);
 }
 function clearManualBenur(instanceId, silent = false) {
     const manualInput = getEl(instanceId, 'manualBenurOverride');
-    if (manualInput) {
-        manualInput.value = '';
-    }
+    if (manualInput) { manualInput.value = ''; }
     const manualToggle = getEl(instanceId, 'manualBenurToggle');
-    if (manualToggle) {
-        manualToggle.checked = false;
-    }
+    if (manualToggle) { manualToggle.checked = false; }
     const inputRow = getEl(instanceId, 'manualBenurInputRow');
-     if (inputRow) {
-        inputRow.style.display = 'none';
-    }
-    if (!silent) {
-        recalcAllHitungan(instanceId); // Hitung ulang
-    }
+     if (inputRow) { inputRow.style.display = 'none'; }
+    if (!silent) { recalcAllHitungan(instanceId); }
 }
 
 function recalcAllHitungan(instanceId) {
-    // --- Bagian 1: Kumpulkan Semua Data Input ---
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
-    if (!multiSessionGrid) return; // Safety check utama
+    if (!multiSessionGrid) return;
     
     const sessions = multiSessionGrid.querySelectorAll('.hit-session');
     let totalSum = 0;
@@ -2555,10 +2581,7 @@ function recalcAllHitungan(instanceId) {
         if(sumTextEl) {
             const sumText = sumTextEl.textContent.replace(/\./g,'');
             const sumVal = parseFloat(sumText)||0;
-            if (sumVal > 0) {
-                totalSum += sumVal;
-                validSessions++;
-            }
+            if (sumVal > 0) { totalSum += sumVal; validSessions++; }
         }
     });
     const averageSum = validSessions > 0 ? totalSum / validSessions : 0;
@@ -2572,10 +2595,7 @@ function recalcAllHitungan(instanceId) {
     const orderDisplayEl = getEl(instanceId, 'orderDisplay');
     const avgValueDisplayEl = getEl(instanceId, 'avgValueDisplay');
 
-    if (!nominalOrderEl || !isiBoxEl || !kapasitasAngkutEl || !allowance1El || !allowance2El || !orderDisplayEl || !avgValueDisplayEl) {
-        console.error(`[${instanceId}] Error: Elemen input dasar tidak ditemukan.`);
-        return;
-    }
+    if (!nominalOrderEl || !isiBoxEl || !kapasitasAngkutEl || !allowance1El || !allowance2El || !orderDisplayEl || !avgValueDisplayEl) return;
 
     const nominalText = nominalOrderEl.value.replace(/\./g,'');
     const nominalOrderEkor = parseFloat(nominalText)||0;
@@ -2589,7 +2609,6 @@ function recalcAllHitungan(instanceId) {
     orderDisplayEl.textContent = nominalOrderEkor.toLocaleString();
     avgValueDisplayEl.textContent = avgRounded.toLocaleString() + ' ekor';
 
-    // --- Bagian 2: Tentukan Nilai Benur/Kantong MURNI (Tahap 1) ---
     const calculatedBenur_Real_Murni = roundToNearestTen(avgRounded * (1 - allowance1));
     
     let kebutuhanBox_Murni = 0;
@@ -2631,7 +2650,6 @@ function recalcAllHitungan(instanceId) {
     
     const benurPerKantong_Real_Dasar = simulationNeeded ? benurPerKantong_SimulasiOverCapacity : calculatedBenur_Real_Murni;
 
-    // --- Bagian 3: Tentukan Nilai Benur/Kantong FINAL (Tahap 2) ---
     const manualBenurToggle = getEl(instanceId, 'manualBenurToggle');
     const manualBenurInput = getEl(instanceId, 'manualBenurOverride');
     const manualBenurValue = manualBenurInput ? safeParseFloat(manualBenurInput.value) : 0;
@@ -2643,18 +2661,15 @@ function recalcAllHitungan(instanceId) {
     let benurPerKantong_Real_Final = 0;
     let usingManualBenur = false;
     let usingSimulasiSelisih = false;
-    let selisihSimulasiValue = 0; // Akan diisi nanti
+    let selisihSimulasiValue = 0; 
 
-    // Prioritas 1: Manual Override
     if (useManualBenurToggle && manualBenurValue > 0) {
         benurPerKantong_Real_Final = manualBenurValue;
         usingManualBenur = true;
     } else {
-        // Prioritas 2 & 3: Simulasi atau Dasar (akan ditentukan di Bagian 4)
-        benurPerKantong_Real_Final = benurPerKantong_Real_Dasar; // Default ke dasar
+        benurPerKantong_Real_Final = benurPerKantong_Real_Dasar; 
     }
     
-    // --- Bagian 4: Hitung Selisih & Tentukan Nilai Simulasi (Tahap 3) ---
     const selisihBoxEl = getEl(instanceId, 'selisihBox');
     const totalPackingEl = getEl(instanceId, 'selisih_totalPacking');
     const selisihOrderEl = getEl(instanceId, 'selisih_selisihOrder');
@@ -2662,18 +2677,14 @@ function recalcAllHitungan(instanceId) {
     const selisihFinalResultEl = getEl(instanceId, 'selisihFinalResult');
 
     if (selisihBoxEl && totalPackingEl && selisihOrderEl && kebutuhanBox_Terbatas > 0 && isiBox > 0) {
-        
-        // (A) Hitung selisih "murni" (tanpa toggle simulasi)
         const totalPacking_Murni = kebutuhanBox_Terbatas * isiBox * benurPerKantong_Real_Dasar;
         const selisihOrder_Murni = totalPacking_Murni - nominalOrderEkor;
-        
         const batasWajar = nominalOrderEkor * 0.001; 
 
         if (selisihWarningBox && !usingManualBenur && selisihOrder_Murni > batasWajar && nominalOrderEkor > 0) {
-            
-            const targetTotalPacking = nominalOrderEkor * 1.001; // Target +0.1%
+            const targetTotalPacking = nominalOrderEkor * 1.001; 
             const newBenurPerKantong = targetTotalPacking / kebutuhanBox_Terbatas / isiBox;
-            selisihSimulasiValue = roundToNearestTen(newBenurPerKantong); // Simpan nilai simulasi
+            selisihSimulasiValue = roundToNearestTen(newBenurPerKantong); 
 
             if (benurPerKantong_Real_Dasar === selisihSimulasiValue) {
                  selisihWarningBox.style.display = 'none';
@@ -2681,7 +2692,7 @@ function recalcAllHitungan(instanceId) {
             } else {
                 selisihWarningBox.style.display = 'block';
                 if(selisihFinalResultEl) selisihFinalResultEl.textContent = selisihSimulasiValue.toLocaleString('id-ID') + ' ekor/kantong';
-            
+                
                 const newTotalPacking = kebutuhanBox_Terbatas * isiBox * selisihSimulasiValue;
                 const newSelisih = newTotalPacking - nominalOrderEkor;
                 const selisihSimulasiResultEl = getEl(instanceId, 'selisihSimulasiResult');
@@ -2689,10 +2700,8 @@ function recalcAllHitungan(instanceId) {
                     selisihSimulasiResultEl.textContent = 'Estimasi Selisih Baru: ' + (newSelisih >= 0 ? '+' : '') + newSelisih.toLocaleString('id-ID') + ' ekor';
                 }
             }
-            
-            // (B) Cek apakah simulasi harus diterapkan
             if (useSimulasiSelisih && selisihSimulasiValue > 0) {
-                 benurPerKantong_Real_Final = selisihSimulasiValue; // Terapkan nilai simulasi
+                 benurPerKantong_Real_Final = selisihSimulasiValue; 
                  usingSimulasiSelisih = true;
             }
 
@@ -2701,7 +2710,6 @@ function recalcAllHitungan(instanceId) {
             if (simulasiSelisihToggle) simulasiSelisihToggle.checked = false;
         }
 
-        // (C) Hitung Total Packing FINAL (berdasarkan nilai final)
         const totalPacking_Final = kebutuhanBox_Terbatas * isiBox * benurPerKantong_Real_Final;
         const selisihOrder_Final = totalPacking_Final - nominalOrderEkor;
         
@@ -2717,7 +2725,6 @@ function recalcAllHitungan(instanceId) {
         if (simulasiSelisihToggle) simulasiSelisihToggle.checked = false;
     }
     
-    // --- Bagian 5: Hitung Nilai SJ FINAL & Tampilkan ---
     const sjAdjustment = benurPerKantong_Real_Final * allowance2;
     const benurPerKantong_SJ_Final = roundToNearestTen(benurPerKantong_Real_Final - sjAdjustment);
     
@@ -2740,7 +2747,6 @@ function recalcAllHitungan(instanceId) {
         if(sjRow) sjRow.style.display = 'none';
     }
 
-    // --- Bagian 6: Styling Box Hasil ---
     const realDisplayBox = getEl(instanceId, 'benurPerKantongRealBox');
     const sjDisplayBox = getEl(instanceId, 'benurPerKantongSJBox');
 
@@ -2769,17 +2775,14 @@ function toggleSimulasiUsage(instanceId) {
 }
 function addHitunganSession(instanceId) {
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
-    if (!multiSessionGrid) return; // Safety check
-    if (!sessionCounter[instanceId]) {
-        sessionCounter[instanceId] = 0;
-    }
+    if (!multiSessionGrid) return; 
+    if (!sessionCounter[instanceId]) { sessionCounter[instanceId] = 0; }
     sessionCounter[instanceId]++;
     const sessionId = sessionCounter[instanceId];
     const newSession = document.createElement('div');
     newSession.className = 'hit-session';
     newSession.dataset.sessionId = sessionId;
     
-    // [REVISI V6.9 - POIN 2] Tambahkan tombol reset baris di sini
     newSession.innerHTML = `
         <div class="session-summary">
             <span class="session-label">Hitungan ${sessionId}:</span>
@@ -2792,7 +2795,6 @@ function addHitunganSession(instanceId) {
     `;
     multiSessionGrid.appendChild(newSession);
     
-    // Buat grid untuk sesi baru
     const grid = document.getElementById(`${instanceId}_sessionGrid${sessionId}`);
     for (let i = 0; i < 8; i++) {
         const box = document.createElement('div');
@@ -2828,22 +2830,16 @@ function resetHitungan(instanceId) {
     const simulasiToggle = getEl(instanceId, 'simulasiToggle');
     if (simulasiToggle) simulasiToggle.checked = false;
     
-    clearManualBenur(instanceId, true); // true = silent
+    clearManualBenur(instanceId, true); 
     recalcAllHitungan(instanceId);
-    // [REVISI] Penandaan status 'Draft' atau 'Edited' ditangani oleh triggerAutoSave
 }
 
-/**
- * [REVISI V6.9 - POIN 3] Logika untuk 'multiSessionGrid' (Tab 3) DIHAPUS.
- * Fungsi ini sekarang hanya untuk Tab 2 (Tester).
- */
 addCalcBox = (fullGridId) => {
     const parts = fullGridId.split('_');
-    const instanceId = parts.slice(0, 3).join('_'); // [PERBAIKAN] Tangani ID unik (misal "instance_17123_45")
-    const gridType = parts[parts.length - 1]; // Ambil bagian terakhir
-    
+    const instanceId = parts.slice(0, 3).join('_'); 
+    const gridType = parts[parts.length - 1]; 
     const grid = document.getElementById(fullGridId);
-    if (!grid) return; // Safety check
+    if (!grid) return; 
     
     const c=grid.querySelectorAll('.calc-box').length;
     if(gridType === 'hitGridTester' && c>=maxBox){alert('Maks '+maxBox+' kolom per sesi.');return;}
@@ -2855,19 +2851,14 @@ addCalcBox = (fullGridId) => {
         box.appendChild(input);
         grid.appendChild(box);
     }
-    // [REVISI POIN 3] Blok 'else if (gridType === 'multiSessionGrid')' dihapus.
 };
 
-/**
- * [REVISI V6.9 - POIN 3] Logika untuk 'multiSessionGrid' (Tab 3) DIHAPUS.
- * Fungsi ini sekarang hanya untuk Tab 2 (Tester).
- */
 removeCalcBox = (fullGridId) => {
     const parts = fullGridId.split('_');
-    const instanceId = parts.slice(0, 3).join('_'); // [PERBAIKAN] Tangani ID unik
-    const gridType = parts[parts.length - 1]; // Ambil bagian terakhir
+    const instanceId = parts.slice(0, 3).join('_'); 
+    const gridType = parts[parts.length - 1]; 
     const grid = document.getElementById(fullGridId);
-    if (!grid) return; // Safety check
+    if (!grid) return; 
     
     let shouldRecalc = false;
     if (gridType === 'hitGridTester') {
@@ -2875,7 +2866,6 @@ removeCalcBox = (fullGridId) => {
         if(b.length){b[b.length-1].remove(); shouldRecalc = true;}
         if (shouldRecalc) recalcAllTester(instanceId);
     }
-    // [REVISI POIN 3] Blok 'else if (gridType === 'multiSessionGrid')' dihapus.
 };
 
 
@@ -2912,7 +2902,6 @@ function updateRecap(instanceId) {
     setRecap('recap_hasilTester', getEl(instanceId, 'finalTesterResult'), false, '0');
     setRecap('recap_estimasiBoxTester', getEl(instanceId, 'estimasiBoxTester'), false, '0 Box');
     
-    // [BARU V6.0] Rekap QC
     setRecap('recap_qcSuhu', getEl(instanceId, 'qcSuhu'), true, '-', ' °C');
     setRecap('recap_qcPh', getEl(instanceId, 'qcPh'), true, '-');
     setRecap('recap_qcDo', getEl(instanceId, 'qcDo'), true, '-', ' ppm');
@@ -2923,9 +2912,7 @@ function updateRecap(instanceId) {
     setRecap('recap_qcStadia', getEl(instanceId, 'qcStadia'));
     setRecap('recap_qcScooping', getEl(instanceId, 'qcScooping'));
     setRecap('recap_qcNoScooping', getEl(instanceId, 'qcNoScooping'));
-    // [REVISI 1] "Bak Asli" dipindah ke sini
     setRecap('recap_qcBakAsli', getEl(instanceId, 'qcBakAsli'));
-    // [AKHIR REVISI 1]
     
     const multiSessionGrid = getEl(instanceId, 'multiSessionGrid');
     let sessionHtml = '';
@@ -3000,13 +2987,8 @@ function updateRecap(instanceId) {
 // ===================================
 // [REVISI V6.0] SAVE, LOAD, SHARE LOGIC
 // ===================================
-
-/**
- * [V6.8] Mengambil data dan MENAMBAHKAN UUID untuk Vault.
- */
 function gatherDataFromInstance(instanceId) {
     const dataToSave = {};
-    // Card 1: Data Panen
     dataToSave.customer = getEl(instanceId, 'customer').value;
     dataToSave.tujuan = getEl(instanceId, 'tujuan').value;
     dataToSave.line = getEl(instanceId, 'line').value;
@@ -3015,8 +2997,6 @@ function gatherDataFromInstance(instanceId) {
     dataToSave.kapasitasAngkut = getEl(instanceId, 'kapasitasAngkut').value;
     dataToSave.driver = getEl(instanceId, 'driver').value;
     dataToSave.platNomor = getEl(instanceId, 'platNomor').value;
-    
-    // Card 2: Tester
     dataToSave.nomorBak = getEl(instanceId, 'nomorBak').value;
     dataToSave.tomota = getEl(instanceId, 'tomota').value;
     dataToSave.allowanceTester = getEl(instanceId, 'allowanceTester').value;
@@ -3024,8 +3004,6 @@ function gatherDataFromInstance(instanceId) {
     if (testerGridEl) {
         dataToSave.testerGrid = [...testerGridEl.querySelectorAll('input')].map(inp => inp.value);
     }
-    
-    // Card 2.5: QC
     dataToSave.qcSuhu = getEl(instanceId, 'qcSuhu').value;
     dataToSave.qcPh = getEl(instanceId, 'qcPh').value;
     dataToSave.qcDo = getEl(instanceId, 'qcDo').value;
@@ -3036,11 +3014,8 @@ function gatherDataFromInstance(instanceId) {
     dataToSave.qcStadia = getEl(instanceId, 'qcStadia').value;
     dataToSave.qcScooping = getEl(instanceId, 'qcScooping').value;
     dataToSave.qcNoScooping = getEl(instanceId, 'qcNoScooping').value;
-    // [REVISI 1] "Bak Asli" dipindah ke sini
     dataToSave.qcBakAsli = getEl(instanceId, 'qcBakAsli').value;
-    // [AKHIR REVISI 1]
     
-    // Card 3: Hitungan
     dataToSave.allowance1 = getEl(instanceId, 'allowance1').value;
     dataToSave.allowance2 = getEl(instanceId, 'allowance2').value;
     dataToSave.sessionsGrid = [];
@@ -3057,22 +3032,19 @@ function gatherDataFromInstance(instanceId) {
         });
     }
     
-    // Card 3: Toggles/Overrides
     dataToSave.limitKapasitasToggle = getEl(instanceId, 'limitKapasitasToggle').checked;
     dataToSave.manualBenurToggle = getEl(instanceId, 'manualBenurToggle').checked;
     dataToSave.manualBenurOverride = getEl(instanceId, 'manualBenurOverride').value;
     dataToSave.simulasiToggle = getEl(instanceId, 'simulasiToggle').checked;
 
-    // [V6.8] Info untuk Vault (ditambah UUID)
     dataToSave._vaultInfo = {
-        uuid: `vault_${Date.now()}_${Math.floor(Math.random() * 1000)}`, // <-- ID UNIK
+        uuid: `vault_${Date.now()}_${Math.floor(Math.random() * 1000)}`, 
         customer: dataToSave.customer || "Tanpa Nama",
         order: dataToSave.nominalOrder || "0",
         tanggal: dataToSave.line || new Date().toISOString().split('T')[0],
         savedOn: new Date().toISOString()
     };
     
-    // [V6.8] Data kalkulasi final untuk Excel (Termasuk Density)
     dataToSave._finalCalc = {};
     const benurRealEl = getEl(instanceId, 'benurPerKantongReal');
     if (benurRealEl) {
@@ -3096,22 +3068,14 @@ function gatherDataFromInstance(instanceId) {
     return dataToSave;
 }
 
-/**
- * [REVISI V6.8] Menyimpan Sesi Aktif (dipanggil auto-save)
- */
 function saveSessionData(instanceId, silent = false, status = 'Draft') {
     try {
         const dataToSave = gatherDataFromInstance(instanceId);
-        // Hapus info vault, tidak perlu untuk sesi
         delete dataToSave._vaultInfo;
         delete dataToSave._finalCalc;
-        
-        // [REVISI] Simpan status (Draft, Terkirim, atau Edited)
         dataToSave._status = status;
-        
         const storageKey = `${LOCAL_STORAGE_KEY}_${instanceId}`;
         localStorage.setItem(storageKey, JSON.stringify(dataToSave));
-        
         if (!silent) {
             alert(`Sesi Data Panen ${instanceId} disimpan! ✅ \n(Ini adalah auto-save, gunakan tombol 'Simpan ke Vault' untuk arsip permanen)`);
         }
@@ -3123,59 +3087,49 @@ function saveSessionData(instanceId, silent = false, status = 'Draft') {
     }
 }
 
-/**
- * [REVISI V6.8] Memuat Sesi Aktif (dipanggil saat load halaman)
- */
 function loadSessionData(instanceId, silent = false) {
     const storageKey = `${LOCAL_STORAGE_KEY}_${instanceId}`;
     const savedData = localStorage.getItem(storageKey);
     if (!savedData) {
         if (!silent) alert(`Tidak ada data sesi tersimpan untuk Panen ${instanceId}. 📂`);
-        return false; // [PERBAIKAN] Kembalikan nilai
+        return false; 
     }
     try {
         const data = JSON.parse(savedData);
-        loadDataFromObject(instanceId, data); // Panggil helper
+        loadDataFromObject(instanceId, data); 
         if (!silent) alert(`Data Sesi Panen ${instanceId} berhasil dimuat! ✅`);
-        return true; // [PERBAIKAN] Kembalikan nilai
+        return true; 
     } catch (e) {
         console.error("Gagal memuat data sesi:", e);
         if (!silent) alert(`Gagal memuat data Sesi Panen ${instanceId}. Data tersimpan mungkin rusak.`);
-        return false; // [PERBAIKAN] Kembalikan nilai
+        return false; 
     }
 }
 
 function formatWithDots(num) {
-    if (typeof num !== 'number' || isNaN(num)) {
-        num = 0;
-    }
+    if (typeof num !== 'number' || isNaN(num)) { num = 0; }
     return Math.round(num).toLocaleString('id-ID');
 }
 function reformatDate(dateString) {
     if (!dateString) return '-';
     try {
-        const parts = dateString.split('-'); // YYYY-MM-DD
+        const parts = dateString.split('-'); 
         if (parts.length !== 3) return dateString;
-        return `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/YYYY
-    } catch (e) {
-        return dateString;
-    }
+        return `${parts[2]}/${parts[1]}/${parts[0]}`; 
+    } catch (e) { return dateString; }
 }
 
 function shareToCustomer(instanceId) {
-    // 1. Ambil Data Panen
     const customer = getEl(instanceId, 'customer').value || 'Customer';
     const tanggal = reformatDate(getEl(instanceId, 'line').value);
     const tujuan = getEl(instanceId, 'tujuan').value || 'Tujuan';
     const nomorBak = getEl(instanceId, 'nomorBak').value || '-';
     
-    // 2. Ambil Data Driver (dari DB dan input)
     const driverName = getEl(instanceId, 'driver').value;
     const driverData = sopirDB[driverName] || { nohp: '-', plat: '-' };
     const driverHP = driverData.nohp;
-    const driverPlat = getEl(instanceId, 'platNomor').value || driverData.plat; // Ambil dari input, fallback ke DB
+    const driverPlat = getEl(instanceId, 'platNomor').value || driverData.plat; 
 
-    // 3. Ambil Data Hitungan
     const kebutuhanBoxEl = getEl(instanceId, 'kebutuhanBox');
     const isiBoxEl = getEl(instanceId, 'isiBox');
     const allowance2El = getEl(instanceId, 'allowance2');
@@ -3191,20 +3145,14 @@ function shareToCustomer(instanceId) {
     const kebutuhanBox = parseFloat(boxText.replace(/[\.,]/g, '')) || 0;
     const isiBox = parseFloat(isiBoxEl.value) || 0;
     const totalKantong = kebutuhanBox * isiBox;
-    
     const a2 = parseFloat(allowance2El.value) || 0;
     
     const benurRealSpan = benurRealEl.querySelector('span');
     const benurSJSpan = benurSJEl.querySelector('span');
-    
-    if (!benurRealSpan || !benurSJSpan) {
-        alert("Error: Elemen nilai <span> tidak ditemukan. Tidak bisa membagikan data.");
-        return;
-    }
+    if (!benurRealSpan || !benurSJSpan) { alert("Error: Elemen nilai <span> tidak ditemukan."); return; }
     
     const benurRealText = benurRealSpan.textContent.split(' ')[0];
     const benurReal_Value = parseFloat(benurRealText.replace(/[\.,]/g, '')) || 0;
-    
     const benurSJText = benurSJSpan.textContent.split(' ')[0];
     const benurSJ_Value = parseFloat(benurSJText.replace(/[\.,]/g, '')) || 0;
 
@@ -3227,41 +3175,59 @@ function shareToCustomer(instanceId) {
     } else {
         const bruto = totalKantong * benurReal_Value;
         const netto = Math.round(bruto * 0.9);
-        
         text += `${formatWithDots(kebutuhanBox)} Box, ${formatWithDots(totalKantong)} Kantong @${formatWithDots(benurReal_Value)} Ekor\n`;
         text += `Bruto = ${formatWithDots(bruto)} (Bak ${nomorBak})\n`;
         text += `Netto = ${formatWithDots(netto)}\n\n`;
     }
 
-    // 4. Tambah Info Sopir (Sama untuk kedua format)
     text += `Dengan Sopir Bp. ${driverName || '-'}\n`;
     text += `No. Hp = ${driverHP}\n`;
     text += `Plat Mobil = ${driverPlat}\n\n`;
     text += `Terimakasih, Sukses Bersama PLB 🤝`;
 
-    // 5. Buka WhatsApp
     const encodedText = encodeURIComponent(text);
     window.open(`https://wa.me/?text=${encodedText}`, '_blank');
 }
 
 // ===================================
-// [REVISI 2] FUNGSI SHARE ADMIN
+// [BARU] FUNGSI SHARE ADMIN DENGAN POP-UP
 // ===================================
+let currentShareInstanceId = null;
+
+// 1. Fungsi Trigger saat tombol ditekan
 function shareAdmin(instanceId) {
-    // --- [REVISI 2] Ambil data QC & Tester ---
+    currentShareInstanceId = instanceId;
+    document.getElementById('shareOptionModal').style.display = 'flex';
+}
+
+// 2. Fungsi Tutup Modal
+function closeShareModal() {
+    document.getElementById('shareOptionModal').style.display = 'none';
+    currentShareInstanceId = null;
+}
+
+// 3. Fungsi Konfirmasi Pilihan
+function confirmShare(isComplete) {
+    if (currentShareInstanceId) {
+        executeShareAdmin(currentShareInstanceId, isComplete);
+    }
+    closeShareModal();
+}
+
+// 4. Eksekusi Pengiriman Pesan
+function executeShareAdmin(instanceId, isComplete) {
+    // Ambil Data QC & Tester
     const suhu = getEl(instanceId, 'qcSuhu').value || '-';
     const doVal = getEl(instanceId, 'qcDo').value || '-';
     const ph = getEl(instanceId, 'qcPh').value || '-';
     const sal = getEl(instanceId, 'qcSalinitas').value || '-';
     const biomassa = getEl(instanceId, 'qcBiomassa').value || '-';
     const tomota = getEl(instanceId, 'tomota').value || '-';
-    const bakAsli = getEl(instanceId, 'qcBakAsli').value || '-'; // Sudah dipindah ke tab 2
+    const bakAsli = getEl(instanceId, 'qcBakAsli').value || '-'; 
     const stadia = getEl(instanceId, 'qcStadia').value || '-';
     const panjang = getEl(instanceId, 'qcPanjang').value || '-';
     const scooping = getEl(instanceId, 'qcScooping').value || '-';
     const noScooping = getEl(instanceId, 'qcNoScooping').value || '-';
-
-    // --- Data lama yang masih dipakai ---
     const customer = getEl(instanceId, 'customer').value || '-';
     const driver = getEl(instanceId, 'driver').value || '-';
     const tujuan = getEl(instanceId, 'tujuan').value || '-';
@@ -3273,7 +3239,7 @@ function shareAdmin(instanceId) {
     const allowance2El = getEl(instanceId, 'allowance2');
 
     if (!avgAktualEl || !kebutuhanBoxEl || !isiBoxEl || !benurRealEl || !benurSJEl || !allowance2El) {
-        alert("Error: Elemen hitungan tidak ditemukan. Tidak bisa mengirim rincian.");
+        alert("Error: Elemen hitungan tidak ditemukan.");
         return;
     }
 
@@ -3287,120 +3253,111 @@ function shareAdmin(instanceId) {
     const benurRealSpan = benurRealEl.querySelector('span');
     const benurSJSpan = benurSJEl.querySelector('span');
     
-    if (!benurRealSpan || !benurSJSpan) {
-        alert("Error: Elemen nilai <span> tidak ditemukan. Tidak bisa mengirim rincian.");
-        return;
-    }
+    if (!benurRealSpan || !benurSJSpan) { alert("Error: Elemen nilai span tidak ditemukan."); return; }
     
     const benurReal = benurRealSpan.textContent.trim();
     const benurSJ = benurSJSpan.textContent.trim();
-    
     const a2 = parseFloat(allowance2El.value) || 0;
 
-    // --- [REVISI 2] Susun format teks baru ---
-    let text = `${scooping}/${noScooping}\n\n`;
-    text += `Suhu ${suhu}\n`;
-    text += `Do ${doVal}\n`;
-    text += `Ph ${ph}\n`;
-    text += `Sal ${sal}\n\n`;
-    text += `Biomassa ${biomassa}\n`;
-    text += `Tomota ${tomota}\n`;
-    text += `Kode Bak ${bakAsli} (${stadia})\n`;
-    text += `Panjang ${panjang} mm\n\n`;
-    text += `${customer}/${tujuan}\n`;
-    text += `${driver}/Act ${avgAktualText}\n\n`;
+    // --- LOGIKA PENYUSUNAN TEKS ---
+    let text = "";
 
+    // Bagian Hitungan (Sama untuk kedua format)
+    let hitunganText = "";
     const lineRealSimple = `${boxValue} Box, ${totalKantong} Kantong @${benurReal} Ekor (+1)`;
     
     if (a2 > 0) {
-        const lineSJ = `SJ: ${boxValue} Box, ${totalKantong} Kantong @${benurSJ} Ekor (+1)`;
-        // Sesuai permintaan, format baru tidak menyertakan baris "Real" jika ada "SJ"
-        // text += `${lineRealSimple}\n${lineSJ}`; 
-        
-        // [UPDATE] Berdasarkan format Anda, sepertinya hanya 1 baris (SJ atau Real).
-        // Jika formatnya ingin menampilkan KEDUANYA, gunakan baris yang saya komentari di atas.
-        // Jika formatnya hanya menampilkan 1 baris (SJ jika ada, Real jika tidak), 
-        // maka saya ganti logikanya:
-        text += lineSJ; // Hanya tampilkan SJ jika a2 > 0
+        // Jika ada A2 -> Tampilkan Real dan SJ
+        hitunganText += `Real: ${lineRealSimple}\n`;
+        hitunganText += `SJ:   ${boxValue} Box, ${totalKantong} Kantong @${benurSJ} Ekor (+1)`;
     } else {
-        text += lineRealSimple; // Tampilkan Real jika a2 == 0
+        // Jika tidak ada A2 -> Tampilkan Real saja (tanpa label "Real:")
+        hitunganText += lineRealSimple;
     }
-    // --- [AKHIR REVISI 2] ---
+
+    if (isComplete) {
+        // --- FORMAT LENGKAP (YA) ---
+        text += `${scooping}/${noScooping}\n\n`;
+        text += `Suhu ${suhu}\n`;
+        text += `Do ${doVal}\n`;
+        text += `Ph ${ph}\n`;
+        text += `Sal ${sal}\n\n`;
+        text += `Biomassa ${biomassa}\n`;
+        text += `Tomota ${tomota}\n`;
+        text += `Kode Bak ${bakAsli} (${stadia})\n`;
+        text += `Panjang ${panjang} mm\n\n`;
+        text += `${customer}/${tujuan}\n`;
+        text += `${driver}/Act ${avgAktualText}\n\n`;
+        text += hitunganText;
+
+    } else {
+        // --- FORMAT RINGKAS (TIDAK) ---
+        // Contoh: 
+        // Heri/5.5
+        // Bak Asli 4
+        // 
+        // CV Sudana/Lombok
+        // Didi/Act 3.804
+        //
+        // [Hitungan]
+
+        text += `${scooping}/${noScooping}\n`;
+        text += `Bak Asli ${bakAsli}\n\n`;
+        
+        text += `${customer}/${tujuan}\n`;
+        text += `${driver}/Act ${avgAktualText}\n\n`;
+        
+        text += hitunganText;
+    }
 
     const encodedText = encodeURIComponent(text);
     window.open(`https://wa.me/?text=${encodedText}`, '_blank');
 }
-// ===================================
-// [AKHIR REVISI 2]
-// ===================================
 
 
 // ===================================
 // IMPORT/EXPORT JSON LOGIC
 // ===================================
-
-/**
- * [REVISI V6.8 - REQ 1] Penanda Status (Draft, Terkirim, Edited)
- * Badge dipindahkan ke tab Rekap.
- */
 function markStatus(instanceID, status) {
   const slideItem = document.getElementById(instanceID);
   if (!slideItem) return;
-  
-  // [REVISI V6.8] Target badge di tab rekap
   const badge = document.getElementById(`${instanceID}_statusBadge`);
-  if (!badge) {
-      console.warn("Status badge not found for", instanceID);
-      return;
-  }
+  if (!badge) { return; }
   
-  // [REVISI V6.8] Simpan status di data attribute slide untuk referensi mudah
   slideItem.dataset.status = status;
   badge.textContent = status;
-  
-  // [REVISI V6.8] Hapus kelas status lama, tambahkan yang baru (untuk panah CSS)
   badge.classList.remove('status-draft', 'status-terkirim', 'status-edited');
   
-  // [REVISI V6.8] Atur warna berdasarkan 3 status baru
   if (status === 'Terkirim') {
-      badge.style.background = 'var(--color-text-sum)'; // Hijau
+      badge.style.background = 'var(--color-text-sum)'; 
       badge.style.color = '#FFFFFF';
       badge.classList.add('status-terkirim');
   } else if (status === 'Edited') {
-      badge.style.background = 'var(--color-alert-text)'; // Oranye
+      badge.style.background = 'var(--color-alert-text)'; 
       badge.style.color = '#FFFFFF';
       badge.classList.add('status-edited');
-  } else { // 'Draft' atau default
-      badge.style.background = '#FFC107'; // Kuning
+  } else { 
+      badge.style.background = '#FFC107'; 
       badge.style.color = '#212529';
       badge.classList.add('status-draft');
   }
-  
-  // [REVISI V6.8] Tampilkan badge dengan animasi
   badge.classList.add('visible');
 }
 
-/**
- * [REVISI V6.8] Memuat data dari object ke UI (dipakai load sesi & load vault)
- */
 function loadDataFromObject(instanceId, data) {
     try {
-        // Card 1
         getEl(instanceId, 'customer').value = data.customer || '';
         getEl(instanceId, 'tujuan').value = data.tujuan || '';
         getEl(instanceId, 'line').value = data.line || '';
         getEl(instanceId, 'nominalOrder').value = data.nominalOrder || '0';
         getEl(instanceId, 'jenisTruk').value = data.jenisTruk || 'Euro2';
         getEl(instanceId, 'kapasitasAngkut').value = data.kapasitasAngkut || '';
-        getEl(instanceId, 'driver').value = data.driver || ''; // [FIX REQ 3] Ini aman karena populateDriverOptions sudah jalan
+        getEl(instanceId, 'driver').value = data.driver || ''; 
         getEl(instanceId, 'platNomor').value = data.platNomor || '';
-        
-        // Card 2: Tester
         getEl(instanceId, 'nomorBak').value = data.nomorBak || '';
         getEl(instanceId, 'tomota').value = data.tomota || '';
         getEl(instanceId, 'allowanceTester').value = data.allowanceTester || '0';
         
-        // Card 2.5: QC
         getEl(instanceId, 'qcSuhu').value = data.qcSuhu || '';
         getEl(instanceId, 'qcPh').value = data.qcPh || '';
         getEl(instanceId, 'qcDo').value = data.qcDo || '';
@@ -3411,11 +3368,8 @@ function loadDataFromObject(instanceId, data) {
         getEl(instanceId, 'qcStadia').value = data.qcStadia || '';
         getEl(instanceId, 'qcScooping').value = data.qcScooping || '';
         getEl(instanceId, 'qcNoScooping').value = data.qcNoScooping || '';
-        // [REVISI 1] "Bak Asli" dipindah ke sini
         getEl(instanceId, 'qcBakAsli').value = data.qcBakAsli || '';
-        // [AKHIR REVISI 1]
         
-        // Load Grid Tester
         const testerGridEl = getEl(instanceId, 'hitGridTester');
         if (testerGridEl && data.testerGrid) {
             testerGridEl.innerHTML = ''; 
@@ -3432,23 +3386,17 @@ function loadDataFromObject(instanceId, data) {
             });
             const diff = 8 - data.testerGrid.length;
             if (diff > 0) {
-                for (let i = 0; i < diff; i++) {
-                   addCalcBox(`${instanceId}_hitGridTester`);
-                }
+                for (let i = 0; i < diff; i++) { addCalcBox(`${instanceId}_hitGridTester`); }
             }
-        } else {
-            // initBoxesTester(instanceId); // [FIX REQ 3] Sudah dipanggil di addInstance
         }
 
-        // Card 3: Hitungan
         getEl(instanceId, 'allowance1').value = data.allowance1 || '0';
         getEl(instanceId, 'allowance2').value = data.allowance2 || '0'; 
 
-        // Load Grid Sesi Hitungan
         const multiSessionGridEl = getEl(instanceId, 'multiSessionGrid');
         if (multiSessionGridEl) {
-            multiSessionGridEl.innerHTML = ''; // Kosongkan
-            sessionCounter[instanceId] = 0; // Reset counter
+            multiSessionGridEl.innerHTML = ''; 
+            sessionCounter[instanceId] = 0; 
             
             if (data.sessionsGrid && data.sessionsGrid.length > 0) {
                 data.sessionsGrid.forEach(sessionData => {
@@ -3457,8 +3405,6 @@ function loadDataFromObject(instanceId, data) {
                     const newSession = document.createElement('div');
                     newSession.className = 'hit-session';
                     newSession.dataset.sessionId = sessionId;
-                    
-                    // [REVISI V6.9 - POIN 2] Pastikan tombol reset ada saat memuat
                     newSession.innerHTML = `
                         <div class="session-summary">
                             <span class="session-label">Hitungan ${sessionId}:</span>
@@ -3487,8 +3433,6 @@ function loadDataFromObject(instanceId, data) {
                         const diff = 8 - sessionData.length;
                         if (diff > 0) {
                             for (let i = 0; i < diff; i++) {
-                                // [REVISI V6.9 - POIN 3] addCalcBox TIDAK BISA DIPAKAI DI SINI LAGI
-                                // Jadi kita tambahkan kolom kosong secara manual
                                 const box = document.createElement('div');
                                 box.className = 'calc-box';
                                 const input = document.createElement('input');
@@ -3502,56 +3446,39 @@ function loadDataFromObject(instanceId, data) {
                     }
                 });
             } else {
-                // [FIX REQ 3] Jika data sesi kosong, tambahkan default
                 addHitunganSession(instanceId);
                 addHitunganSession(instanceId);
             }
         }
         
-        // Load data toggle/override
         const limitToggle = getEl(instanceId, 'limitKapasitasToggle');
-        if (limitToggle) limitToggle.checked = data.limitKapasitasToggle !== undefined ? data.limitKapasitasToggle : true; // Default 'true'
-        
+        if (limitToggle) limitToggle.checked = data.limitKapasitasToggle !== undefined ? data.limitKapasitasToggle : true; 
         const manualToggle = getEl(instanceId, 'manualBenurToggle');
         if (manualToggle) manualToggle.checked = data.manualBenurToggle || false;
-        
         const manualInput = getEl(instanceId, 'manualBenurOverride');
         if (manualInput) manualInput.value = data.manualBenurOverride || '';
-        
         const simulasiToggle = getEl(instanceId, 'simulasiToggle');
         if (simulasiToggle) simulasiToggle.checked = data.simulasiToggle || false;
         
         toggleManualBenurInput(instanceId);
 
-        // Panggil semua fungsi kalkulasi ulang
         updateTruckDetails(instanceId);
         recalcAllTester(instanceId);
         recalcAllHitungan(instanceId);
         formatCurrency(getEl(instanceId, 'nominalOrder'));
         updateRecap(instanceId);
         
-        // [REVISI V6.8] Logika Status Baru (Draft, Terkirim, Edited)
-        let currentStatus = data._status || 'Draft'; // Ambil status dari sesi
-        if (data._vaultInfo) {
-            // Jika dimuat dari vault, statusnya selalu 'Terkirim' (atau 'Edited' jika ada _status)
-            currentStatus = data._status || 'Terkirim'; 
-        }
-        // Konversi status lama 'Final' ke 'Terkirim'
-        if (currentStatus === 'Final') {
-            currentStatus = 'Terkirim';
-        }
-        
+        let currentStatus = data._status || 'Draft'; 
+        if (data._vaultInfo) { currentStatus = data._status || 'Terkirim'; }
+        if (currentStatus === 'Final') { currentStatus = 'Terkirim'; }
         markStatus(instanceId, currentStatus); 
         
-    } catch (e) {
-        console.error(`Gagal memuat data ke ${instanceId}:`, e);
-    }
+    } catch (e) { console.error(`Gagal memuat data ke ${instanceId}:`, e); }
 }
 
 // ===================================
 // FLOATING CALCULATOR LOGIC
 // ===================================
-/* SEMUA FUNGSI KALKULATOR (calcClear, calcInput, dll) DISALIN DI SINI */
 const calcContainer = document.getElementById('calculatorContainer');
 const calcDisplay = document.getElementById('calcDisplay');
 let currentInput = '0';
@@ -3667,19 +3594,6 @@ function calcEquals() {
          waitingForNewInput = true;
      }
 }
-/* AKHIR FUNGSI KALKULATOR */
-
-
-// ===================================
-// [REVISI] FUNGSI PENGUNCIAN FORM (DINONAKTIFKAN)
-// ===================================
-function lockInstanceForm(instanceId) {
-    /* [REVISI V6.8] Fitur kunci dihapus sesuai permintaan. */
-}
-function unlockInstanceForm(instanceId) {
-    /* [REVISI V6.8] Fitur kunci dihapus sesuai permintaan. */
-}
-
 
 // ===================================
 // [REVISI V6.8] FUNGSI VAULT (BRANKAS DATA)
@@ -3690,7 +3604,6 @@ function getVaultData() {
     if (!vaultRaw) { return []; }
     try {
         const data = JSON.parse(vaultRaw);
-        // Urutkan data terbaru di atas
         return data.sort((a, b) => new Date(b._vaultInfo.savedOn) - new Date(a._vaultInfo.savedOn));
     } catch (e) {
         console.error("Data vault rusak:", e);
@@ -3707,15 +3620,11 @@ function saveVaultData(vaultArray) {
     }
 }
 
-/**
- * [REVISI V6.8] Fungsi utama yang dipanggil tombol "Simpan ke Vault"
- */
 function saveDataToVault(instanceId) {
-    // [REVISI V6.8] Ubah pesan konfirmasi
     if (!confirm("Simpan data panen ini ke Vault? \n\nData ini akan ditandai sebagai 'Terkirim'.")) return;
     
-    clearTimeout(autoSaveTimeout); // Hentikan auto-save
-    clearTimeout(statusLockTimeout); // Hentikan lock sebelumnya (jika ada)
+    clearTimeout(autoSaveTimeout); 
+    clearTimeout(statusLockTimeout); 
 
     try {
         const newData = gatherDataFromInstance(instanceId);
@@ -3727,13 +3636,12 @@ function saveDataToVault(instanceId) {
         alert("Data Panen berhasil disimpan ke Vault! 🗄️");
         populateVaultList(); 
         
-        markStatus(instanceId, 'Terkirim'); // Set status
-        saveSessionData(instanceId, true, 'Terkirim'); // Simpan status
+        markStatus(instanceId, 'Terkirim'); 
+        saveSessionData(instanceId, true, 'Terkirim'); 
         
-        // KUNCI status "Terkirim" agar tidak diubah oleh auto-save selama 3 detik
         statusLockTimeout = setTimeout(() => {
             statusLockTimeout = null; 
-        }, 3000); // Kunci selama 3 detik
+        }, 3000); 
         
     } catch (e) {
         console.error("Gagal menyimpan ke Vault:", e);
@@ -3741,15 +3649,12 @@ function saveDataToVault(instanceId) {
     }
 }
 
-/**
- * [V6.8] Menampilkan daftar vault, meneruskan UUID ke tombol.
- */
 function populateVaultList() {
     const vaultArray = getVaultData();
     const listEl = document.getElementById('vaultList');
     
     if (!listEl) return;
-    listEl.innerHTML = ''; // Kosongkan daftar
+    listEl.innerHTML = ''; 
     
     const now = new Date();
     const twelveHoursAgo = new Date(now.getTime() - (12 * 60 * 60 * 1000));
@@ -3757,25 +3662,18 @@ function populateVaultList() {
     if (vaultArray.length === 0) {
         listEl.innerHTML = '<p style="text-align: center; color: var(--color-text-light);">Vault data kosong.</p>';
     } else {
-        vaultArray.forEach((item) => { // Hapus 'index'
+        vaultArray.forEach((item) => { 
             const info = item._vaultInfo;
-            if (!info) return; // Keamanan jika data korup
+            if (!info) return; 
             
             const customerName = info.customer || 'Tanpa Nama';
             const order = parseFloat(info.order.replace(/\./g,'') || 0).toLocaleString('id-ID');
             const date = reformatDate(info.tanggal);
             
-            // [V6.8] Cek apakah baru (kurang dari 12 jam)
             const savedDate = new Date(info.savedOn);
             const isNew = savedDate > twelveHoursAgo;
-            
             const newBadgeHTML = isNew ? '<span class="vault-new-badge">NEW!</span>' : '';
-
-            // [V6.8] Ambil UUID
             const uuid = info.uuid;
-            if (!uuid) {
-                console.warn("Item vault tanpa UUID ditemukan:", item);
-            }
 
             const itemEl = document.createElement('div');
             itemEl.className = 'vault-list-item';
@@ -3797,90 +3695,60 @@ function populateVaultList() {
                 </div>
             `;
             
-            // [V6.8] Tambahkan event listener untuk UUID
             itemEl.querySelector('.delete').onclick = () => deleteFromVault(uuid, itemEl);
-            itemEl.querySelector('.restore').onclick = () => loadFromVault(item); // Kirim seluruh data item
-
+            itemEl.querySelector('.restore').onclick = () => loadFromVault(item); 
             listEl.appendChild(itemEl);
         });
     }
 }
 
-/**
- * [V6.8] Animasi toggle Vault baru
- */
 function toggleVault() {
     const overlay = document.getElementById('vaultOverlay');
     const container = document.getElementById('vaultContainer');
     
     if (container.classList.contains('visible')) {
-        // Proses menyembunyikan
         overlay.style.opacity = 0;
         container.classList.add('is-hiding');
-        
         setTimeout(() => {
             overlay.classList.remove('visible');
             container.classList.remove('visible');
             container.classList.remove('is-hiding');
-        }, 300); // Sesuaikan durasi (harus sama dengan transisi CSS)
+        }, 300); 
     } else {
-        // Proses menampilkan
-        populateVaultList(); // Isi data vault sebelum ditampilkan
+        populateVaultList(); 
         overlay.classList.add('visible');
         container.classList.add('visible');
     }
 }
 
-/**
- * [REVISI V6.8] Memuat data dari Vault ke slide baru
- */
 function loadFromVault(restoredData) {
     if (!confirm("Muat Ulang data ini? \n\nData akan dimuat di slide baru paling akhir. Ini tidak akan mengubah data di Vault.")) return;
-
-    // Panggil addInstance versi baru dengan data
     addInstance(restoredData); 
-    
-    // Pindah ke slide baru (addInstance TIDAK otomatis pindah jika ada dataToLoad)
     goToSlide(slideTrack.children.length - 1); 
-
-    toggleVault(); // Tutup vault
-    // [REVISI V6.8] Ubah pesan alert
+    toggleVault(); 
     alert("Data berhasil dimuat ulang! \nSlide baru ini ditandai sebagai 'Terkirim' dan dapat diedit.");
 }
 
-/**
- * [V6.8] Menghapus data dari Vault menggunakan UUID
- */
 function deleteFromVault(uuidToDelete, itemElement) {
     if (!uuidToDelete) {
         alert("Gagal menghapus: Data ini tidak memiliki ID unik. (Data lama?)");
         return;
     }
     if (!confirm("Yakin ingin MENGHAPUS PERMANEN data ini dari Vault? Tindakan ini tidak dapat dibatalkan.")) return;
-
-    // 1. Terapkan animasi CSS
     itemElement.classList.add('is-deleting');
-    
-    // 2. Tunggu animasi selesai
     setTimeout(() => {
         let vaultArray = getVaultData();
-        
-        // Cari dan Hapus data dari array menggunakan UUID
         const newVaultArray = vaultArray.filter(item => item._vaultInfo.uuid !== uuidToDelete);
-        
         if (newVaultArray.length < vaultArray.length) {
-            saveVaultData(newVaultArray); // Simpan array baru
+            saveVaultData(newVaultArray); 
         } else {
             console.warn(`Gagal menghapus: UUID ${uuidToDelete} tidak ditemukan di vault.`);
         }
-        
-        // 3. Perbarui daftar (untuk re-index tombol hapus lainnya)
         populateVaultList(); 
-    }, 400); // Durasi harus cocok dengan transisi CSS
+    }, 400); 
 }
 
 
-// === [V6.8] FUNGSI EXPORT EXCEL (DENGAN PERBAIKAN DENSITY) ===
 function exportVaultToExcel(buttonElement) {
     const originalText = buttonElement.innerHTML;
     buttonElement.innerHTML = "⏳ Exporting...";
@@ -3918,23 +3786,20 @@ function exportVaultToExcel(buttonElement) {
                     const kebutuhanBox = safeParseFloat(calc.kebutuhanBox);
                     const isiBox = safeParseFloat(calc.isiBox);
                     const benurPerKantong = safeParseFloat(calc.benurPerKantong);
-                    
                     const jumlahKantong = kebutuhanBox * isiBox;
                     const totalBenur = jumlahKantong * benurPerKantong;
-                    
-                    // [V6.8] Ambil density yang sudah dihitung dari Tester
                     const densityTester = calc.testerDensity || '-';
 
                     dataToExport.push([
                         reformatDate(item.line),
                         item.customer || '-',
                         item.nomorBak || '-',
-                        item.qcBakAsli || '-', // [REVISI 1] Ambil data bak asli
+                        item.qcBakAsli || '-', 
                         jumlahKantong,
                         benurPerKantong,
                         safeParseFloat(calc.avgAktual),
                         safeParseFloat(item.tomota),
-                        safeParseFloat(densityTester), // <-- PERBAIKAN LOGIKA
+                        safeParseFloat(densityTester), 
                         totalBenur,
                         safeParseFloat(item.qcPanjang),
                         safeParseFloat(item.qcSuhu),
@@ -3977,15 +3842,11 @@ function exportVaultToExcel(buttonElement) {
     }, 100); 
 }
 
-// === [AKHIR] FUNGSI VAULT ===
-
-
 // ===================================
-// [REVISI V6.8 - PERBAIKAN BUG REQ 3] INITIALIZATION
+// INITIALIZATION
 // ===================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Inisialisasi Tombol ---
     document.getElementById('darkModeToggle').onclick = toggleDarkMode;
     document.getElementById('floatingVaultBtn').onclick = toggleVault;
     document.getElementById('floatingPrevBtn').onclick = () => goToSlide(activeInstanceIndex - 1);
@@ -3993,11 +3854,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkDarkModePreference();
 
-    // === [REVISI V6.8 - PERBAIKAN BUG REQ 2 & 3] Logika Load Sesi yang baru dan stabil ===
     let keysToLoad = [];
     try {
         const allKeys = Object.keys(localStorage);
-        // Cari semua kunci sesi yang valid
         keysToLoad = allKeys.filter(key => 
             key.startsWith(LOCAL_STORAGE_KEY) && key.includes('_instance_')
         );
@@ -4006,31 +3865,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (keysToLoad.length === 0) {
-        addInstance(); // Buat 1 instance default
+        addInstance(); 
     } 
     else {
-        // [FIX REQ 3] Muat setiap instance dari localStorage dengan ID dan data yang benar
         keysToLoad.sort().forEach(key => {
-            const instanceId = key.substring(LOCAL_STORAGE_KEY.length + 1); // Dapatkan ID yang BENAR
+            const instanceId = key.substring(LOCAL_STORAGE_KEY.length + 1); 
             const savedData = localStorage.getItem(key);
             if (savedData) {
                 try {
                     const data = JSON.parse(savedData);
-                    // Panggil addInstance dengan data DAN ID yang ada
                     addInstance(data, instanceId); 
                 } catch (e) {
                     console.warn(`Gagal memuat sesi data untuk ${instanceId}:`, e);
-                    // Jika data rusak, buat slide kosong dengan ID yang sama agar tidak hilang
                     addInstance(null, instanceId); 
                 }
             }
         });
     }
     
-    goToSlide(0); // Pindah ke slide pertama SETELAH semua dimuat
+    goToSlide(0); 
     calcClear();
     
-    // === [V6.8] PENINGKATAN KONTRAK DARK MODE ===
     const observer = new MutationObserver(() => {
       if (document.body.classList.contains("dark-mode")) {
         document.documentElement.style.setProperty("--color-text-main", "#E2ECF5");
@@ -4046,9 +3901,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.documentElement.style.setProperty("--color-text-light", "#A8B6C9");
     }
     
-    // === [V6.8] GESTURE SWIPE ANTAR TAB ===
-    // [REVISI V6.9 - POIN 1] Logika swipe slide (carousel) dihapus.
-    // Hanya logika swipe tab yang tersisa.
     let tabStartX = 0;
     document.addEventListener("touchstart", e => {
         if (e.target.closest('.card-tab-content') || e.target.closest('.card-tab-nav')) {
@@ -4072,36 +3924,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const tabs = Array.from(activeTab.parentNode.querySelectorAll(".tab-link"));
         let idx = tabs.indexOf(activeTab);
         
-        if (delta < 0 && idx < tabs.length - 1) { // Swipe Kiri (Next Tab)
+        if (delta < 0 && idx < tabs.length - 1) { 
             tabs[idx + 1].click();
         }
-        if (delta > 0 && idx > 0) { // Swipe Kanan (Prev Tab)
+        if (delta > 0 && idx > 0) { 
             tabs[idx - 1].click();
         }
       }
-      tabStartX = 0; // Reset
+      tabStartX = 0; 
     });
     
-    // === [REVISI V6.9 - POIN 1] GESTURE SWIPE ANTAR SLIDE DIHAPUS ===
-    // Blok listener untuk 'carouselWrapper' (slideStartX) telah dihapus.
-    
-    // === [V6.8] VALIDASI INPUT ANGKA ===
     document.addEventListener("input", (e) => {
       const el = e.target;
       if (el.type === "number") {
         const val = parseFloat(el.value);
-        if (val < 0) el.value = 0; // tidak boleh negatif
-        
+        if (val < 0) el.value = 0; 
         const max = el.getAttribute('max');
         if (max && val > parseFloat(max)) {
-             el.value = max; // Hormati max HTML
+             el.value = max; 
         } else if (!max && val > 9999999) {
-             el.value = 9999999; // Batas umum
+             el.value = 9999999; 
         }
       }
     });
     
-    // === [V6.8] TOOLTIP TAMBAHAN ===
     const tooltips = [
         { sel: "#darkModeToggle", text: "Ganti Tema Terang/Gelap 🌙" },
         { sel: "#vaultToggleBtn", text: "Buka Brankas Data Panen 🗄️" },
@@ -4140,19 +3986,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <script>
 (function(){
-  // 🎨 Warna status — Draft: Oranye, Terkirim: Hijau, Edited: Biru Muda
   const STATUS_COLORS = {
-    Draft:   { bg: '#FFA500', text: '#ffffff' },  // oranye terang
-    Terkirim:{ bg: '#198754', text: '#ffffff' },  // hijau sukses
-    Edited:  { bg: '#0DCAF0', text: '#212529' }   // biru muda
+    Draft:   { bg: '#FFA500', text: '#ffffff' }, 
+    Terkirim:{ bg: '#198754', text: '#ffffff' }, 
+    Edited:  { bg: '#0DCAF0', text: '#212529' } 
   };
 
-  // 🧩 Fungsi untuk menampilkan badge dengan transisi halus
   function setStatusBadge(badgeEl, status) {
     if (!badgeEl) return;
     const col = STATUS_COLORS[status] || STATUS_COLORS.Draft;
-
-    // Tambahkan animasi transisi kecil
     badgeEl.classList.add('status-changed');
     setTimeout(() => badgeEl.classList.remove('status-changed'), 250);
 
@@ -4163,13 +4005,11 @@ document.addEventListener('DOMContentLoaded', () => {
     badgeEl.style.setProperty('--after-color', col.bg);
   }
 
-  // 🔍 Cari badge dari elemen di dalam card (slide-item)
   function findBadgeFromInside(el) {
     const slide = el.closest('.slide-item');
     return slide ? slide.querySelector('.status-badge') : null;
   }
 
-  // 🚀 Inisialisasi awal: semua badge = Draft
   function initializeExistingBadges() {
     document.querySelectorAll('.status-badge').forEach(b => {
       setStatusBadge(b, 'Draft');
@@ -4177,7 +4017,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ✏️ Saat user mengedit input
   function attachInputListeners(root) {
     if (!root) root = document;
     root.addEventListener('input', function(e){
@@ -4192,16 +4031,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const current = (badge.textContent || '').trim();
 
       if (!hasSaved) {
-        // Belum disimpan = Draft (tetap)
         if (current !== 'Draft') setStatusBadge(badge, 'Draft');
       } else {
-        // Sudah disimpan dan diedit = Edited
         if (current !== 'Edited') setStatusBadge(badge, 'Edited');
       }
     }, { capture: true });
   }
 
-  // 💾 Saat klik tombol Save ke Vault
   function attachSaveClickListener() {
     document.addEventListener('click', function(e){
       const btn = e.target.closest('button, a, input[type="button"], input[type="submit"]');
@@ -4218,7 +4054,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }, true);
   }
 
-  // 🧭 Pantau elemen baru yang muncul
   function observeNewBadges() {
     const mo = new MutationObserver(muts => {
       muts.forEach(m => {
@@ -4237,13 +4072,11 @@ document.addEventListener('DOMContentLoaded', () => {
     mo.observe(document.body, { childList: true, subtree: true });
   }
 
-  // 🚦 Jalankan semua fungsi
   initializeExistingBadges();
   attachInputListeners(document);
   attachSaveClickListener();
   observeNewBadges();
 
-  // API kecil untuk akses manual (opsional)
   window.PLB = window.PLB || {};
   window.PLB.setStatusBadge = (inst, status)=>{
     const badge = typeof inst === 'string' ? document.getElementById(inst) : findBadgeFromInside(inst);
