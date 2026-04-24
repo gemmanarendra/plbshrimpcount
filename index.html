@@ -1700,7 +1700,7 @@ body.dark-mode .tab-link.active {
                         <input type="number" id="{{INSTANCE_ID}}_kapasitasAngkut" placeholder="Auto isi">
 
                         <label>⚖️ Isi Per Box (Kantong)</label>
-                        <input type="number" id="{{INSTANCE_ID}}_isiBox" placeholder="Auto isi dari jenis truk" readonly>
+                        <input type="number" id="{{INSTANCE_ID}}_isiBox" oninput="recalcAllHitungan('{{INSTANCE_ID}}')" placeholder="Masukan jumlah kantong">
 
                         <label>🚚 Driver</label>
                         <select id="{{INSTANCE_ID}}_driver" onchange="updateDriverDetails('{{INSTANCE_ID}}')">
