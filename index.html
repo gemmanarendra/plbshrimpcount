@@ -2421,8 +2421,8 @@ function updateTruckDetails(instanceId){
   const j=getEl(instanceId, 'jenisTruk').value;
   const i=getEl(instanceId, 'isiBox');
   const k=getEl(instanceId, 'kapasitasAngkut');
-  if(j.includes('Euro2')){i.value=2;k.value=240;}
-  else if(j.includes('Euro4')){i.value=2;k.value=258;}
+  if(j.includes('Euro2')){i.value=3;k.value=240;}
+  else if(j.includes('Euro4')){i.value=3;k.value=258;}
   else if(j.includes('Bandara')){i.value=6;k.value=120;}
   else {i.value='';k.value='';}
   updateRecap(instanceId);
