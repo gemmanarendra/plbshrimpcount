@@ -1720,7 +1720,7 @@ body.dark-mode .tab-link.active {
                             <div class="col"><label>💧 Bak Asli</label><input id="{{INSTANCE_ID}}_qcBakAsli" placeholder="Bak Asli" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
                         </div>
                         <div class="row">
-                            <div class="col"><label>🤖 Tomota (ekor)</label><input id="{{INSTANCE_ID}}_tomota" type="number" placeholder="Tomota" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
+                            <div class="col"><label>🤖 iCounter (ekor)</label><input id="{{INSTANCE_ID}}_tomota" type="number" placeholder="Tomota" oninput="updateRecap('{{INSTANCE_ID}}')"></div>
                         </div>
                         <div class="row">
                             <div class="col"><label>Hitungan Tester:</label></div>
@@ -1988,7 +1988,7 @@ body.dark-mode .tab-link.active {
 
                         <h3 class="recap-section-title">Data Tester</h3>
                         <div class="recap-row"><span class="recap-label">No. Bak Scooring</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_nomorBak">-</span></div>
-                        <div class="recap-row"><span class="recap-label">Tomota</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tomota">- ekor</span></div>
+                        <div class="recap-row"><span class="recap-label">iCounter</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_tomota">- ekor</span></div>
                         <div class="recap-row"><span class="recap-label">Σ Total</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerSum">0</span></div>
                         <div class="recap-row"><span class="recap-label">Density</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_testerDensity">-</span></div>
                         <div class="recap-row"><span class="recap-label">Allowance</span><span class="recap-value" id="{{INSTANCE_ID}}_recap_allowanceTester">0 %</span></div>
@@ -2168,17 +2168,17 @@ const sopirDB = {
   "Rudiana": { "nohp": "082341858330", "plat": "DK 8349 VA" },
   "Dian": { "nohp": "082340074446", "plat": "DK 8323 UH" },
   "Anggi": { "nohp": "082169656871", "plat": "DK 8687 UH" },
-  "Frendi": { "nohp": "082278912811", "plat": "DK 9593 TI" },
+  "Frendi": { "nohp": "082278912811", "plat": "DK 8593 TI" },
   "Asep Satria": { "nohp": "081337045654", "plat": "DK 8591 TI" },
   "M. Soleh": { "nohp": "082145810407", "plat": "DK 8684 UH" },
   "Awaludin": { "nohp": "085333533892", "plat": "DK 8580 VB" },
-  "Yusup": { "nohp": "08881722094", "plat": "DK 8177 VA" },
+  "Yusup": { "nohp": "08881722094", "plat": "DK 8177 VU" },
   "Sidik": { "nohp": "082146807407", "plat": "DK 8745 VU" },
   "Romli": { "nohp": "082174445127", "plat": "DK 8945 VA" },
   "Anang": { "nohp": "0881037838649", "plat": "DK 8588 TI" },
   "Sulaeman": { "nohp": "081337611536", "plat": "DK 8459 UZ" },
   "Pathudin": { "nohp": "085234139084", "plat": "DK 8115 YU" },
-  "Jenal": { "nohp": "082127741992", "plat": "DK 9592 TI" }
+  "Jenal": { "nohp": "082127741992", "plat": "DK 8592 TI" }
 };
 
 /**
@@ -3223,7 +3223,7 @@ function executeShareAdmin(instanceId, isComplete) {
     const ph = getEl(instanceId, 'qcPh').value || '-';
     const sal = getEl(instanceId, 'qcSalinitas').value || '-';
     const biomassa = getEl(instanceId, 'qcBiomassa').value || '-';
-    const tomota = getEl(instanceId, 'tomota').value || '-';
+    const iCounter = getEl(instanceId, 'tomota').value || '-';
     const bakAsli = getEl(instanceId, 'qcBakAsli').value || '-'; 
     const stadia = getEl(instanceId, 'qcStadia').value || '-';
     const panjang = getEl(instanceId, 'qcPanjang').value || '-';
@@ -3284,7 +3284,7 @@ function executeShareAdmin(instanceId, isComplete) {
         text += `Ph ${ph}\n`;
         text += `Sal ${sal}\n\n`;
         text += `Biomassa ${biomassa}\n`;
-        text += `Tomota ${tomota}\n`;
+        text += `iCounter ${tomota}\n`;
         text += `Kode Bak ${bakAsli} (${stadia})\n`;
         text += `Panjang ${panjang} mm\n\n`;
         text += `${customer}/${tujuan}\n`;
