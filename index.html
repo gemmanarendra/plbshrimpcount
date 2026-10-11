@@ -3219,6 +3219,7 @@ function confirmShare(isComplete) {
 }
 
 // 4. Eksekusi Pengiriman Pesan
+// --- PATCH PERBAIKAN: executeShareAdmin ---
 function executeShareAdmin(instanceId, isComplete) {
     // Ambil Data QC & Tester
     const suhu = getEl(instanceId, 'qcSuhu').value || '-';
@@ -3226,7 +3227,7 @@ function executeShareAdmin(instanceId, isComplete) {
     const ph = getEl(instanceId, 'qcPh').value || '-';
     const sal = getEl(instanceId, 'qcSalinitas').value || '-';
     const biomassa = getEl(instanceId, 'qcBiomassa').value || '-';
-    const iCounter = getEl(instanceId, 'tomota').value || '-';
+    const iCounter = getEl(instanceId, 'tomota').value || '-'; // Diperbaiki konsistensinya
     const bakAsli = getEl(instanceId, 'qcBakAsli').value || '-'; 
     const stadia = getEl(instanceId, 'qcStadia').value || '-';
     const panjang = getEl(instanceId, 'qcPanjang').value || '-';
@@ -3263,60 +3264,44 @@ function executeShareAdmin(instanceId, isComplete) {
     const benurSJ = benurSJSpan.textContent.trim();
     const a2 = parseFloat(allowance2El.value) || 0;
 
-    // --- LOGIKA PENYUSUNAN TEKS ---
-    let text = "";
-
-    // Bagian Hitungan (Sama untuk kedua format)
     let hitunganText = "";
     const lineRealSimple = `${boxValue} Box, ${totalKantong} Kantong @${benurReal} Ekor (+1)`;
     
     if (a2 > 0) {
-        // Jika ada A2 -> Tampilkan Real dan SJ
         hitunganText += `Real: ${lineRealSimple}\n`;
         hitunganText += `SJ:   ${boxValue} Box, ${totalKantong} Kantong @${benurSJ} Ekor (+1)`;
     } else {
-        // Jika tidak ada A2 -> Tampilkan Real saja (tanpa label "Real:")
         hitunganText += lineRealSimple;
     }
 
+    let text = "";
     if (isComplete) {
-        // --- FORMAT LENGKAP (YA) ---
+        // --- FORMAT LENGKAP (Memperbaiki error variabel tomota -> iCounter) ---
         text += `${scooping}/${noScooping}\n\n`;
         text += `Suhu ${suhu}\n`;
         text += `Do ${doVal}\n`;
         text += `Ph ${ph}\n`;
         text += `Sal ${sal}\n\n`;
         text += `Biomassa ${biomassa}\n`;
-        text += `iCounter ${tomota}\n`;
+        text += `iCounter ${iCounter}\n`; // ✅ Diperbaiki dari tomota ke iCounter
         text += `Kode Bak ${bakAsli} (${stadia})\n`;
         text += `Panjang ${panjang} mm\n\n`;
         text += `${customer}/${tujuan}\n`;
         text += `${driver}/Act ${avgAktualText}\n\n`;
         text += hitunganText;
-
     } else {
-        // --- FORMAT RINGKAS (TIDAK) ---
-        // Contoh: 
-        // Heri/5.5
-        // Bak Asli 4
-        // 
-        // CV Sudana/Lombok
-        // Didi/Act 3.804
-        //
-        // [Hitungan]
-
-        // text += `${scooping}/${noScooping}\n`;
-        // text += `Bak Asli ${bakAsli}\n\n`;
-        
+        // --- FORMAT RINGKAS ---
         text += `${customer}/${tujuan}\n`;
         text += `${driver}/Act ${avgAktualText}\n\n`;
-        
         text += hitunganText;
     }
 
     const encodedText = encodeURIComponent(text);
-    window.open(`https://wa.me/?text=${encodedText}`, '_blank');
+    
+    // Menggunakan window.location.href lebih aman untuk menghindari pemblokiran pop-up di iOS Safari
+    window.location.href = `https://wa.me/?text=${encodedText}`;
 }
+// --- AKHIR PATCH ---
 
 
 // ===================================
